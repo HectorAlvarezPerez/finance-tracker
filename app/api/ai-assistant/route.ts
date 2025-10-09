@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     // Create OpenAI completion with function calling
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
+      model: "gpt-4o-mini",  // Optimized for cost - great quality at 1/10th the price
       messages: [
         {
           role: "system",
@@ -201,7 +201,7 @@ EXAMPLE REJECTIONS:
 
       // Get AI's final response with the function result
       const secondCompletion = await openai.chat.completions.create({
-        model: "gpt-4-turbo-preview",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
