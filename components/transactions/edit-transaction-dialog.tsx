@@ -51,7 +51,7 @@ export function EditTransactionDialog({
   const [amount, setAmount] = useState(transaction.amount.toString())
   const [date, setDate] = useState(transaction.date)
   const [accountId, setAccountId] = useState(transaction.account_id)
-  const [categoryId, setCategoryId] = useState(transaction.category_id || "")
+  const [categoryId, setCategoryId] = useState(transaction.category_id || "none")
   const [status, setStatus] = useState(transaction.status)
   const [notes, setNotes] = useState(transaction.notes || "")
   const router = useRouter()
@@ -63,7 +63,7 @@ export function EditTransactionDialog({
     setAmount(transaction.amount.toString())
     setDate(transaction.date)
     setAccountId(transaction.account_id)
-    setCategoryId(transaction.category_id || "")
+    setCategoryId(transaction.category_id || "none")
     setStatus(transaction.status)
     setNotes(transaction.notes || "")
   }, [transaction])
@@ -80,7 +80,7 @@ export function EditTransactionDialog({
           amount: parseFloat(amount),
           date,
           account_id: accountId,
-          category_id: categoryId || null,
+          category_id: categoryId === "none" ? null : categoryId,
           status: status as Transaction["status"],
           notes: notes || null,
         })
@@ -174,7 +174,7 @@ export function EditTransactionDialog({
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No category</SelectItem>
+                  <SelectItem value="none">No category</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
