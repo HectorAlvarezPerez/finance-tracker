@@ -67,7 +67,7 @@ export function DeleteCategoryDialog({
             Delete Category
           </DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete the category "{category.name}"?
+            Are you sure you want to delete the category &quot;{category.name}&quot;?
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">

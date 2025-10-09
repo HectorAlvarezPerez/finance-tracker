@@ -67,7 +67,7 @@ export function DeleteAccountDialog({
             Delete Account
           </DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete "{account.name}"?
+            Are you sure you want to delete &quot;{account.name}&quot;?
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
