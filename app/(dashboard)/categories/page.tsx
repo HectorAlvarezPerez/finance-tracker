@@ -7,17 +7,17 @@ export default async function CategoriesPage() {
   const supabase = createServerClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     redirect("/login")
   }
 
   const { data: categories } = await supabase
     .from("categories")
     .select("*")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .order("type", { ascending: true })
     .order("name", { ascending: true })
 
@@ -30,10 +30,10 @@ export default async function CategoriesPage() {
             Manage your income and expense categories
           </p>
         </div>
-        <AddCategoryDialog userId={session.user.id} />
+        <AddCategoryDialog userId={user.id} />
       </div>
 
-      <CategoriesList categories={categories || []} userId={session.user.id} />
+      <CategoriesList categories={categories || []} userId={user.id} />
     </div>
   )
 }

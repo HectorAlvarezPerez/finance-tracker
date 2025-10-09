@@ -8,8 +8,8 @@ export async function middleware(req: NextRequest) {
   const supabase = createMiddlewareClient<Database>({ req, res })
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
   // Protect routes
   const protectedRoutes = [
@@ -24,7 +24,7 @@ export async function middleware(req: NextRequest) {
 
   const isProtectedRoute = protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route))
 
-  if (isProtectedRoute && !session) {
+  if (isProtectedRoute && !user) {
     const redirectUrl = req.nextUrl.clone()
     redirectUrl.pathname = "/login"
     redirectUrl.searchParams.set("redirectedFrom", req.nextUrl.pathname)
@@ -33,7 +33,7 @@ export async function middleware(req: NextRequest) {
 
   // Redirect to dashboard if logged in and trying to access auth pages
   if (
-    session &&
+    user &&
     (req.nextUrl.pathname === "/login" ||
       req.nextUrl.pathname === "/signup" ||
       req.nextUrl.pathname === "/")

@@ -7,17 +7,17 @@ export default async function BudgetsPage() {
   const supabase = createServerClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     redirect("/login")
   }
 
   const { data: categories } = await supabase
     .from("categories")
     .select("*")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .eq("type", "expense")
     .order("name")
 
@@ -26,7 +26,7 @@ export default async function BudgetsPage() {
   const { data: budgets } = await supabase
     .from("budgets")
     .select("*, categories(name, color)")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .eq("month", currentMonth)
 
   // Get transactions for the month
@@ -42,7 +42,7 @@ export default async function BudgetsPage() {
   const { data: transactions } = await supabase
     .from("transactions")
     .select("*")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .gte("date", firstDay)
     .lte("date", lastDay)
     .lt("amount", 0)
@@ -56,13 +56,13 @@ export default async function BudgetsPage() {
             Set and track your monthly spending limits
           </p>
         </div>
-        <AddBudgetDialog userId={session.user.id} categories={categories || []} />
+        <AddBudgetDialog userId={user.id} categories={categories || []} />
       </div>
 
       <BudgetsList
         budgets={budgets || []}
         transactions={transactions || []}
-        userId={session.user.id}
+        userId={user.id}
       />
     </div>
   )

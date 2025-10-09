@@ -8,10 +8,10 @@ export default async function InsightsPage() {
   const supabase = createServerClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     redirect("/login")
   }
 
@@ -27,7 +27,7 @@ export default async function InsightsPage() {
   const { data: currentTransactions } = await supabase
     .from("transactions")
     .select("*, categories(name, color)")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .gte("date", firstDay)
     .lte("date", lastDay)
 
@@ -39,7 +39,7 @@ export default async function InsightsPage() {
   const { data: historicalTransactions } = await supabase
     .from("transactions")
     .select("*, categories(name, color)")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .gte("date", sixMonthsAgo)
     .lt("date", firstDay)
 

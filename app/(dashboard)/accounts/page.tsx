@@ -7,17 +7,17 @@ export default async function AccountsPage() {
   const supabase = createServerClient()
   
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     redirect("/login")
   }
 
   const { data: accounts } = await supabase
     .from("accounts")
     .select("*")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false })
 
   return (
@@ -29,10 +29,10 @@ export default async function AccountsPage() {
             Manage your bank accounts, savings, and investments
           </p>
         </div>
-        <AddAccountDialog userId={session.user.id} />
+        <AddAccountDialog userId={user.id} />
       </div>
 
-      <AccountsList accounts={accounts || []} userId={session.user.id} />
+      <AccountsList accounts={accounts || []} userId={user.id} />
     </div>
   )
 }

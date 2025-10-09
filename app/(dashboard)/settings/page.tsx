@@ -7,17 +7,17 @@ export default async function SettingsPage() {
   const supabase = createServerClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     redirect("/login")
   }
 
   const { data: settings } = await supabase
     .from("settings")
     .select("*")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .single()
 
   return (
@@ -43,13 +43,13 @@ export default async function SettingsPage() {
             <div>
               <p className="text-sm font-medium">User ID</p>
               <p className="text-sm text-muted-foreground font-mono text-xs">
-                {session.user.id}
+                {user.id}
               </p>
             </div>
           </CardContent>
         </Card>
 
-        <SettingsForm userId={session.user.id} currentSettings={settings} />
+        <SettingsForm userId={user.id} currentSettings={settings} />
       </div>
     </div>
   )

@@ -13,10 +13,10 @@ export default async function TransactionsPage({
   const supabase = createServerClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     redirect("/login")
   }
 
@@ -24,21 +24,21 @@ export default async function TransactionsPage({
   const { data: accounts } = await supabase
     .from("accounts")
     .select("*")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .eq("is_active", true)
 
   // Get categories for filters
   const { data: categories } = await supabase
     .from("categories")
     .select("*")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .order("name")
 
   // Build query based on filters
   let query = supabase
     .from("transactions")
     .select("*, categories(name, color, icon), accounts(name, type)")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .order("date", { ascending: false })
 
   if (searchParams.account) {
@@ -74,12 +74,12 @@ export default async function TransactionsPage({
         </div>
         <div className="flex gap-2">
           <CSVImportDialog
-            userId={session.user.id}
+            userId={user.id}
             accounts={accounts || []}
             categories={categories || []}
           />
           <AddTransactionDialog
-            userId={session.user.id}
+            userId={user.id}
             accounts={accounts || []}
             categories={categories || []}
           />
@@ -95,7 +95,7 @@ export default async function TransactionsPage({
         transactions={transactions || []}
         accounts={accounts || []}
         categories={categories || []}
-        userId={session.user.id}
+        userId={user.id}
       />
     </div>
   )

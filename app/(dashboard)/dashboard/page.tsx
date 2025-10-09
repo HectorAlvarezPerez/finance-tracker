@@ -8,10 +8,10 @@ export default async function DashboardPage() {
   const supabase = createServerClient()
   
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     redirect("/login")
   }
 
@@ -24,11 +24,11 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <DashboardOverview userId={session.user.id} />
+      <DashboardOverview userId={user.id} />
 
       <div className="grid gap-6 md:grid-cols-2">
-        <RecentTransactions userId={session.user.id} />
-        <BudgetOverview userId={session.user.id} />
+        <RecentTransactions userId={user.id} />
+        <BudgetOverview userId={user.id} />
       </div>
     </div>
   )

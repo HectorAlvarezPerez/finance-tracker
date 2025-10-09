@@ -9,17 +9,17 @@ export default async function PortfolioPage() {
   const supabase = createServerClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     redirect("/login")
   }
 
   const { data: holdings } = await supabase
     .from("holdings")
     .select("*")
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .order("asset_symbol")
 
   // Get latest prices for each asset
@@ -30,7 +30,7 @@ export default async function PortfolioPage() {
         .from("prices")
         .select("*")
         .eq("asset_symbol", holding.asset_symbol)
-        .or(`user_id.eq.${session.user.id},user_id.is.null`)
+        .or(`user_id.eq.${user.id},user_id.is.null`)
         .order("as_of", { ascending: false })
         .limit(1)
 
@@ -50,14 +50,14 @@ export default async function PortfolioPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <ManagePricesDialog userId={session.user.id} holdings={holdings || []} />
-          <AddHoldingDialog userId={session.user.id} />
+          <ManagePricesDialog userId={user.id} holdings={holdings || []} />
+          <AddHoldingDialog userId={user.id} />
         </div>
       </div>
 
       <PortfolioOverview holdings={holdings || []} prices={pricesMap} />
 
-      <HoldingsList holdings={holdings || []} prices={pricesMap} userId={session.user.id} />
+      <HoldingsList holdings={holdings || []} prices={pricesMap} userId={user.id} />
     </div>
   )
 }
