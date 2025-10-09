@@ -46,7 +46,7 @@ export function EditRecurringDialog({
   const [amount, setAmount] = useState(recurring.amount.toString())
   const [accountId, setAccountId] = useState(recurring.account_id)
   const [categoryId, setCategoryId] = useState(recurring.category_id || "none")
-  const [frequency, setFrequency] = useState(recurring.frequency)
+  const [frequency, setFrequency] = useState<string>(recurring.frequency)
   const [intervalValue, setIntervalValue] = useState(recurring.interval_value.toString())
   const [dayOfMonth, setDayOfMonth] = useState((recurring.day_of_month || 1).toString())
   const [dayOfWeek, setDayOfWeek] = useState((recurring.day_of_week || 1).toString())
@@ -77,11 +77,11 @@ export function EditRecurringDialog({
           amount: parseFloat(amount),
           account_id: accountId,
           category_id: categoryId === "none" ? null : categoryId,
-          frequency,
+          frequency: frequency as RecurringTransaction["frequency"],
           interval_value: parseInt(intervalValue),
           day_of_month: frequency === "monthly" ? parseInt(dayOfMonth) : null,
           day_of_week: frequency === "weekly" ? parseInt(dayOfWeek) : null,
-        } as any)
+        })
         .eq("id", recurring.id)
 
       if (error) throw error

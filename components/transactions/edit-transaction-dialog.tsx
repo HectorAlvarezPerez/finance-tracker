@@ -185,7 +185,7 @@ export function EditTransactionDialog({
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-status">Status</Label>
-              <Select value={status} onValueChange={(value) => setStatus(value)}>
+              <Select value={status} onValueChange={(value) => setStatus(value as Transaction["status"])}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
