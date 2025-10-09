@@ -50,7 +50,7 @@ export function EditCategoryDialog({
 }) {
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState(category.name)
-  const [type, setType] = useState(category.type)
+  const [type, setType] = useState<string>(category.type)
   const [color, setColor] = useState(category.color)
   const router = useRouter()
   const { toast } = useToast()
@@ -71,7 +71,7 @@ export function EditCategoryDialog({
         .from("categories")
         .update({
           name,
-          type,
+          type: type as Category["type"],
           color,
         })
         .eq("id", category.id)
