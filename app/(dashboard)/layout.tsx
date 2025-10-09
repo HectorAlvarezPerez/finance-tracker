@@ -1,4 +1,5 @@
 import { Nav, MobileNav } from "@/components/nav"
+import { AIChatWrapper } from "@/components/ai-assistant/ai-chat-wrapper"
 
 export default function DashboardLayout({
   children,
@@ -12,6 +13,7 @@ export default function DashboardLayout({
         {children}
       </main>
       <MobileNav />
+      <AIChatWrapper />
     </div>
   )
 }

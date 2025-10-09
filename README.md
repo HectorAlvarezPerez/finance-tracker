@@ -10,6 +10,7 @@ A comprehensive, production-ready personal finance web application built with Ne
 ## 🚀 Features
 
 ### Core Functionality
+- **🤖 AI Assistant**: Natural language commands to create categories, transactions, accounts, and budgets (powered by OpenAI GPT-4)
 - **Multi-Account Management**: Track checking, savings, brokerage, crypto, and other accounts
 - **Transaction Management**: Full CRUD operations with CSV import/export
 - **Smart Categorization**: Auto-categorize transactions with customizable rules
@@ -41,6 +42,7 @@ A comprehensive, production-ready personal finance web application built with Ne
 
 ### Backend & Database
 - **Supabase** (PostgreSQL, Auth, Row Level Security)
+- **OpenAI GPT-4** (AI Assistant with function calling)
 - **Zod** (schema validation)
 
 ### Deployment
@@ -51,6 +53,7 @@ A comprehensive, production-ready personal finance web application built with Ne
 
 - Node.js 18+ and npm/yarn
 - Supabase account ([supabase.com](https://supabase.com))
+- OpenAI API key (optional, for AI Assistant) ([platform.openai.com](https://platform.openai.com))
 - Vercel account (optional, for deployment)
 
 ## 🚀 Getting Started
@@ -84,6 +87,9 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
+# OpenAI Configuration (optional - for AI Assistant)
+OPENAI_API_KEY=sk-your-openai-api-key
+
 # App Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
@@ -91,6 +97,8 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 NEXT_PUBLIC_ENABLE_REALTIME_PRICES=false
 NEXT_PUBLIC_ENABLE_BANK_INTEGRATION=false
 ```
+
+> **📚 AI Assistant Setup**: For detailed instructions on setting up and using the AI Assistant, see [AI_ASSISTANT.md](./AI_ASSISTANT.md)
 
 ### 5. Run Database Migrations
 
