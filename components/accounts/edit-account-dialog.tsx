@@ -37,7 +37,7 @@ export function EditAccountDialog({
 }) {
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState(account.name)
-  const [type, setType] = useState(account.type)
+  const [type, setType] = useState<string>(account.type)
   const [currency, setCurrency] = useState(account.currency)
   const router = useRouter()
   const { toast } = useToast()
@@ -58,7 +58,7 @@ export function EditAccountDialog({
         .from("accounts")
         .update({
           name,
-          type,
+          type: type as Account["type"],
           currency,
         })
         .eq("id", account.id)
