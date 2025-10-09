@@ -86,31 +86,55 @@ npm run dev
 
 ## 💰 Cost Considerations
 
+### Current Model: GPT-4o-mini ✅
+
+**The app is configured to use GPT-4o-mini by default** - the best balance of quality and cost!
+
 ### OpenAI Pricing (as of 2024):
 
+- **GPT-4o-mini** (default): $0.00015 / 1K input tokens, $0.0006 / 1K output tokens 💚
 - **GPT-4 Turbo**: $0.01 / 1K input tokens, $0.03 / 1K output tokens
 - **GPT-3.5 Turbo**: $0.0005 / 1K input tokens, $0.0015 / 1K output tokens
 
-### Estimated Costs:
+### Estimated Costs (Personal Use):
 
-A typical conversation:
-- **10 messages** ≈ 5,000 tokens ≈ **$0.10 - $0.20** (GPT-4)
-- **10 messages** ≈ 5,000 tokens ≈ **$0.005 - $0.01** (GPT-3.5)
+**With GPT-4o-mini (current default):**
 
-**For 100 users using 10 messages/day:**
-- GPT-4: ~$200-400/month
-- GPT-3.5: ~$15-30/month
+| Usage | Questions/day | Cost/month |
+|-------|---------------|------------|
+| Light | 5 questions | **$0.12** 💚💚 |
+| Normal | 10 questions | **$0.24** 💚💚 |
+| Heavy | 20 questions | **$0.48** 💚 |
+| Power User | 50 questions | **$1.20** 💚 |
 
-### 💡 Cost Optimization Tips:
+**Typical question cost:** ~$0.0008 (less than 0.1 cent!)
 
-1. **Switch to GPT-3.5** for lower costs (edit `/app/api/ai-assistant/route.ts`):
-   ```typescript
-   model: "gpt-3.5-turbo"  // instead of "gpt-4-turbo-preview"
-   ```
+### 💡 Model Comparison:
 
-2. **Add rate limiting** (coming soon in future update)
+| Model | Quality | Speed | Cost/question | 10 questions/day |
+|-------|---------|-------|---------------|------------------|
+| **GPT-4o-mini** ✅ | ⭐⭐⭐⭐ | ⚡⚡⚡ | $0.0008 | **$0.24/month** |
+| GPT-4 Turbo | ⭐⭐⭐⭐⭐ | ⚡⚡ | $0.008 | $2.40/month |
+| GPT-3.5 | ⭐⭐⭐ | ⚡⚡⚡ | $0.0025 | $0.75/month |
 
-3. **Monitor usage**: https://platform.openai.com/usage
+### 💡 To Change Model:
+
+Edit `/app/api/ai-assistant/route.ts` line 30:
+
+```typescript
+// For maximum quality (10x more expensive)
+model: "gpt-4-turbo-preview"
+
+// For best value (current default)
+model: "gpt-4o-mini"
+
+// For lowest cost
+model: "gpt-3.5-turbo"
+```
+
+### 📊 Monitor Usage:
+
+Track your spending at: https://platform.openai.com/usage
 
 ## 🎯 Usage Examples
 
