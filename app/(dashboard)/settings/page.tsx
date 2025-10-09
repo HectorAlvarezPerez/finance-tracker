@@ -38,7 +38,7 @@ export default async function SettingsPage() {
           <CardContent className="space-y-4">
             <div>
               <p className="text-sm font-medium">Email</p>
-              <p className="text-sm text-muted-foreground">{session.user.email}</p>
+              <p className="text-sm text-muted-foreground">{user.email}</p>
             </div>
             <div>
               <p className="text-sm font-medium">User ID</p>
