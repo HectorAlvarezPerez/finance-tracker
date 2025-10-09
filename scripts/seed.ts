@@ -105,7 +105,7 @@ async function seed() {
       type: "checking",
       currency: "USD",
       is_active: true,
-    })
+    } as any)
 
     if (accountError) {
       console.error("Error creating account:", accountError.message)
@@ -128,7 +128,7 @@ async function seed() {
       locale: "en-US",
       theme: "system",
       insights_opt_in: true,
-    })
+    } as any)
 
     if (settingsError) {
       console.error("Error creating settings:", settingsError.message)
