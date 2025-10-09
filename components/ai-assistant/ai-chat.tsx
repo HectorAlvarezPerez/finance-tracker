@@ -28,7 +28,7 @@ export function AIChat({ userId }: AIChatProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hi! I'm your AI financial assistant. I can help you create categories, transactions, accounts, budgets, and answer questions. Try saying something like 'Create a category called Salary for income' or 'Add a transaction for $50 on groceries'.",
+      content: "Hi! I'm your specialized financial assistant. I can help you manage your finances:\n\n✅ Create categories, transactions, accounts, and budgets\n✅ Answer questions about your financial data\n✅ Provide financial advice and tips\n\n⚠️ I only respond to finance-related questions.\n\nTry: 'Create a category called Salary for income' or 'Add a transaction for $50 on groceries'",
     },
   ])
   const [input, setInput] = useState("")

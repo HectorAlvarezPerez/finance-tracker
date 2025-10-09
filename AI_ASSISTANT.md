@@ -11,6 +11,40 @@ The AI Assistant can help you:
 - ✅ **Create accounts** - "Create a savings account in USD"
 - ✅ **Create budgets** - "Set a budget of $500 for groceries this month"
 - ✅ **Answer questions** - "How much did I spend last month?"
+- ✅ **Financial advice** - "How can I save more money?"
+- ✅ **Financial concepts** - "What's a good emergency fund?"
+
+## 🛡️ Guardrails (Safety Features)
+
+The AI Assistant has **strict guardrails** to ensure it stays focused on finances:
+
+### What It Will Do:
+✅ Answer finance-related questions
+✅ Create financial data (categories, transactions, etc.)
+✅ Provide financial advice and tips
+✅ Explain financial concepts
+
+### What It Will NOT Do:
+❌ Answer general knowledge questions (weather, sports, etc.)
+❌ Discuss politics, entertainment, or unrelated topics
+❌ Help with cooking, travel, or other non-finance topics
+
+### Example Responses to Off-Topic Questions:
+
+```
+User: "What's the weather like today?"
+AI: "I'm sorry, but I can only help with personal finance questions. 
+     Is there anything about your finances I can help you with?"
+
+User: "Who won the Super Bowl?"
+AI: "That's outside my area of expertise. I'm here specifically 
+     to help you manage your money and finances."
+```
+
+**Why?** This ensures:
+- 🎯 Focused assistance on what matters
+- 💰 Lower OpenAI API costs (no wasted tokens)
+- 🔒 Better user experience
 
 ## 🔑 Setup OpenAI API Key
 
