@@ -11,7 +11,8 @@ import {
   TrendingUp, 
   Settings,
   LineChart,
-  Tag
+  Tag,
+  Repeat
 } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 
@@ -25,6 +26,11 @@ const navItems = [
     title: "Transactions",
     href: "/transactions",
     icon: CreditCard,
+  },
+  {
+    title: "Recurring",
+    href: "/recurring",
+    icon: Repeat,
   },
   {
     title: "Accounts",
