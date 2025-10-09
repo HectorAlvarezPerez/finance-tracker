@@ -16,6 +16,8 @@ import { formatCurrency, formatDate } from "@/lib/utils"
 import { Edit, Trash2, Download } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { EditTransactionDialog } from "./edit-transaction-dialog"
+import { DeleteTransactionDialog } from "./delete-transaction-dialog"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
@@ -40,33 +42,9 @@ export function TransactionsTable({
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
-  const [deleting, setDeleting] = useState<string | null>(null)
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null)
+  const [deletingTransaction, setDeletingTransaction] = useState<Transaction | null>(null)
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this transaction?")) return
-
-    setDeleting(id)
-    try {
-      const { error } = await supabase.from("transactions").delete().eq("id", id)
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: "Transaction deleted successfully",
-      })
-
-      router.refresh()
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete transaction",
-        variant: "destructive",
-      })
-    } finally {
-      setDeleting(null)
-    }
-  }
 
   const handleExportCSV = () => {
     const headers = ["Date", "Description", "Amount", "Category", "Account", "Status", "Notes"]
@@ -171,15 +149,19 @@ export function TransactionsTable({
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8"
+                      onClick={() => setEditingTransaction(transaction)}
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8"
-                      onClick={() => handleDelete(transaction.id)}
-                      disabled={deleting === transaction.id}
+                      onClick={() => setDeletingTransaction(transaction)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -190,6 +172,24 @@ export function TransactionsTable({
           </TableBody>
         </Table>
       </div>
+
+      {editingTransaction && (
+        <EditTransactionDialog
+          transaction={editingTransaction}
+          accounts={accounts}
+          categories={categories}
+          open={!!editingTransaction}
+          onOpenChange={(open) => !open && setEditingTransaction(null)}
+        />
+      )}
+
+      {deletingTransaction && (
+        <DeleteTransactionDialog
+          transaction={deletingTransaction}
+          open={!!deletingTransaction}
+          onOpenChange={(open) => !open && setDeletingTransaction(null)}
+        />
+      )}
     </div>
   )
 }
