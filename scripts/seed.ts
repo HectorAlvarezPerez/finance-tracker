@@ -82,7 +82,7 @@ async function seed() {
 
     const { error: categoriesError } = await supabase
       .from("categories")
-      .insert(categoriesToInsert)
+      .insert(categoriesToInsert as any)
 
     if (categoriesError) {
       console.error("Error inserting categories:", categoriesError.message)
