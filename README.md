@@ -14,7 +14,7 @@ A comprehensive, production-ready personal finance web application built with Ne
 - **Multi-Account Management**: Track checking, savings, brokerage, crypto, and other accounts
 - **Transaction Management**: Full CRUD operations with CSV import/export
 - **Smart Categorization**: Auto-categorize transactions with customizable rules
-- **Recurring Transactions**: Automated monthly/weekly transaction scheduling
+- **Recurring Transactions**: Fully automated transaction scheduling (daily, weekly, monthly, yearly) with Vercel Cron Jobs
 - **Budget Tracking**: Set monthly budgets with progress tracking and alerts
 - **Spending Insights**: AI-powered analysis and recommendations
 - **Investment Portfolio**: Track stocks, index funds, crypto, and precious metals with P/L and ROI calculations
@@ -90,6 +90,9 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 # OpenAI Configuration (optional - for AI Assistant)
 OPENAI_API_KEY=sk-your-openai-api-key
 
+# Cron Job Configuration (optional - for automatic recurring transactions)
+CRON_SECRET=your-secure-random-token
+
 # App Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 
@@ -99,6 +102,8 @@ NEXT_PUBLIC_ENABLE_BANK_INTEGRATION=false
 ```
 
 > **📚 AI Assistant Setup**: For detailed instructions on setting up and using the AI Assistant, see [AI_ASSISTANT.md](./AI_ASSISTANT.md)
+> 
+> **🔄 Recurring Transactions**: For automatic execution of recurring transactions with Vercel Cron Jobs, see [RECURRING_TRANSACTIONS.md](./RECURRING_TRANSACTIONS.md)
 
 ### 5. Run Database Migrations
 
