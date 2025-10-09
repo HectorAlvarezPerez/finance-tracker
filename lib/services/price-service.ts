@@ -93,7 +93,7 @@ export class ManualPriceService implements IPriceService {
       return []
     }
 
-    return data.map((row) => ({
+    return data.map((row: any) => ({
       price: parseFloat(row.price),
       asOf: new Date(row.as_of),
       currency: row.currency,
