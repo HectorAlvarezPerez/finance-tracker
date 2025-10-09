@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 export default async function SettingsPage() {
   const supabase = createServerClient()
 
+  // Get current user (not session - for security)
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -38,7 +39,9 @@ export default async function SettingsPage() {
           <CardContent className="space-y-4">
             <div>
               <p className="text-sm font-medium">Email</p>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
+              <p className="text-sm text-muted-foreground">
+                {user.email}
+              </p>
             </div>
             <div>
               <p className="text-sm font-medium">User ID</p>
