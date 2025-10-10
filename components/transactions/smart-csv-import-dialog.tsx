@@ -38,6 +38,7 @@ export function SmartCSVImportDialog({
   const [progress, setProgress] = useState(0)
   const [statusMessage, setStatusMessage] = useState("")
   const [file, setFile] = useState<File | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
@@ -46,6 +47,39 @@ export function SmartCSVImportDialog({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0])
+    }
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+
+    const files = e.dataTransfer.files
+    if (files && files[0]) {
+      const file = files[0]
+      // Check if it's a CSV or Excel file
+      if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+        setFile(file)
+      } else {
+        toast({
+          title: "Formato no válido",
+          description: "Por favor sube un archivo CSV o Excel (.csv, .xlsx, .xls)",
+          variant: "destructive",
+        })
+      }
     }
   }
 
@@ -105,7 +139,7 @@ export function SmartCSVImportDialog({
           setStatusMessage(`Procesando ${rows.length} transacciones...`)
 
           // Detect columns automatically
-          const headers = Object.keys(rows[0])
+          const headers = Object.keys(rows[0] as any)
           const { dateCol, descCol, amountCol } = detectColumns(headers)
 
           if (!dateCol || !descCol || !amountCol) {
@@ -276,20 +310,59 @@ export function SmartCSVImportDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="csv-file">Archivo CSV/Excel</Label>
+          {/* Drag & Drop Zone */}
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`
+              relative border-2 border-dashed rounded-lg p-8 transition-all cursor-pointer
+              ${isDragging 
+                ? 'border-primary bg-primary/5 scale-105' 
+                : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-accent/50'
+              }
+              ${loading ? 'pointer-events-none opacity-50' : ''}
+            `}
+          >
             <input
               id="csv-file"
               type="file"
               accept=".csv,.xlsx,.xls"
               onChange={handleFileChange}
-              className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               disabled={loading}
             />
-            <p className="text-xs text-muted-foreground">
-              Formato flexible: detecta automáticamente columnas de fecha, descripción y cantidad
-            </p>
+            
+            <div className="flex flex-col items-center justify-center text-center space-y-3">
+              <div className={`p-3 rounded-full transition-all ${
+                isDragging ? 'bg-primary text-primary-foreground scale-110' : 'bg-muted'
+              }`}>
+                <Upload className={`h-8 w-8 ${isDragging ? 'animate-bounce' : ''}`} />
+              </div>
+              
+              <div>
+                <p className="text-sm font-medium">
+                  {isDragging 
+                    ? '¡Suelta el archivo aquí!' 
+                    : 'Arrastra tu CSV/Excel aquí'
+                  }
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  o haz click para seleccionar
+                </p>
+              </div>
+              
+              <div className="flex gap-2 text-xs text-muted-foreground">
+                <span className="px-2 py-1 bg-muted rounded">CSV</span>
+                <span className="px-2 py-1 bg-muted rounded">XLSX</span>
+                <span className="px-2 py-1 bg-muted rounded">XLS</span>
+              </div>
+            </div>
           </div>
+
+          <p className="text-xs text-center text-muted-foreground">
+            ✨ Detección automática de columnas • IA categoriza transacciones • Crea categorías que falten
+          </p>
 
           {loading && (
             <div className="space-y-2">
@@ -299,9 +372,29 @@ export function SmartCSVImportDialog({
           )}
 
           {file && !loading && (
-            <div className="p-3 bg-muted rounded-md">
-              <p className="text-sm font-medium">Archivo seleccionado:</p>
-              <p className="text-sm text-muted-foreground">{file.name}</p>
+            <div className="p-4 bg-primary/5 border border-primary/20 rounded-md">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-primary/10 rounded">
+                  <Upload className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{file.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {(file.size / 1024).toFixed(1)} KB
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setFile(null)
+                  }}
+                  className="h-8 w-8 p-0"
+                >
+                  ✕
+                </Button>
+              </div>
             </div>
           )}
         </div>
