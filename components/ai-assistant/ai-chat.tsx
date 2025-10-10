@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -24,11 +25,12 @@ interface AIChatProps {
 }
 
 export function AIChat({ userId }: AIChatProps) {
+  const t = useTranslations('ai')
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Hi! I'm your specialized financial assistant. I can help you manage your finances:\n\n✅ Create categories, transactions, accounts, and budgets\n✅ Answer questions about your financial data\n✅ Provide financial advice and tips\n\n⚠️ I only respond to finance-related questions.\n\nTry: 'Create a category called Salary for income' or 'Add a transaction for $50 on groceries'",
+      content: t('initialMessage'),
     },
   ])
   const [input, setInput] = useState("")
@@ -124,10 +126,10 @@ export function AIChat({ userId }: AIChatProps) {
           <DialogHeader className="p-6 pb-4">
             <DialogTitle className="flex items-center gap-2">
               <Bot className="h-5 w-5" />
-              AI Financial Assistant
+              {t('title')}
             </DialogTitle>
             <DialogDescription>
-              Ask me anything about your finances or tell me what to do
+              {t('subtitle')}
             </DialogDescription>
           </DialogHeader>
 
@@ -168,7 +170,7 @@ export function AIChat({ userId }: AIChatProps) {
           <div className="p-4 border-t">
             <div className="flex gap-2">
               <Input
-                placeholder="Type your message..."
+                placeholder={t('placeholder')}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}

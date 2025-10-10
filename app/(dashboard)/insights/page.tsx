@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { getTranslations } from 'next-intl/server'
 import { NetWorthChart } from "@/components/analytics/net-worth-chart"
 import { IncomeVsExpensesChart } from "@/components/analytics/income-vs-expenses-chart"
 import { ExpensesByCategoryChart } from "@/components/analytics/expenses-by-category-chart"
@@ -9,6 +10,7 @@ import { TopCategories } from "@/components/insights/top-categories"
 
 export default async function InsightsPage() {
   const supabase = createServerClient()
+  const t = await getTranslations('insights')
 
   const {
     data: { user },
@@ -67,9 +69,9 @@ export default async function InsightsPage() {
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Analytics & Insights</h1>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Comprehensive analysis of your financial health and spending patterns
+          {t('subtitle')}
         </p>
       </div>
 

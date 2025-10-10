@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { getTranslations } from 'next-intl/server'
 import { PortfolioOverview } from "@/components/portfolio/portfolio-overview"
 import { HoldingsList } from "@/components/portfolio/holdings-list"
 import { AddHoldingDialog } from "@/components/portfolio/add-holding-dialog"
@@ -7,6 +8,7 @@ import { ManagePricesDialog } from "@/components/portfolio/manage-prices-dialog"
 
 export default async function PortfolioPage() {
   const supabase = createServerClient()
+  const t = await getTranslations('portfolio')
 
   const {
     data: { user },
@@ -44,9 +46,9 @@ export default async function PortfolioPage() {
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Portfolio</h1>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Track your investments and performance
+            {t('subtitle')}
           </p>
         </div>
         <div className="flex gap-2">

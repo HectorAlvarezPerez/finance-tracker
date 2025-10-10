@@ -1,10 +1,12 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { getTranslations } from 'next-intl/server'
 import { RecurringTransactionsList } from "@/components/recurring/recurring-list"
 import { AddRecurringDialog } from "@/components/recurring/add-recurring-dialog"
 
 export default async function RecurringPage() {
   const supabase = createServerClient()
+  const t = await getTranslations('recurring')
 
   const {
     data: { user },
@@ -44,9 +46,9 @@ export default async function RecurringPage() {
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Recurring Transactions</h1>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Automate your regular income and expenses
+            {t('subtitle')}
           </p>
         </div>
         <AddRecurringDialog

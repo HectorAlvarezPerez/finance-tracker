@@ -1,10 +1,12 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { getTranslations } from 'next-intl/server'
 import { BudgetsList } from "@/components/budgets/budgets-list"
 import { AddBudgetDialog } from "@/components/budgets/add-budget-dialog"
 
 export default async function BudgetsPage() {
   const supabase = createServerClient()
+  const t = await getTranslations('budgets')
 
   const {
     data: { user },
@@ -51,9 +53,9 @@ export default async function BudgetsPage() {
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Budgets</h1>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Set and track your monthly spending limits
+            {t('subtitle')}
           </p>
         </div>
         <AddBudgetDialog userId={user.id} categories={categories || []} />
