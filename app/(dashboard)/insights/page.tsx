@@ -1,7 +1,10 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { NetWorthChart } from "@/components/analytics/net-worth-chart"
+import { IncomeVsExpensesChart } from "@/components/analytics/income-vs-expenses-chart"
+import { ExpensesByCategoryChart } from "@/components/analytics/expenses-by-category-chart"
+import { MonthlyTrendsChart } from "@/components/analytics/monthly-trends-chart"
 import { SpendingInsights } from "@/components/insights/spending-insights"
-import { MonthlyComparison } from "@/components/insights/monthly-comparison"
 import { TopCategories } from "@/components/insights/top-categories"
 
 export default async function InsightsPage() {
@@ -15,7 +18,25 @@ export default async function InsightsPage() {
     redirect("/login")
   }
 
-  // Get current month transactions
+  // Get all transactions (last 12 months for better analytics)
+  const twelveMonthsAgo = new Date()
+  twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12)
+  const startDate = twelveMonthsAgo.toISOString().split("T")[0]
+
+  const { data: allTransactions } = await supabase
+    .from("transactions")
+    .select("*, categories(name, color)")
+    .eq("user_id", user.id)
+    .gte("date", startDate)
+    .order("date", { ascending: true })
+
+  // Get all accounts for net worth calculation
+  const { data: accounts } = await supabase
+    .from("accounts")
+    .select("*")
+    .eq("user_id", user.id)
+
+  // Get current month transactions for insights
   const currentMonth = new Date()
   const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
     .toISOString()
@@ -46,23 +67,39 @@ export default async function InsightsPage() {
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Insights</h1>
+        <h1 className="text-3xl font-bold">Analytics & Insights</h1>
         <p className="text-muted-foreground">
-          Analyze your spending patterns and get recommendations
+          Comprehensive analysis of your financial health and spending patterns
         </p>
       </div>
 
-      <SpendingInsights
-        currentTransactions={currentTransactions || []}
-        historicalTransactions={historicalTransactions || []}
+      {/* Net Worth Over Time */}
+      <NetWorthChart 
+        transactions={allTransactions || []} 
+        accounts={accounts || []}
       />
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <MonthlyComparison
+      {/* Income vs Expenses and Monthly Trends */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <IncomeVsExpensesChart transactions={allTransactions || []} />
+        <MonthlyTrendsChart transactions={allTransactions || []} />
+      </div>
+
+      {/* Expenses by Category */}
+      <ExpensesByCategoryChart transactions={allTransactions || []} />
+
+      {/* Legacy Insights */}
+      <div className="pt-6 border-t">
+        <h2 className="text-2xl font-bold mb-4">Current Month Insights</h2>
+        
+        <SpendingInsights
           currentTransactions={currentTransactions || []}
           historicalTransactions={historicalTransactions || []}
         />
-        <TopCategories transactions={currentTransactions || []} />
+
+        <div className="grid gap-6 md:grid-cols-2 mt-6">
+          <TopCategories transactions={currentTransactions || []} />
+        </div>
       </div>
     </div>
   )
