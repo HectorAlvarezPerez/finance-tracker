@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
-import { Upload, Sparkles } from "lucide-react"
+import { Upload } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 import Papa from "papaparse"
@@ -209,99 +209,23 @@ export function SmartCSVImportDialog({
         throw new Error("No se pudieron detectar las columnas necesarias (fecha, descripción, cantidad)")
       }
 
-      // Prepare transactions for AI analysis
-      const rawTransactions = rows.map((row: any) => ({
+      // Prepare transactions directly without AI categorization
+      setProgress(50)
+      setStatusMessage("Preparando transacciones...")
+
+      const transactions = rows.map((row: any) => ({
+        user_id: userId,
+        account_id: accounts[0]?.id || "",
         date: parseDate(row[dateCol]),
         description: row[descCol],
         amount: parseAmount(row[amountCol]),
+        category_id: null, // No category assigned
+        status: "posted" as const,
+        notes: null,
       }))
-
-      setProgress(40)
-      setStatusMessage("Analizando transacciones con IA...")
-
-      // Call AI to categorize transactions
-      const aiResponse = await fetch('/api/ai-categorize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          transactions: rawTransactions,
-          userId,
-        }),
-      })
-
-      if (!aiResponse.ok) {
-        throw new Error('Error al categorizar con IA')
-      }
-
-      const { categorizations } = await aiResponse.json()
-
-      setProgress(60)
-      setStatusMessage("Creando categorías necesarias...")
-
-      // Create missing categories
-      const existingCategoryNames = new Set(categories.map(c => c.name.toLowerCase()))
-      const newCategories = new Map<string, { name: string; type: 'income' | 'expense' }>()
-
-      categorizations.forEach((cat: any) => {
-        const categoryName = cat.category
-        if (!existingCategoryNames.has(categoryName.toLowerCase()) && 
-            !newCategories.has(categoryName.toLowerCase())) {
-          newCategories.set(categoryName.toLowerCase(), {
-            name: categoryName,
-            type: cat.type,
-          })
-        }
-      })
-
-      // Insert new categories
-      const categoryMap = new Map<string, string>()
-      categories.forEach(c => categoryMap.set(c.name.toLowerCase(), c.id))
-
-      if (newCategories.size > 0) {
-        const categoriesToInsert = Array.from(newCategories.values()).map(nc => ({
-          user_id: userId,
-          name: nc.name,
-          type: nc.type,
-          color: generateColor(),
-        }))
-
-        const { data: insertedCategories, error: catError } = await supabase
-          .from('categories')
-          .insert(categoriesToInsert as any)
-          .select()
-
-        if (catError) throw catError
-
-        insertedCategories?.forEach(c => {
-          categoryMap.set(c.name.toLowerCase(), c.id)
-        })
-      }
 
       setProgress(80)
       setStatusMessage("Guardando transacciones...")
-
-      // Prepare final transactions
-      const transactions = rawTransactions.map((t: any, i: number) => {
-        const cat = categorizations[i]
-        const categoryId = categoryMap.get(cat.category.toLowerCase()) || null
-        
-        // Determine amount sign based on type
-        let amount = Math.abs(t.amount)
-        if (cat.type === 'expense') {
-          amount = -amount
-        }
-
-        return {
-          user_id: userId,
-          account_id: accounts[0]?.id || "",
-          date: t.date,
-          description: t.description,
-          amount,
-          category_id: categoryId,
-          status: "posted" as const,
-          notes: null,
-        }
-      })
 
       // Insert transactions
       const { error: txError } = await supabase
@@ -314,8 +238,8 @@ export function SmartCSVImportDialog({
       setStatusMessage("¡Completado!")
 
       toast({
-        title: "✨ Importación inteligente completada",
-        description: `${transactions.length} transacciones importadas y categorizadas${newCategories.size > 0 ? `, ${newCategories.size} categorías creadas` : ''}`,
+        title: "✨ Importación completada",
+        description: `${transactions.length} transacciones importadas correctamente`,
       })
 
       setOpen(false)
@@ -339,32 +263,22 @@ export function SmartCSVImportDialog({
     }
   }
 
-  // Generate random color for new categories
-  const generateColor = () => {
-    const colors = [
-      "#ef4444", "#f97316", "#f59e0b", "#84cc16", "#22c55e",
-      "#14b8a6", "#06b6d4", "#3b82f6", "#6366f1", "#8b5cf6",
-      "#a855f7", "#ec4899", "#f43f5e"
-    ]
-    return colors[Math.floor(Math.random() * colors.length)]
-  }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
-          <Sparkles className="mr-2 h-4 w-4" />
-          Smart Import
+          <Upload className="mr-2 h-4 w-4" />
+          Import CSV
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            Importación Inteligente
+            <Upload className="h-5 w-5 text-primary" />
+            Importar Transacciones
           </DialogTitle>
           <DialogDescription>
-            Sube un CSV o Excel. La IA detectará automáticamente categorías y creará las que falten.
+            Sube un CSV o Excel con tus transacciones. Se importarán con fecha, concepto e importe.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
@@ -419,7 +333,7 @@ export function SmartCSVImportDialog({
           </div>
 
           <p className="text-xs text-center text-muted-foreground">
-            ✨ Detección automática de columnas • IA categoriza transacciones • Crea categorías que falten
+            📋 Detección automática de columnas • Importa fecha, concepto e importe
           </p>
 
           {loading && (
@@ -469,8 +383,8 @@ export function SmartCSVImportDialog({
               </>
             ) : (
               <>
-                <Sparkles className="mr-2 h-4 w-4" />
-                Importar con IA
+                <Upload className="mr-2 h-4 w-4" />
+                Importar
               </>
             )}
           </Button>
