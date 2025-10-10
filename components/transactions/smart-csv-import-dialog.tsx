@@ -118,6 +118,16 @@ export function SmartCSVImportDialog({
   const handleImport = async () => {
     if (!file) return
 
+    // Validate that user has at least one account
+    if (!accounts || accounts.length === 0) {
+      toast({
+        title: "Error",
+        description: "Necesitas crear al menos una cuenta antes de importar transacciones.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setLoading(true)
     setProgress(10)
     setStatusMessage("Leyendo archivo...")
