@@ -35,10 +35,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     }
   }, [settings?.locale, loading])
 
-  if (loading) {
-    return <>{children}</>
-  }
-
+  // Always provide the context, even when loading
   return (
     <NextIntlClientProvider
       locale={locale}
