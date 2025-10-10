@@ -133,152 +133,160 @@ export function SmartCSVImportDialog({
     setStatusMessage("Leyendo archivo...")
 
     try {
-      Papa.parse(file, {
-        header: true,
-        complete: async (results) => {
-          const rows = results.data.filter((row: any) => {
-            const values = Object.values(row).join('')
-            return values.trim().length > 0
-          })
-
-          if (rows.length === 0) {
-            throw new Error("No se encontraron datos válidos en el archivo")
-          }
-
-          setProgress(20)
-          setStatusMessage(`Procesando ${rows.length} transacciones...`)
-
-          // Detect columns automatically
-          const headers = Object.keys(rows[0] as any)
-          const { dateCol, descCol, amountCol } = detectColumns(headers)
-
-          if (!dateCol || !descCol || !amountCol) {
-            throw new Error("No se pudieron detectar las columnas necesarias (fecha, descripción, cantidad)")
-          }
-
-          // Prepare transactions for AI analysis
-          const rawTransactions = rows.map((row: any) => ({
-            date: row[dateCol],
-            description: row[descCol],
-            amount: parseAmount(row[amountCol]),
-          }))
-
-          setProgress(40)
-          setStatusMessage("Analizando transacciones con IA...")
-
-          // Call AI to categorize transactions
-          const aiResponse = await fetch('/api/ai-categorize', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              transactions: rawTransactions,
-              userId,
-            }),
-          })
-
-          if (!aiResponse.ok) {
-            throw new Error('Error al categorizar con IA')
-          }
-
-          const { categorizations } = await aiResponse.json()
-
-          setProgress(60)
-          setStatusMessage("Creando categorías necesarias...")
-
-          // Create missing categories
-          const existingCategoryNames = new Set(categories.map(c => c.name.toLowerCase()))
-          const newCategories = new Map<string, { name: string; type: 'income' | 'expense' }>()
-
-          categorizations.forEach((cat: any) => {
-            const categoryName = cat.category
-            if (!existingCategoryNames.has(categoryName.toLowerCase()) && 
-                !newCategories.has(categoryName.toLowerCase())) {
-              newCategories.set(categoryName.toLowerCase(), {
-                name: categoryName,
-                type: cat.type,
+      // Wrap Papa.parse in a Promise for better async handling
+      const parseFile = (): Promise<any[]> => {
+        return new Promise((resolve, reject) => {
+          Papa.parse(file, {
+            header: true,
+            complete: (results) => {
+              const rows = results.data.filter((row: any) => {
+                const values = Object.values(row).join('')
+                return values.trim().length > 0
               })
-            }
+              resolve(rows)
+            },
+            error: (error: any) => {
+              reject(error)
+            },
           })
+        })
+      }
 
-          // Insert new categories
-          const categoryMap = new Map<string, string>()
-          categories.forEach(c => categoryMap.set(c.name.toLowerCase(), c.id))
+      const rows = await parseFile()
 
-          if (newCategories.size > 0) {
-            const categoriesToInsert = Array.from(newCategories.values()).map(nc => ({
-              user_id: userId,
-              name: nc.name,
-              type: nc.type,
-              color: generateColor(),
-            }))
+      if (rows.length === 0) {
+        throw new Error("No se encontraron datos válidos en el archivo")
+      }
 
-            const { data: insertedCategories, error: catError } = await supabase
-              .from('categories')
-              .insert(categoriesToInsert as any)
-              .select()
+      setProgress(20)
+      setStatusMessage(`Procesando ${rows.length} transacciones...`)
 
-            if (catError) throw catError
+      // Detect columns automatically
+      const headers = Object.keys(rows[0] as any)
+      const { dateCol, descCol, amountCol } = detectColumns(headers)
 
-            insertedCategories?.forEach(c => {
-              categoryMap.set(c.name.toLowerCase(), c.id)
-            })
-          }
+      if (!dateCol || !descCol || !amountCol) {
+        throw new Error("No se pudieron detectar las columnas necesarias (fecha, descripción, cantidad)")
+      }
 
-          setProgress(80)
-          setStatusMessage("Guardando transacciones...")
+      // Prepare transactions for AI analysis
+      const rawTransactions = rows.map((row: any) => ({
+        date: row[dateCol],
+        description: row[descCol],
+        amount: parseAmount(row[amountCol]),
+      }))
 
-          // Prepare final transactions
-          const transactions = rawTransactions.map((t: any, i: number) => {
-            const cat = categorizations[i]
-            const categoryId = categoryMap.get(cat.category.toLowerCase()) || null
-            
-            // Determine amount sign based on type
-            let amount = Math.abs(t.amount)
-            if (cat.type === 'expense') {
-              amount = -amount
-            }
+      setProgress(40)
+      setStatusMessage("Analizando transacciones con IA...")
 
-            return {
-              user_id: userId,
-              account_id: accounts[0]?.id || "",
-              date: t.date,
-              description: t.description,
-              amount,
-              category_id: categoryId,
-              status: "posted" as const,
-              notes: null,
-            }
-          })
-
-          // Insert transactions
-          const { error: txError } = await supabase
-            .from('transactions')
-            .insert(transactions as any)
-
-          if (txError) throw txError
-
-          setProgress(100)
-          setStatusMessage("¡Completado!")
-
-          toast({
-            title: "✨ Importación inteligente completada",
-            description: `${transactions.length} transacciones importadas y categorizadas${newCategories.size > 0 ? `, ${newCategories.size} categorías creadas` : ''}`,
-          })
-
-          setOpen(false)
-          router.refresh()
-          
-          // Reset after close
-          setTimeout(() => {
-            setFile(null)
-            setProgress(0)
-            setStatusMessage("")
-          }, 500)
-        },
-        error: (error: any) => {
-          throw new Error(`Error al leer el archivo: ${error.message}`)
-        },
+      // Call AI to categorize transactions
+      const aiResponse = await fetch('/api/ai-categorize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transactions: rawTransactions,
+          userId,
+        }),
       })
+
+      if (!aiResponse.ok) {
+        throw new Error('Error al categorizar con IA')
+      }
+
+      const { categorizations } = await aiResponse.json()
+
+      setProgress(60)
+      setStatusMessage("Creando categorías necesarias...")
+
+      // Create missing categories
+      const existingCategoryNames = new Set(categories.map(c => c.name.toLowerCase()))
+      const newCategories = new Map<string, { name: string; type: 'income' | 'expense' }>()
+
+      categorizations.forEach((cat: any) => {
+        const categoryName = cat.category
+        if (!existingCategoryNames.has(categoryName.toLowerCase()) && 
+            !newCategories.has(categoryName.toLowerCase())) {
+          newCategories.set(categoryName.toLowerCase(), {
+            name: categoryName,
+            type: cat.type,
+          })
+        }
+      })
+
+      // Insert new categories
+      const categoryMap = new Map<string, string>()
+      categories.forEach(c => categoryMap.set(c.name.toLowerCase(), c.id))
+
+      if (newCategories.size > 0) {
+        const categoriesToInsert = Array.from(newCategories.values()).map(nc => ({
+          user_id: userId,
+          name: nc.name,
+          type: nc.type,
+          color: generateColor(),
+        }))
+
+        const { data: insertedCategories, error: catError } = await supabase
+          .from('categories')
+          .insert(categoriesToInsert as any)
+          .select()
+
+        if (catError) throw catError
+
+        insertedCategories?.forEach(c => {
+          categoryMap.set(c.name.toLowerCase(), c.id)
+        })
+      }
+
+      setProgress(80)
+      setStatusMessage("Guardando transacciones...")
+
+      // Prepare final transactions
+      const transactions = rawTransactions.map((t: any, i: number) => {
+        const cat = categorizations[i]
+        const categoryId = categoryMap.get(cat.category.toLowerCase()) || null
+        
+        // Determine amount sign based on type
+        let amount = Math.abs(t.amount)
+        if (cat.type === 'expense') {
+          amount = -amount
+        }
+
+        return {
+          user_id: userId,
+          account_id: accounts[0]?.id || "",
+          date: t.date,
+          description: t.description,
+          amount,
+          category_id: categoryId,
+          status: "posted" as const,
+          notes: null,
+        }
+      })
+
+      // Insert transactions
+      const { error: txError } = await supabase
+        .from('transactions')
+        .insert(transactions as any)
+
+      if (txError) throw txError
+
+      setProgress(100)
+      setStatusMessage("¡Completado!")
+
+      toast({
+        title: "✨ Importación inteligente completada",
+        description: `${transactions.length} transacciones importadas y categorizadas${newCategories.size > 0 ? `, ${newCategories.size} categorías creadas` : ''}`,
+      })
+
+      setOpen(false)
+      router.refresh()
+      
+      // Reset after close
+      setTimeout(() => {
+        setFile(null)
+        setProgress(0)
+        setStatusMessage("")
+      }, 500)
     } catch (error: any) {
       console.error('Import error:', error)
       toast({
