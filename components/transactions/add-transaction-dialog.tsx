@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -49,6 +50,8 @@ export function AddTransactionDialog({
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
+  const t = useTranslations('dialogs.addTransaction')
+  const tForms = useTranslations('forms')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -94,20 +97,20 @@ export function AddTransactionDialog({
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
-          Add Transaction
+          {t('title')}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add Transaction</DialogTitle>
+            <DialogTitle>{t('title')}</DialogTitle>
             <DialogDescription>
-              Add a new transaction to your account
+              {t('subtitle')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="date">Date</Label>
+              <Label htmlFor="date">{tForms('date')}</Label>
               <Input
                 id="date"
                 type="date"
@@ -117,32 +120,30 @@ export function AddTransactionDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{tForms('description')}</Label>
               <Input
                 id="description"
-                placeholder="e.g., Grocery shopping"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount (negative for expenses)</Label>
+              <Label htmlFor="amount">{tForms('amount')}</Label>
               <Input
                 id="amount"
                 type="number"
                 step="0.01"
-                placeholder="e.g., -50.00 or 1000.00"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="account">Account</Label>
+              <Label htmlFor="account">{tForms('account')}</Label>
               <Select value={accountId} onValueChange={setAccountId} required>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select account" />
+                  <SelectValue placeholder={tForms('selectAccount')} />
                 </SelectTrigger>
                 <SelectContent>
                   {accounts.map((account) => (
@@ -154,10 +155,10 @@ export function AddTransactionDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="category">Category (Optional)</Label>
+              <Label htmlFor="category">{tForms('category')}</Label>
               <Select value={categoryId} onValueChange={setCategoryId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={tForms('selectCategory')} />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((category) => (
@@ -169,10 +170,9 @@ export function AddTransactionDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="notes">Notes (Optional)</Label>
+              <Label htmlFor="notes">{tForms('notes')}</Label>
               <Input
                 id="notes"
-                placeholder="Additional notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
               />
@@ -180,10 +180,10 @@ export function AddTransactionDialog({
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {tForms('cancel')}
             </Button>
             <Button type="submit" disabled={loading || !accountId}>
-              {loading ? "Adding..." : "Add Transaction"}
+              {loading ? tForms('saving') : t('title')}
             </Button>
           </DialogFooter>
         </form>
