@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -35,6 +36,9 @@ export function DeleteTransactionDialog({
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
+  const t = useTranslations('dialogs.deleteTransaction')
+  const tForms = useTranslations('forms')
+  const tMsg = useTranslations('messages')
 
   const handleDelete = async () => {
     setLoading(true)
@@ -48,16 +52,16 @@ export function DeleteTransactionDialog({
       if (error) throw error
 
       toast({
-        title: "Success",
-        description: "Transaction deleted successfully",
+        title: tMsg('success'),
+        description: t('message'),
       })
 
       onOpenChange(false)
       router.refresh()
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to delete transaction",
+        title: tMsg('error'),
+        description: error.message || tMsg('error'),
         variant: "destructive",
       })
     } finally {
@@ -71,43 +75,43 @@ export function DeleteTransactionDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            Delete Transaction
+            {t('title')}
           </DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this transaction?
+            {t('message')}
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <div className="rounded-lg border p-4 space-y-2">
             <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Description:</span>
+              <span className="text-sm text-muted-foreground">{tForms('description')}:</span>
               <span className="text-sm font-medium">{transaction.description}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Amount:</span>
+              <span className="text-sm text-muted-foreground">{tForms('amount')}:</span>
               <span className={`text-sm font-semibold ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"}`}>
                 {formatCurrency(transaction.amount)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Date:</span>
+              <span className="text-sm text-muted-foreground">{tForms('date')}:</span>
               <span className="text-sm">{formatDate(transaction.date, "long")}</span>
             </div>
             {transaction.categories && (
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Category:</span>
+                <span className="text-sm text-muted-foreground">{tForms('category')}:</span>
                 <span className="text-sm">{transaction.categories.name}</span>
               </div>
             )}
             {transaction.accounts && (
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Account:</span>
+                <span className="text-sm text-muted-foreground">{tForms('account')}:</span>
                 <span className="text-sm">{transaction.accounts.name}</span>
               </div>
             )}
           </div>
           <p className="text-sm text-muted-foreground mt-4">
-            This action cannot be undone.
+            {t('description')}
           </p>
         </div>
         <DialogFooter>
@@ -117,7 +121,7 @@ export function DeleteTransactionDialog({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            Cancel
+            {tForms('cancel')}
           </Button>
           <Button
             type="button"
@@ -125,7 +129,7 @@ export function DeleteTransactionDialog({
             onClick={handleDelete}
             disabled={loading}
           >
-            {loading ? "Deleting..." : "Delete Transaction"}
+            {loading ? tForms('deleting') : t('title')}
           </Button>
         </DialogFooter>
       </DialogContent>
