@@ -112,7 +112,7 @@ export function AIChat({ userId }: AIChatProps) {
       {/* Floating Button */}
       <Button
         size="icon"
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50"
+        className="fixed bottom-20 right-4 md:bottom-6 md:right-6 h-14 w-14 rounded-full shadow-lg z-50"
         onClick={() => setOpen(true)}
       >
         <Bot className="h-6 w-6" />
