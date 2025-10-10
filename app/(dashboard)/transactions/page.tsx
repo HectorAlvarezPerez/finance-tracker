@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { getTranslations } from 'next-intl/server'
 import { TransactionsTable } from "@/components/transactions/transactions-table"
 import { TransactionFilters } from "@/components/transactions/transaction-filters"
 import { AddTransactionDialog } from "@/components/transactions/add-transaction-dialog"
@@ -11,6 +12,7 @@ export default async function TransactionsPage({
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
   const supabase = createServerClient()
+  const t = await getTranslations('transactions')
 
   const {
     data: { user },
@@ -67,9 +69,9 @@ export default async function TransactionsPage({
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Transactions</h1>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Manage all your financial transactions
+            {t('subtitle')}
           </p>
         </div>
         <div className="flex gap-2">

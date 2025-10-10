@@ -1,10 +1,12 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { getTranslations } from 'next-intl/server'
 import { AccountsList } from "@/components/accounts/accounts-list"
 import { AddAccountDialog } from "@/components/accounts/add-account-dialog"
 
 export default async function AccountsPage() {
   const supabase = createServerClient()
+  const t = await getTranslations('accounts')
   
   const {
     data: { user },
@@ -24,9 +26,9 @@ export default async function AccountsPage() {
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Accounts</h1>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">
-            Manage your bank accounts, savings, and investments
+            {t('subtitle')}
           </p>
         </div>
         <AddAccountDialog userId={user.id} />
