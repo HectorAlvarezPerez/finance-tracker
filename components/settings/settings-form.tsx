@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -35,6 +36,7 @@ export function SettingsForm({
   const { toast } = useToast()
   const { refreshSettings } = useSettings()
   const supabase = createBrowserClient()
+  const t = useTranslations('settings')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -111,13 +113,13 @@ export function SettingsForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Preferences</CardTitle>
-        <CardDescription>Customize your application experience</CardDescription>
+        <CardTitle>{t('preferences')}</CardTitle>
+        <CardDescription>{t('preferencesDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="currency">Default Currency</Label>
+            <Label htmlFor="currency">{t('currency')}</Label>
             <Select value={currency} onValueChange={setCurrency}>
               <SelectTrigger>
                 <SelectValue />
@@ -138,12 +140,12 @@ export function SettingsForm({
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              This will be used to display all monetary values throughout the app
+              {t('currencyDesc')}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="locale">Language & Format</Label>
+            <Label htmlFor="locale">{t('locale')}</Label>
             <Select value={locale} onValueChange={setLocale}>
               <SelectTrigger>
                 <SelectValue />
@@ -161,21 +163,21 @@ export function SettingsForm({
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              This affects date and number formatting
+              {t('localeDesc')}
             </p>
           </div>
 
           <Button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Save Changes"}
+            {loading ? t('saving') : t('saveChanges')}
           </Button>
         </form>
 
         {/* Logout Section */}
         <div className="mt-6 pt-6 border-t">
           <div className="space-y-2">
-            <h3 className="text-sm font-medium">Account Actions</h3>
+            <h3 className="text-sm font-medium">{t('accountActions')}</h3>
             <p className="text-sm text-muted-foreground">
-              Sign out of your account
+              {t('signOut')}
             </p>
           </div>
           <Button
@@ -185,7 +187,7 @@ export function SettingsForm({
             className="mt-4 w-full sm:w-auto"
           >
             <LogOut className="mr-2 h-4 w-4" />
-            {logoutLoading ? "Logging out..." : "Log Out"}
+            {logoutLoading ? t('loggingOut') : t('logOut')}
           </Button>
         </div>
       </CardContent>

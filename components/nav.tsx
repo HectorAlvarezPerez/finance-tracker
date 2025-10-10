@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import { 
   LayoutDashboard, 
@@ -16,56 +17,57 @@ import {
 } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
 
-const navItems = [
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Transactions",
-    href: "/transactions",
-    icon: CreditCard,
-  },
-  {
-    title: "Recurring",
-    href: "/recurring",
-    icon: Repeat,
-  },
-  {
-    title: "Accounts",
-    href: "/accounts",
-    icon: Wallet,
-  },
-  {
-    title: "Categories",
-    href: "/categories",
-    icon: Tag,
-  },
-  {
-    title: "Budgets",
-    href: "/budgets",
-    icon: PiggyBank,
-  },
-  {
-    title: "Insights",
-    href: "/insights",
-    icon: LineChart,
-  },
-  {
-    title: "Portfolio",
-    href: "/portfolio",
-    icon: TrendingUp,
-  },
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: Settings,
-  },
-]
-
 export function Nav() {
   const pathname = usePathname()
+  const t = useTranslations('nav')
+
+  const navItems = [
+    {
+      title: t('dashboard'),
+      href: "/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      title: t('transactions'),
+      href: "/transactions",
+      icon: CreditCard,
+    },
+    {
+      title: t('recurring'),
+      href: "/recurring",
+      icon: Repeat,
+    },
+    {
+      title: t('accounts'),
+      href: "/accounts",
+      icon: Wallet,
+    },
+    {
+      title: t('categories'),
+      href: "/categories",
+      icon: Tag,
+    },
+    {
+      title: t('budgets'),
+      href: "/budgets",
+      icon: PiggyBank,
+    },
+    {
+      title: t('insights'),
+      href: "/insights",
+      icon: LineChart,
+    },
+    {
+      title: t('portfolio'),
+      href: "/portfolio",
+      icon: TrendingUp,
+    },
+    {
+      title: t('settings'),
+      href: "/settings",
+      icon: Settings,
+    },
+  ]
 
   return (
     <nav className="flex items-center justify-between px-4 py-3 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -107,6 +109,55 @@ export function Nav() {
 
 export function MobileNav() {
   const pathname = usePathname()
+  const t = useTranslations('nav')
+
+  const navItems = [
+    {
+      title: t('dashboard'),
+      href: "/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      title: t('transactions'),
+      href: "/transactions",
+      icon: CreditCard,
+    },
+    {
+      title: t('recurring'),
+      href: "/recurring",
+      icon: Repeat,
+    },
+    {
+      title: t('accounts'),
+      href: "/accounts",
+      icon: Wallet,
+    },
+    {
+      title: t('categories'),
+      href: "/categories",
+      icon: Tag,
+    },
+    {
+      title: t('budgets'),
+      href: "/budgets",
+      icon: PiggyBank,
+    },
+    {
+      title: t('insights'),
+      href: "/insights",
+      icon: LineChart,
+    },
+    {
+      title: t('portfolio'),
+      href: "/portfolio",
+      icon: TrendingUp,
+    },
+    {
+      title: t('settings'),
+      href: "/settings",
+      icon: Settings,
+    },
+  ]
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
