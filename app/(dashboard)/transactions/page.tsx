@@ -4,7 +4,7 @@ import { getTranslations } from 'next-intl/server'
 import { TransactionsTable } from "@/components/transactions/transactions-table"
 import { TransactionFilters } from "@/components/transactions/transaction-filters"
 import { AddTransactionDialog } from "@/components/transactions/add-transaction-dialog"
-import { CSVImportDialog } from "@/components/transactions/csv-import-dialog"
+import { SmartCSVImportDialog } from "@/components/transactions/smart-csv-import-dialog"
 
 export default async function TransactionsPage({
   searchParams,
@@ -75,7 +75,7 @@ export default async function TransactionsPage({
           </p>
         </div>
         <div className="flex gap-2">
-          <CSVImportDialog
+          <SmartCSVImportDialog
             userId={user.id}
             accounts={accounts || []}
             categories={categories || []}
