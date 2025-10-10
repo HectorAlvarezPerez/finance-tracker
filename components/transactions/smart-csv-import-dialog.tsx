@@ -104,6 +104,46 @@ export function SmartCSVImportDialog({
     return { dateCol, descCol, amountCol }
   }
 
+  // Parse date flexibly (handles different formats)
+  const parseDate = (value: string): string => {
+    if (!value) return new Date().toISOString().split('T')[0]
+    
+    const str = value.toString().trim()
+    
+    // Try different date formats
+    // Format: YYYY-MM-DD (ISO)
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+      return str.split(' ')[0] // Remove time if present
+    }
+    
+    // Format: DD/MM/YYYY or DD-MM-YYYY
+    const ddmmyyyy = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/)
+    if (ddmmyyyy) {
+      const [, day, month, year] = ddmmyyyy
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    }
+    
+    // Format: MM/DD/YYYY or MM-DD-YYYY (American)
+    const mmddyyyy = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/)
+    if (mmddyyyy) {
+      const [, month, day, year] = mmddyyyy
+      // Assume European format if day > 12, otherwise American
+      if (parseInt(day) > 12) {
+        return `${year}-${day.padStart(2, '0')}-${month.padStart(2, '0')}`
+      }
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    }
+    
+    // Try parsing as Date object
+    const date = new Date(str)
+    if (!isNaN(date.getTime())) {
+      return date.toISOString().split('T')[0]
+    }
+    
+    // Fallback to today
+    return new Date().toISOString().split('T')[0]
+  }
+
   // Parse amount flexibly (handles different formats)
   const parseAmount = (value: string): number => {
     if (!value) return 0
@@ -171,7 +211,7 @@ export function SmartCSVImportDialog({
 
       // Prepare transactions for AI analysis
       const rawTransactions = rows.map((row: any) => ({
-        date: row[dateCol],
+        date: parseDate(row[dateCol]),
         description: row[descCol],
         amount: parseAmount(row[amountCol]),
       }))
