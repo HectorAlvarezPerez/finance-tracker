@@ -34,7 +34,7 @@ export function SettingsForm({
   const [locale, setLocale] = useState(currentSettings?.locale || "en-US")
   const router = useRouter()
   const { toast } = useToast()
-  const { refreshSettings } = useSettings()
+  const settingsContext = useSettings()
   const supabase = createBrowserClient()
   const t = useTranslations('settings')
 
@@ -72,7 +72,9 @@ export function SettingsForm({
       })
 
       // Refresh settings context
-      await refreshSettings()
+      if (settingsContext?.refreshSettings) {
+        await settingsContext.refreshSettings()
+      }
       router.refresh()
     } catch (error: any) {
       toast({

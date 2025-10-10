@@ -4,10 +4,10 @@ import { useSettings } from "@/lib/contexts/settings-context"
 import { formatCurrency as formatCurrencyUtil } from "@/lib/utils"
 
 export function useCurrency() {
-  const { settings } = useSettings()
+  const settingsContext = useSettings()
   
-  const currency = settings?.default_currency || "USD"
-  const locale = settings?.locale || "en-US"
+  const currency = settingsContext?.settings?.default_currency || "USD"
+  const locale = settingsContext?.settings?.locale || "en-US"
 
   const formatCurrency = (amount: number): string => {
     return formatCurrencyUtil(amount, currency, locale)

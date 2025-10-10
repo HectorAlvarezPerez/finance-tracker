@@ -20,10 +20,19 @@ const messages: Record<string, any> = {
   'it-IT': enMessages, // TODO: Add Italian translations
 }
 
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const { settings, loading } = useSettings()
+export function I18nProvider({ 
+  children, 
+  defaultLocale = 'en' 
+}: { 
+  children: ReactNode
+  defaultLocale?: string 
+}) {
+  const settingsContext = useSettings()
+  const settings = settingsContext?.settings
+  const loading = settingsContext?.loading ?? true
+  
   const [currentMessages, setCurrentMessages] = useState(enMessages)
-  const [locale, setLocale] = useState('en')
+  const [locale, setLocale] = useState(defaultLocale)
 
   useEffect(() => {
     if (!loading && settings?.locale) {

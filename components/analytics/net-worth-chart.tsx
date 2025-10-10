@@ -16,8 +16,10 @@ interface NetWorthChartProps {
 export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
   // Calculate net worth over time
   const calculateNetWorth = () => {
-    // Get current balances
-    const currentBalances = accounts.reduce((sum, acc) => sum + acc.balance, 0)
+    // Calculate current balance from all transactions
+    const currentBalances = transactions
+      .filter((t) => t.status === "posted")
+      .reduce((sum, t) => sum + t.amount, 0)
     
     // Group transactions by date (daily)
     const dailyChanges = new Map<string, number>()
