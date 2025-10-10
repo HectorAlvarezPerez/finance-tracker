@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -57,6 +58,8 @@ export function EditTransactionDialog({
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
+  const t = useTranslations('dialogs.editTransaction')
+  const tForms = useTranslations('forms')
 
   useEffect(() => {
     setDescription(transaction.description)
@@ -111,39 +114,34 @@ export function EditTransactionDialog({
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Edit Transaction</DialogTitle>
+            <DialogTitle>{t('title')}</DialogTitle>
             <DialogDescription>
-              Update the details of this transaction
+              {t('subtitle')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-description">Description</Label>
+              <Label htmlFor="edit-description">{tForms('description')}</Label>
               <Input
                 id="edit-description"
-                placeholder="e.g., Grocery shopping"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-amount">Amount</Label>
+              <Label htmlFor="edit-amount">{tForms('amount')}</Label>
               <Input
                 id="edit-amount"
                 type="number"
                 step="0.01"
-                placeholder="e.g., -50.00"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                Use negative for expenses, positive for income
-              </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-date">Date</Label>
+              <Label htmlFor="edit-date">{tForms('date')}</Label>
               <Input
                 id="edit-date"
                 type="date"
@@ -153,7 +151,7 @@ export function EditTransactionDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-account">Account</Label>
+              <Label htmlFor="edit-account">{tForms('account')}</Label>
               <Select value={accountId} onValueChange={setAccountId}>
                 <SelectTrigger>
                   <SelectValue />
@@ -168,13 +166,13 @@ export function EditTransactionDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-category">Category (Optional)</Label>
+              <Label htmlFor="edit-category">{tForms('category')}</Label>
               <Select value={categoryId} onValueChange={setCategoryId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={tForms('selectCategory')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">No category</SelectItem>
+                  <SelectItem value="none">{tForms('noCategory')}</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
@@ -184,23 +182,22 @@ export function EditTransactionDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-status">Status</Label>
+              <Label htmlFor="edit-status">{tForms('status')}</Label>
               <Select value={status} onValueChange={(value) => setStatus(value as Transaction["status"])}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="posted">Posted</SelectItem>
-                  <SelectItem value="reconciled">Reconciled</SelectItem>
+                  <SelectItem value="pending">Pendiente</SelectItem>
+                  <SelectItem value="posted">Registrado</SelectItem>
+                  <SelectItem value="reconciled">Reconciliado</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-notes">Notes (Optional)</Label>
+              <Label htmlFor="edit-notes">{tForms('notes')}</Label>
               <Textarea
                 id="edit-notes"
-                placeholder="Add any additional notes..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
               />
@@ -213,10 +210,10 @@ export function EditTransactionDialog({
               onClick={() => onOpenChange(false)}
               disabled={loading}
             >
-              Cancel
+              {tForms('cancel')}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Updating..." : "Update Transaction"}
+              {loading ? tForms('updating') : tForms('update')}
             </Button>
           </DialogFooter>
         </form>
