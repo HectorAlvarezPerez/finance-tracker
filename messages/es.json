@@ -166,7 +166,22 @@
     "status": "Estado",
     "color": "Color",
     "balance": "Balance",
+    "notes": "Notas",
+    "symbol": "Símbolo",
+    "ticker": "Ticker",
+    "shares": "Acciones",
+    "price": "Precio",
+    "currency": "Moneda",
+    "period": "Período",
+    "limit": "Límite",
+    "frequency": "Frecuencia",
+    "startDate": "Fecha de Inicio",
+    "endDate": "Fecha de Fin",
     "noCategory": "Sin categoría",
+    "selectCategory": "Seleccionar Categoría",
+    "selectAccount": "Seleccionar Cuenta",
+    "selectType": "Seleccionar Tipo",
+    "selectFrequency": "Seleccionar Frecuencia",
     "cancel": "Cancelar",
     "save": "Guardar",
     "delete": "Eliminar",
@@ -175,7 +190,20 @@
     "create": "Crear",
     "update": "Actualizar",
     "close": "Cerrar",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "submit": "Enviar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "import": "Importar",
+    "export": "Exportar",
+    "download": "Descargar",
+    "upload": "Subir",
+    "refresh": "Actualizar",
+    "reset": "Restablecer"
   },
   "messages": {
     "success": "Éxito",
@@ -203,6 +231,127 @@
     },
     "nextDate": "Próxima Fecha",
     "noRecurring": "No hay transacciones recurrentes todavía"
+  },
+  "dialogs": {
+    "addTransaction": {
+      "title": "Añadir Transacción",
+      "subtitle": "Crear una nueva transacción"
+    },
+    "editTransaction": {
+      "title": "Editar Transacción",
+      "subtitle": "Modificar transacción existente"
+    },
+    "deleteTransaction": {
+      "title": "Eliminar Transacción",
+      "message": "¿Estás seguro de que quieres eliminar esta transacción?",
+      "description": "Esta acción no se puede deshacer."
+    },
+    "addAccount": {
+      "title": "Añadir Cuenta",
+      "subtitle": "Crear una nueva cuenta"
+    },
+    "editAccount": {
+      "title": "Editar Cuenta",
+      "subtitle": "Modificar cuenta existente"
+    },
+    "deleteAccount": {
+      "title": "Eliminar Cuenta",
+      "message": "¿Estás seguro de que quieres eliminar esta cuenta?",
+      "description": "Esta acción eliminará todas las transacciones asociadas."
+    },
+    "addCategory": {
+      "title": "Añadir Categoría",
+      "subtitle": "Crear una nueva categoría"
+    },
+    "editCategory": {
+      "title": "Editar Categoría",
+      "subtitle": "Modificar categoría existente"
+    },
+    "deleteCategory": {
+      "title": "Eliminar Categoría",
+      "message": "¿Estás seguro de que quieres eliminar esta categoría?",
+      "description": "Esta acción no se puede deshacer."
+    },
+    "addBudget": {
+      "title": "Añadir Presupuesto",
+      "subtitle": "Establecer un límite de gasto"
+    },
+    "addHolding": {
+      "title": "Añadir Inversión",
+      "subtitle": "Añadir una nueva inversión a tu portafolio"
+    },
+    "editHolding": {
+      "title": "Editar Inversión",
+      "subtitle": "Modificar inversión existente"
+    },
+    "deleteHolding": {
+      "title": "Eliminar Inversión",
+      "message": "¿Estás seguro de que quieres eliminar esta inversión?",
+      "description": "Esta acción no se puede deshacer."
+    },
+    "managePrices": {
+      "title": "Gestionar Precios",
+      "subtitle": "Actualizar precios de tus inversiones",
+      "updatePrices": "Actualizar Precios",
+      "updating": "Actualizando...",
+      "lastUpdated": "Última actualización",
+      "never": "Nunca"
+    },
+    "addRecurring": {
+      "title": "Añadir Transacción Recurrente",
+      "subtitle": "Crear una transacción que se repite automáticamente"
+    },
+    "editRecurring": {
+      "title": "Editar Transacción Recurrente",
+      "subtitle": "Modificar transacción recurrente existente"
+    },
+    "deleteRecurring": {
+      "title": "Eliminar Transacción Recurrente",
+      "message": "¿Estás seguro de que quieres eliminar esta transacción recurrente?",
+      "description": "Esto no eliminará las transacciones ya creadas."
+    },
+    "importCSV": {
+      "title": "Importar Transacciones",
+      "subtitle": "Sube un CSV o Excel con tus transacciones. Se importarán con fecha, concepto e importe.",
+      "dragDrop": "Arrastra tu CSV/Excel aquí",
+      "orClick": "o haz click para seleccionar",
+      "dropHere": "¡Suelta el archivo aquí!",
+      "fileInfo": "Detección automática de columnas • Importa fecha, concepto e importe",
+      "importButton": "Importar",
+      "processing": "Procesando...",
+      "reading": "Leyendo archivo...",
+      "preparing": "Preparando transacciones...",
+      "saving": "Guardando transacciones...",
+      "complete": "¡Completado!",
+      "success": "Importación completada",
+      "successDesc": "transacciones importadas correctamente",
+      "error": "Error",
+      "errorDesc": "Error al importar transacciones",
+      "noAccount": "Necesitas crear al menos una cuenta antes de importar transacciones.",
+      "invalidFormat": "Formato no válido",
+      "invalidFormatDesc": "Por favor sube un archivo CSV o Excel (.csv, .xlsx, .xls)"
+    },
+    "forgotPassword": {
+      "title": "Restablecer Contraseña",
+      "subtitle": "Te enviaremos un enlace de restablecimiento a tu correo",
+      "email": "Correo Electrónico",
+      "send": "Enviar Enlace",
+      "sending": "Enviando...",
+      "backToLogin": "Volver al inicio de sesión"
+    }
+  },
+  "accountTypes": {
+    "checking": "Corriente",
+    "savings": "Ahorro",
+    "brokerage": "Corretaje",
+    "crypto": "Cripto",
+    "other": "Otro"
+  },
+  "categoryTypes": {
+    "income": "Ingreso",
+    "expense": "Gasto",
+    "transfer": "Transferencia",
+    "investment": "Inversión"
   }
 }
 
