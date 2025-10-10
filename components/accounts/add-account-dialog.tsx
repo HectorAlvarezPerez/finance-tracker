@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -34,6 +35,10 @@ export function AddAccountDialog({ userId }: { userId: string }) {
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
+  const t = useTranslations('dialogs.addAccount')
+  const tForms = useTranslations('forms')
+  const tMsg = useTranslations('messages')
+  const tTypes = useTranslations('accountTypes')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -51,8 +56,8 @@ export function AddAccountDialog({ userId }: { userId: string }) {
       if (error) throw error
 
       toast({
-        title: "Success",
-        description: "Account created successfully",
+        title: tMsg('success'),
+        description: t('subtitle'),
       })
 
       setOpen(false)
@@ -61,8 +66,8 @@ export function AddAccountDialog({ userId }: { userId: string }) {
       router.refresh()
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to create account",
+        title: tMsg('error'),
+        description: error.message || tMsg('error'),
         variant: "destructive",
       })
     } finally {
@@ -75,65 +80,64 @@ export function AddAccountDialog({ userId }: { userId: string }) {
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
-          Add Account
+          {t('title')}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add New Account</DialogTitle>
+            <DialogTitle>{t('title')}</DialogTitle>
             <DialogDescription>
-              Create a new account to track your finances
+              {t('subtitle')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Account Name</Label>
+              <Label htmlFor="name">{tForms('name')}</Label>
               <Input
                 id="name"
-                placeholder="e.g., Chase Checking"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="type">Account Type</Label>
+              <Label htmlFor="type">{tForms('type')}</Label>
               <Select value={type} onValueChange={setType}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="checking">Checking</SelectItem>
-                  <SelectItem value="savings">Savings</SelectItem>
-                  <SelectItem value="brokerage">Brokerage</SelectItem>
-                  <SelectItem value="crypto">Crypto</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="checking">{tTypes('checking')}</SelectItem>
+                  <SelectItem value="savings">{tTypes('savings')}</SelectItem>
+                  <SelectItem value="brokerage">{tTypes('brokerage')}</SelectItem>
+                  <SelectItem value="crypto">{tTypes('crypto')}</SelectItem>
+                  <SelectItem value="other">{tTypes('other')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="currency">Currency</Label>
+              <Label htmlFor="currency">{tForms('currency')}</Label>
               <Select value={currency} onValueChange={setCurrency}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="USD">USD - US Dollar</SelectItem>
-                  <SelectItem value="EUR">EUR - Euro</SelectItem>
-                  <SelectItem value="GBP">GBP - British Pound</SelectItem>
-                  <SelectItem value="JPY">JPY - Japanese Yen</SelectItem>
-                  <SelectItem value="CAD">CAD - Canadian Dollar</SelectItem>
+                  <SelectItem value="USD">USD</SelectItem>
+                  <SelectItem value="EUR">EUR</SelectItem>
+                  <SelectItem value="GBP">GBP</SelectItem>
+                  <SelectItem value="JPY">JPY</SelectItem>
+                  <SelectItem value="CAD">CAD</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {tForms('cancel')}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Account"}
+              {loading ? tForms('creating') : tForms('create')}
             </Button>
           </DialogFooter>
         </form>

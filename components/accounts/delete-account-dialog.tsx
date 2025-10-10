@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -31,6 +32,9 @@ export function DeleteAccountDialog({
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
+  const t = useTranslations('dialogs.deleteAccount')
+  const tForms = useTranslations('forms')
+  const tMsg = useTranslations('messages')
 
   const handleDelete = async () => {
     setLoading(true)
@@ -41,16 +45,16 @@ export function DeleteAccountDialog({
       if (error) throw error
 
       toast({
-        title: "Success",
-        description: "Account deleted successfully",
+        title: tMsg('success'),
+        description: t('message'),
       })
 
       onOpenChange(false)
       router.refresh()
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to delete account",
+        title: tMsg('error'),
+        description: error.message || tMsg('error'),
         variant: "destructive",
       })
     } finally {
@@ -64,24 +68,23 @@ export function DeleteAccountDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            Delete Account
+            {t('title')}
           </DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete &quot;{account.name}&quot;?
+            {t('message')} &quot;{account.name}&quot;?
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <p className="text-sm text-muted-foreground">
-            This action cannot be undone. All transactions associated with this account will
-            also be deleted.
+            {t('description')}
           </p>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {tForms('cancel')}
           </Button>
           <Button variant="destructive" onClick={handleDelete} disabled={loading}>
-            {loading ? "Deleting..." : "Delete Account"}
+            {loading ? tForms('deleting') : t('title')}
           </Button>
         </DialogFooter>
       </DialogContent>
