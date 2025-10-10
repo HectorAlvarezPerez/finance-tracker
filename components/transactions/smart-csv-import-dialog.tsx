@@ -42,7 +42,8 @@ export function SmartCSVImportDialog({
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
-  const t = useTranslations('transactions')
+  const t = useTranslations('dialogs.importCSV')
+  const tForms = useTranslations('forms')
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -75,8 +76,8 @@ export function SmartCSVImportDialog({
         setFile(file)
       } else {
         toast({
-          title: "Formato no válido",
-          description: "Por favor sube un archivo CSV o Excel (.csv, .xlsx, .xls)",
+          title: t('invalidFormat'),
+          description: t('invalidFormatDesc'),
           variant: "destructive",
         })
       }
@@ -161,8 +162,8 @@ export function SmartCSVImportDialog({
     // Validate that user has at least one account
     if (!accounts || accounts.length === 0) {
       toast({
-        title: "Error",
-        description: "Necesitas crear al menos una cuenta antes de importar transacciones.",
+        title: t('error'),
+        description: t('noAccount'),
         variant: "destructive",
       })
       return
@@ -170,7 +171,7 @@ export function SmartCSVImportDialog({
 
     setLoading(true)
     setProgress(10)
-    setStatusMessage("Leyendo archivo...")
+    setStatusMessage(t('reading'))
 
     try {
       // Wrap Papa.parse in a Promise for better async handling
@@ -195,23 +196,23 @@ export function SmartCSVImportDialog({
       const rows = await parseFile()
 
       if (rows.length === 0) {
-        throw new Error("No se encontraron datos válidos en el archivo")
+        throw new Error(t('errorDesc'))
       }
 
       setProgress(20)
-      setStatusMessage(`Procesando ${rows.length} transacciones...`)
+      setStatusMessage(t('processing'))
 
       // Detect columns automatically
       const headers = Object.keys(rows[0] as any)
       const { dateCol, descCol, amountCol } = detectColumns(headers)
 
       if (!dateCol || !descCol || !amountCol) {
-        throw new Error("No se pudieron detectar las columnas necesarias (fecha, descripción, cantidad)")
+        throw new Error(t('errorDesc'))
       }
 
       // Prepare transactions directly without AI categorization
       setProgress(50)
-      setStatusMessage("Preparando transacciones...")
+      setStatusMessage(t('preparing'))
 
       const transactions = rows.map((row: any) => ({
         user_id: userId,
@@ -225,7 +226,7 @@ export function SmartCSVImportDialog({
       }))
 
       setProgress(80)
-      setStatusMessage("Guardando transacciones...")
+      setStatusMessage(t('saving'))
 
       // Insert transactions
       const { error: txError } = await supabase
@@ -235,11 +236,11 @@ export function SmartCSVImportDialog({
       if (txError) throw txError
 
       setProgress(100)
-      setStatusMessage("¡Completado!")
+      setStatusMessage(t('complete'))
 
       toast({
-        title: "✨ Importación completada",
-        description: `${transactions.length} transacciones importadas correctamente`,
+        title: t('success'),
+        description: `${transactions.length} ${t('successDesc')}`,
       })
 
       setOpen(false)
@@ -254,8 +255,8 @@ export function SmartCSVImportDialog({
     } catch (error: any) {
       console.error('Import error:', error)
       toast({
-        title: "Error",
-        description: error.message || "Error al importar transacciones",
+        title: t('error'),
+        description: error.message || t('errorDesc'),
         variant: "destructive",
       })
     } finally {
@@ -268,17 +269,17 @@ export function SmartCSVImportDialog({
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
           <Upload className="mr-2 h-4 w-4" />
-          Import CSV
+          {tForms('import')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5 text-primary" />
-            Importar Transacciones
+            {t('title')}
           </DialogTitle>
           <DialogDescription>
-            Sube un CSV o Excel con tus transacciones. Se importarán con fecha, concepto e importe.
+            {t('subtitle')}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
@@ -315,12 +316,12 @@ export function SmartCSVImportDialog({
               <div>
                 <p className="text-sm font-medium">
                   {isDragging 
-                    ? '¡Suelta el archivo aquí!' 
-                    : 'Arrastra tu CSV/Excel aquí'
+                    ? t('dropHere')
+                    : t('dragDrop')
                   }
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  o haz click para seleccionar
+                  {t('orClick')}
                 </p>
               </div>
               
@@ -333,7 +334,7 @@ export function SmartCSVImportDialog({
           </div>
 
           <p className="text-xs text-center text-muted-foreground">
-            📋 Detección automática de columnas • Importa fecha, concepto e importe
+            {t('fileInfo')}
           </p>
 
           {loading && (
@@ -379,12 +380,12 @@ export function SmartCSVImportDialog({
             {loading ? (
               <>
                 <Upload className="mr-2 h-4 w-4 animate-bounce" />
-                Procesando...
+                {t('processing')}
               </>
             ) : (
               <>
                 <Upload className="mr-2 h-4 w-4" />
-                Importar
+                {t('importButton')}
               </>
             )}
           </Button>
