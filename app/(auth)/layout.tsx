@@ -5,6 +5,6 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <I18nProvider defaultLocale="en">{children}</I18nProvider>
+  return <I18nProvider defaultLocale="es">{children}</I18nProvider>
 }
 

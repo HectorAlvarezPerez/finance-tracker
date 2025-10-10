@@ -30,8 +30,8 @@ export function SettingsForm({
 }) {
   const [loading, setLoading] = useState(false)
   const [logoutLoading, setLogoutLoading] = useState(false)
-  const [currency, setCurrency] = useState(currentSettings?.default_currency || "USD")
-  const [locale, setLocale] = useState(currentSettings?.locale || "en-US")
+  const [currency, setCurrency] = useState(currentSettings?.default_currency || "EUR")
+  const [locale, setLocale] = useState(currentSettings?.locale || "es-ES")
   const router = useRouter()
   const { toast } = useToast()
   const settingsContext = useSettings()
