@@ -77,8 +77,16 @@ Rules:
       throw new Error('No response from AI')
     }
 
+    // Clean response: remove markdown code blocks if present
+    let cleanedResponse = response.trim()
+    if (cleanedResponse.startsWith('```json')) {
+      cleanedResponse = cleanedResponse.replace(/^```json\n?/, '').replace(/\n?```$/, '')
+    } else if (cleanedResponse.startsWith('```')) {
+      cleanedResponse = cleanedResponse.replace(/^```\n?/, '').replace(/\n?```$/, '')
+    }
+
     // Parse AI response
-    const categorizations = JSON.parse(response)
+    const categorizations = JSON.parse(cleanedResponse)
 
     return NextResponse.json({ categorizations })
   } catch (error: any) {
