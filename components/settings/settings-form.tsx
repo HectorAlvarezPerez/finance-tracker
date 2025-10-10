@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/select"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { useSettings } from "@/lib/contexts/settings-context"
+import { LogOut } from "lucide-react"
 import type { Database } from "@/types/database"
 
 type Settings = Database["public"]["Tables"]["settings"]["Row"]
@@ -26,10 +28,12 @@ export function SettingsForm({
   currentSettings: Settings | null
 }) {
   const [loading, setLoading] = useState(false)
+  const [logoutLoading, setLogoutLoading] = useState(false)
   const [currency, setCurrency] = useState(currentSettings?.default_currency || "USD")
   const [locale, setLocale] = useState(currentSettings?.locale || "en-US")
   const router = useRouter()
   const { toast } = useToast()
+  const { refreshSettings } = useSettings()
   const supabase = createBrowserClient()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,9 +66,11 @@ export function SettingsForm({
 
       toast({
         title: "Success",
-        description: "Settings updated successfully",
+        description: "Settings updated successfully. Refresh the page to see changes.",
       })
 
+      // Refresh settings context
+      await refreshSettings()
       router.refresh()
     } catch (error: any) {
       toast({
@@ -74,6 +80,31 @@ export function SettingsForm({
       })
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    setLogoutLoading(true)
+
+    try {
+      const { error } = await supabase.auth.signOut()
+
+      if (error) throw error
+
+      toast({
+        title: "Logged out",
+        description: "You have been logged out successfully",
+      })
+
+      router.push("/login")
+      router.refresh()
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to log out",
+        variant: "destructive",
+      })
+      setLogoutLoading(false)
     }
   }
 
@@ -92,36 +123,71 @@ export function SettingsForm({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="USD">USD - US Dollar</SelectItem>
-                <SelectItem value="EUR">EUR - Euro</SelectItem>
-                <SelectItem value="GBP">GBP - British Pound</SelectItem>
-                <SelectItem value="JPY">JPY - Japanese Yen</SelectItem>
-                <SelectItem value="CAD">CAD - Canadian Dollar</SelectItem>
-                <SelectItem value="AUD">AUD - Australian Dollar</SelectItem>
+                <SelectItem value="USD">USD 🇺🇸 - US Dollar</SelectItem>
+                <SelectItem value="EUR">EUR 🇪🇺 - Euro</SelectItem>
+                <SelectItem value="GBP">GBP 🇬🇧 - British Pound</SelectItem>
+                <SelectItem value="JPY">JPY 🇯🇵 - Japanese Yen</SelectItem>
+                <SelectItem value="CAD">CAD 🇨🇦 - Canadian Dollar</SelectItem>
+                <SelectItem value="AUD">AUD 🇦🇺 - Australian Dollar</SelectItem>
+                <SelectItem value="CHF">CHF 🇨🇭 - Swiss Franc</SelectItem>
+                <SelectItem value="CNY">CNY 🇨🇳 - Chinese Yuan</SelectItem>
+                <SelectItem value="MXN">MXN 🇲🇽 - Mexican Peso</SelectItem>
+                <SelectItem value="BRL">BRL 🇧🇷 - Brazilian Real</SelectItem>
+                <SelectItem value="ARS">ARS 🇦🇷 - Argentine Peso</SelectItem>
+                <SelectItem value="COP">COP 🇨🇴 - Colombian Peso</SelectItem>
               </SelectContent>
             </Select>
+            <p className="text-xs text-muted-foreground">
+              This will be used to display all monetary values throughout the app
+            </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="locale">Locale</Label>
+            <Label htmlFor="locale">Language & Format</Label>
             <Select value={locale} onValueChange={setLocale}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="en-US">English (US)</SelectItem>
-                <SelectItem value="en-GB">English (UK)</SelectItem>
-                <SelectItem value="es-ES">Español</SelectItem>
-                <SelectItem value="fr-FR">Français</SelectItem>
-                <SelectItem value="de-DE">Deutsch</SelectItem>
+                <SelectItem value="en-US">🇺🇸 English (US)</SelectItem>
+                <SelectItem value="en-GB">🇬🇧 English (UK)</SelectItem>
+                <SelectItem value="es-ES">🇪🇸 Español (España)</SelectItem>
+                <SelectItem value="es-MX">🇲🇽 Español (México)</SelectItem>
+                <SelectItem value="es-AR">🇦🇷 Español (Argentina)</SelectItem>
+                <SelectItem value="fr-FR">🇫🇷 Français</SelectItem>
+                <SelectItem value="de-DE">🇩🇪 Deutsch</SelectItem>
+                <SelectItem value="pt-BR">🇧🇷 Português (Brasil)</SelectItem>
+                <SelectItem value="it-IT">🇮🇹 Italiano</SelectItem>
               </SelectContent>
             </Select>
+            <p className="text-xs text-muted-foreground">
+              This affects date and number formatting
+            </p>
           </div>
 
           <Button type="submit" disabled={loading}>
             {loading ? "Saving..." : "Save Changes"}
           </Button>
         </form>
+
+        {/* Logout Section */}
+        <div className="mt-6 pt-6 border-t">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Account Actions</h3>
+            <p className="text-sm text-muted-foreground">
+              Sign out of your account
+            </p>
+          </div>
+          <Button
+            variant="destructive"
+            onClick={handleLogout}
+            disabled={logoutLoading}
+            className="mt-4 w-full sm:w-auto"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            {logoutLoading ? "Logging out..." : "Log Out"}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   )
