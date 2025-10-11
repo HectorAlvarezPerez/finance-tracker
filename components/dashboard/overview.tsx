@@ -30,14 +30,14 @@ export async function DashboardOverview({ userId }: { userId: string }) {
     .gte("date", firstDay)
     .lte("date", lastDay)
 
-  // Calculate totals
+  // Calculate totals (only transactions with categories)
   const income = transactions
-    ?.filter((t) => t.amount > 0)
+    ?.filter((t) => t.amount > 0 && t.category_id !== null)
     .reduce((sum, t) => sum + t.amount, 0) || 0
 
   const expenses = Math.abs(
     transactions
-      ?.filter((t) => t.amount < 0)
+      ?.filter((t) => t.amount < 0 && t.category_id !== null)
       .reduce((sum, t) => sum + t.amount, 0) || 0
   )
 
@@ -81,7 +81,7 @@ export async function DashboardOverview({ userId }: { userId: string }) {
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{formatCurrency(income)}</div>
             <p className="text-xs text-muted-foreground">
-              {transactions?.filter((t) => t.amount > 0).length || 0} transactions
+              {transactions?.filter((t) => t.amount > 0 && t.category_id !== null).length || 0} transactions
             </p>
           </CardContent>
         </Card>
@@ -94,7 +94,7 @@ export async function DashboardOverview({ userId }: { userId: string }) {
           <CardContent>
             <div className="text-2xl font-bold text-red-600">{formatCurrency(expenses)}</div>
             <p className="text-xs text-muted-foreground">
-              {transactions?.filter((t) => t.amount < 0).length || 0} transactions
+              {transactions?.filter((t) => t.amount < 0 && t.category_id !== null).length || 0} transactions
             </p>
           </CardContent>
         </Card>
