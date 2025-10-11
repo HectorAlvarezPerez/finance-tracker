@@ -3,7 +3,6 @@ import { redirect } from "next/navigation"
 import { getTranslations } from 'next-intl/server'
 import { NetWorthChart } from "@/components/analytics/net-worth-chart"
 import { IncomeVsExpensesChart } from "@/components/analytics/income-vs-expenses-chart"
-import { ExpensesByCategoryChart } from "@/components/analytics/expenses-by-category-chart"
 import { MonthlyTrendsChart } from "@/components/analytics/monthly-trends-chart"
 import { SpendingInsights } from "@/components/insights/spending-insights"
 import { TopCategories } from "@/components/insights/top-categories"
@@ -75,31 +74,30 @@ export default async function InsightsPage() {
         </p>
       </div>
 
-      {/* Net Worth Over Time */}
-      <NetWorthChart 
-        transactions={allTransactions || []} 
-        accounts={accounts || []}
-      />
+      {/* Analytics Charts */}
+      <div className="grid gap-6">
+        {/* Net Worth Over Time */}
+        <NetWorthChart 
+          transactions={allTransactions || []} 
+          accounts={accounts || []}
+        />
 
-      {/* Income vs Expenses and Monthly Trends */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <IncomeVsExpensesChart transactions={allTransactions || []} />
-        <MonthlyTrendsChart transactions={allTransactions || []} />
+        {/* Income vs Expenses and Monthly Trends */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <IncomeVsExpensesChart transactions={allTransactions || []} />
+          <MonthlyTrendsChart transactions={allTransactions || []} />
+        </div>
       </div>
 
-      {/* Expenses by Category */}
-      <ExpensesByCategoryChart transactions={allTransactions || []} />
-
-      {/* Legacy Insights */}
+      {/* Current Month Insights */}
       <div className="pt-6 border-t">
         <h2 className="text-2xl font-bold mb-4">Current Month Insights</h2>
         
-        <SpendingInsights
-          currentTransactions={currentTransactions || []}
-          historicalTransactions={historicalTransactions || []}
-        />
-
-        <div className="grid gap-6 md:grid-cols-2 mt-6">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <SpendingInsights
+            currentTransactions={currentTransactions || []}
+            historicalTransactions={historicalTransactions || []}
+          />
           <TopCategories transactions={currentTransactions || []} />
         </div>
       </div>
