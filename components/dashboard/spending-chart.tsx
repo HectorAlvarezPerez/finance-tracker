@@ -16,6 +16,7 @@ export function SpendingChart({ transactions }: { transactions: Transaction[] })
 
   transactions
     .filter((t) => t.categories !== null) // All transactions with categories
+    .filter((t) => t.categories!.type !== 'income') // Exclude income categories (like salary)
     .forEach((t) => {
       const categoryName = t.categories!.name
       const categoryColor = t.categories!.color
