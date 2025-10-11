@@ -28,16 +28,33 @@ export default async function PortfolioPage() {
   const pricesMap = new Map<string, number>()
   if (holdings && holdings.length > 0) {
     for (const holding of holdings) {
-      const { data: priceData } = await supabase
-        .from("prices")
-        .select("*")
-        .eq("asset_symbol", holding.asset_symbol)
-        .or(`user_id.eq.${user.id},user_id.is.null`)
-        .order("as_of", { ascending: false })
-        .limit(1)
+      if (holding.asset_symbol) {
+        // Get automatic price for holdings with symbol
+        const { data: priceData } = await supabase
+          .from("prices")
+          .select("*")
+          .eq("asset_symbol", holding.asset_symbol)
+          .or(`user_id.eq.${user.id},user_id.is.null`)
+          .order("as_of", { ascending: false })
+          .limit(1)
 
-      if (priceData && priceData.length > 0) {
-        pricesMap.set(holding.asset_symbol, parseFloat(priceData[0].price.toString()))
+        if (priceData && priceData.length > 0) {
+          pricesMap.set(holding.asset_symbol, parseFloat(priceData[0].price.toString()))
+        }
+      } else {
+        // Get manual price for holdings without symbol
+        const manualSymbol = `manual_${holding.id}`
+        const { data: priceData } = await supabase
+          .from("prices")
+          .select("*")
+          .eq("asset_symbol", manualSymbol)
+          .eq("user_id", user.id)
+          .order("as_of", { ascending: false })
+          .limit(1)
+
+        if (priceData && priceData.length > 0) {
+          pricesMap.set(manualSymbol, parseFloat(priceData[0].price.toString()))
+        }
       }
     }
   }
