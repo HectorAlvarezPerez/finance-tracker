@@ -117,7 +117,7 @@ export async function DashboardOverview({ userId }: { userId: string }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Spending by Category</CardTitle>
+          <CardTitle>Net Spending by Category</CardTitle>
         </CardHeader>
         <CardContent>
           <SpendingChart transactions={transactions || []} />
