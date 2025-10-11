@@ -324,7 +324,7 @@ export function DashboardOverview({
         {/* Spending Chart - Now smaller */}
         <Card>
           <CardHeader>
-            <CardTitle>Expenses by Category</CardTitle>
+            <CardTitle>Net Spending by Category</CardTitle>
           </CardHeader>
           <CardContent>
             <SpendingChart transactions={filteredTransactions} />
