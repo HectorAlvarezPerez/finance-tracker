@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 import type { Database } from "@/types/database"
 import { AlertTriangle } from "lucide-react"
 
@@ -40,13 +41,52 @@ export function DeleteAccountDialog({
     setLoading(true)
 
     try {
+      // Save account data before deleting for undo functionality
+      const deletedAccount = {
+        user_id: account.user_id,
+        name: account.name,
+        type: account.type,
+        currency: account.currency,
+        is_active: account.is_active,
+      }
+
       const { error } = await supabase.from("accounts").delete().eq("id", account.id)
 
       if (error) throw error
 
+      // Show success toast with undo option
       toast({
         title: tMsg('success'),
         description: t('message'),
+        action: (
+          <ToastAction
+            altText="Undo delete"
+            onClick={async () => {
+              try {
+                const { error: undoError } = await supabase
+                  .from("accounts")
+                  .insert(deletedAccount)
+
+                if (undoError) throw undoError
+
+                toast({
+                  title: "Account restored",
+                  description: "The account has been restored successfully. Note: Associated transactions cannot be recovered.",
+                })
+
+                router.refresh()
+              } catch (undoError: any) {
+                toast({
+                  title: tMsg('error'),
+                  description: "Failed to restore account",
+                  variant: "destructive",
+                })
+              }
+            }}
+          >
+            Undo
+          </ToastAction>
+        ),
       })
 
       onOpenChange(false)

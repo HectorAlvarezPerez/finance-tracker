@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { ToastAction } from "@/components/ui/toast"
 import type { Database } from "@/types/database"
 import { AlertTriangle } from "lucide-react"
 
@@ -36,13 +37,52 @@ export function DeleteCategoryDialog({
     setLoading(true)
 
     try {
+      // Save category data before deleting for undo functionality
+      const deletedCategory = {
+        user_id: category.user_id,
+        name: category.name,
+        type: category.type,
+        color: category.color,
+        icon: category.icon,
+      }
+
       const { error } = await supabase.from("categories").delete().eq("id", category.id)
 
       if (error) throw error
 
+      // Show success toast with undo option
       toast({
         title: "Success",
         description: "Category deleted successfully",
+        action: (
+          <ToastAction
+            altText="Undo delete"
+            onClick={async () => {
+              try {
+                const { error: undoError } = await supabase
+                  .from("categories")
+                  .insert(deletedCategory)
+
+                if (undoError) throw undoError
+
+                toast({
+                  title: "Category restored",
+                  description: "The category has been restored successfully",
+                })
+
+                router.refresh()
+              } catch (undoError: any) {
+                toast({
+                  title: "Error",
+                  description: "Failed to restore category",
+                  variant: "destructive",
+                })
+              }
+            }}
+          >
+            Undo
+          </ToastAction>
+        ),
       })
 
       onOpenChange(false)
