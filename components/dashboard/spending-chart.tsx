@@ -8,32 +8,30 @@ type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
 }
 
 export function SpendingChart({ transactions }: { transactions: Transaction[] }) {
-  // Group by category and calculate net amount (income - expenses)
+  // Group by category and calculate total expenses only
   const categoryMap = new Map<string, { name: string; value: number; color: string }>()
 
   transactions
     .filter((t) => t.categories !== null) // All transactions with categories
+    .filter((t) => t.amount < 0) // Only expenses (negative amounts)
+    .filter((t) => t.categories!.type === 'expense') // Only expense categories (exclude income like salary)
     .forEach((t) => {
       const categoryName = t.categories!.name
       const categoryColor = t.categories!.color
       const current = categoryMap.get(categoryName) || { name: categoryName, value: 0, color: categoryColor }
-      // Add income as positive, expenses as positive (for net calculation)
-      current.value += t.amount // This will be negative for expenses, positive for income
+      current.value += Math.abs(t.amount) // Add as positive for display
       categoryMap.set(categoryName, current)
     })
 
-  // Filter to only show categories with net spending (negative net = spending)
-  // and take absolute value for display
+  // Sort by value and take top 6
   const data = Array.from(categoryMap.values())
-    .filter((c) => c.value < 0) // Only categories with net spending
-    .map((c) => ({ ...c, value: Math.abs(c.value) })) // Convert to positive for display
     .sort((a, b) => b.value - a.value)
     .slice(0, 6) // Top 6 categories
 
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-        No net spending data for this month
+        No expense data for this month
       </div>
     )
   }
