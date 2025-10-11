@@ -103,7 +103,7 @@ async function seed() {
       user_id: userId,
       name: "Main Checking",
       type: "checking",
-      currency: "USD",
+      currency: "EUR",
       is_active: true,
     } as any)
 
@@ -124,7 +124,7 @@ async function seed() {
   if (!existingSettings || existingSettings.length === 0) {
     const { error: settingsError } = await supabase.from("settings").insert({
       user_id: userId,
-      default_currency: "USD",
+      default_currency: "EUR",
       locale: "en-US",
       theme: "system",
       insights_opt_in: true,

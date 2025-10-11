@@ -12,7 +12,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS settings (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  default_currency TEXT NOT NULL DEFAULT 'USD',
+  default_currency TEXT NOT NULL DEFAULT 'EUR',
   locale TEXT NOT NULL DEFAULT 'en-US',
   theme TEXT NOT NULL DEFAULT 'system',
   insights_opt_in BOOLEAN NOT NULL DEFAULT true,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS accounts (
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   type TEXT NOT NULL CHECK (type IN ('checking', 'savings', 'brokerage', 'crypto', 'other')),
-  currency TEXT NOT NULL DEFAULT 'USD',
+  currency TEXT NOT NULL DEFAULT 'EUR',
   is_active BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

@@ -62,7 +62,7 @@ export function SettingsForm({
           <div className="space-y-2">
             <Label>{t('currency')}</Label>
             <div className="flex items-center justify-between p-3 border rounded-md bg-muted/50">
-              <span className="text-sm font-medium">USD 🇺🇸 - US Dollar</span>
+              <span className="text-sm font-medium">EUR 🇪🇺 - Euro</span>
               <span className="text-xs text-muted-foreground">Default</span>
             </div>
             <p className="text-xs text-muted-foreground">
