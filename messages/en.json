@@ -169,7 +169,7 @@
     "currency": "Currency",
     "notes": "Notes",
     "initialBalance": "Initial Balance",
-    "balanceAdjustment": "Balance Adjustment",
+    "balanceAdjustment": "Adjust Balance",
     "noCategory": "No category",
     "selectAccount": "Select account",
     "selectCategory": "Select category",
