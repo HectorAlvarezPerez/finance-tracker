@@ -48,12 +48,12 @@ export function DashboardOverview({
         ? selectedMonth.split('-').map(Number)
         : [new Date().getFullYear(), new Date().getMonth() + 1]
       
-      const firstDay = new Date(year, month - 1, 1)
-        .toISOString()
-        .split("T")[0]
-      const lastDay = new Date(year, month, 0)
-        .toISOString()
-        .split("T")[0]
+      // Calculate first and last day without timezone conversion
+      const firstDay = `${year}-${String(month).padStart(2, '0')}-01`
+      const lastDayOfMonth = new Date(year, month, 0).getDate()
+      const lastDay = `${year}-${String(month).padStart(2, '0')}-${String(lastDayOfMonth).padStart(2, '0')}`
+
+      console.log('Date range:', { selectedMonth, firstDay, lastDay })
 
       const { data: transactionsData } = await supabase
         .from("transactions")
