@@ -19,12 +19,7 @@ export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
   
   // Calculate net worth over time
   const calculateNetWorth = () => {
-    // Calculate current balance from all transactions
-    const currentBalances = transactions
-      .filter((t) => t.status === "posted")
-      .reduce((sum, t) => sum + t.amount, 0)
-    
-    // Group transactions by date (daily)
+    // Group all transactions by date
     const dailyChanges = new Map<string, number>()
     
     transactions
@@ -35,45 +30,45 @@ export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
         dailyChanges.set(date, current + t.amount)
       })
     
-    // Sort dates
-    const sortedDates = Array.from(dailyChanges.keys()).sort()
-    
-    // Calculate running net worth (working backwards from current)
-    let runningBalance = currentBalances
-    const data: { date: string; netWorth: number; change: number }[] = []
-    
-    // Add current date
-    const today = new Date().toISOString().split("T")[0]
-    data.push({
-      date: today,
-      netWorth: runningBalance,
-      change: 0,
-    })
-    
-    // Work backwards through last 90 days
-    const ninetyDaysAgo = new Date()
-    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
-    
+    // Generate array of last 90 days
     const dates: string[] = []
-    for (let i = 0; i < 90; i++) {
-      const date = new Date()
+    const today = new Date()
+    
+    for (let i = 89; i >= 0; i--) {
+      const date = new Date(today)
       date.setDate(date.getDate() - i)
       dates.push(date.toISOString().split("T")[0])
     }
     
-    dates.reverse().forEach((date) => {
+    // Calculate cumulative net worth from oldest to newest
+    let runningBalance = 0
+    const data: { date: string; netWorth: number }[] = []
+    
+    // First, add all transactions before our 90-day window
+    const startDate = dates[0]
+    transactions
+      .filter((t) => t.status === "posted" && t.date < startDate)
+      .forEach((t) => {
+        runningBalance += t.amount
+      })
+    
+    // Now calculate day by day through the 90-day period
+    dates.forEach((date) => {
       const change = dailyChanges.get(date) || 0
-      runningBalance -= change
+      runningBalance += change
       
-      data.unshift({
+      data.push({
         date,
         netWorth: runningBalance,
-        change,
       })
     })
     
-    // Sample every 3 days for cleaner chart
-    return data.filter((_, index) => index % 3 === 0).map((d) => ({
+    // Sample every 3 days for cleaner chart, but keep first and last
+    const sampledData = data.filter((_, index) => 
+      index === 0 || index === data.length - 1 || index % 3 === 0
+    )
+    
+    return sampledData.map((d) => ({
       date: new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
       netWorth: parseFloat(d.netWorth.toFixed(2)),
     }))
