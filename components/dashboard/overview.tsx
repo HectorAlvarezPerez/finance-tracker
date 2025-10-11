@@ -2,15 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { formatCurrency } from "@/lib/utils"
-import { TrendingUp, TrendingDown, Wallet, DollarSign, Filter } from "lucide-react"
+import { TrendingUp, TrendingDown, Wallet, DollarSign } from "lucide-react"
 import { SpendingChart } from "./spending-chart"
 import { createBrowserClient } from "@/lib/supabase/client"
 import type { Database } from "@/types/database"
@@ -20,12 +13,17 @@ type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
   categories: Database["public"]["Tables"]["categories"]["Row"] | null
 }
 
-export function DashboardOverview({ userId }: { userId: string }) {
+export function DashboardOverview({ 
+  userId, 
+  selectedAccountId = "all" 
+}: { 
+  userId: string
+  selectedAccountId?: string 
+}) {
   const supabase = createBrowserClient()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [allTransactions, setAllTransactions] = useState<{ account_id: string; amount: number }[]>([])
-  const [selectedAccountId, setSelectedAccountId] = useState<string>("all")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -70,7 +68,7 @@ export function DashboardOverview({ userId }: { userId: string }) {
     }
 
     fetchData()
-  }, [userId, supabase])
+  }, [userId, supabase, selectedAccountId])
 
   // Filter transactions by selected account
   const filteredTransactions = selectedAccountId === "all"
@@ -117,36 +115,6 @@ export function DashboardOverview({ userId }: { userId: string }) {
 
   return (
     <>
-      {/* Account Filter */}
-      <Card className="mb-4">
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-4">
-            <Filter className="h-5 w-5 text-muted-foreground" />
-            <div className="flex-1">
-              <label className="text-sm font-medium mb-2 block">Filter by Account</label>
-              <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
-                <SelectTrigger className="w-full md:w-[300px]">
-                  <SelectValue placeholder="Select account" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Accounts</SelectItem>
-                  {accounts.map((account) => (
-                    <SelectItem key={account.id} value={account.id}>
-                      {account.name} ({account.type})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            {selectedAccountId !== "all" && (
-              <p className="text-sm text-muted-foreground">
-                Showing data for selected account only
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

@@ -1,13 +1,11 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { getTranslations } from 'next-intl/server'
-import { DashboardOverview } from "@/components/dashboard/overview"
+import { DashboardWrapper } from "@/components/dashboard/dashboard-wrapper"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { BudgetOverview } from "@/components/dashboard/budget-overview"
 
 export default async function DashboardPage() {
   const supabase = createServerClient()
-  const t = await getTranslations('dashboard')
   
   const {
     data: { user },
@@ -19,14 +17,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">{t('title')}</h1>
-        <p className="text-muted-foreground">
-          {t('subtitle')}
-        </p>
-      </div>
-
-      <DashboardOverview userId={user.id} />
+      <DashboardWrapper userId={user.id} />
 
       <div className="grid gap-6 md:grid-cols-2">
         <RecentTransactions userId={user.id} />
