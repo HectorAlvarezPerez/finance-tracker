@@ -2,6 +2,7 @@ import { Nav, MobileNav } from "@/components/nav"
 import { AIChatWrapper } from "@/components/ai-assistant/ai-chat-wrapper"
 import { SettingsProvider } from "@/lib/contexts/settings-context"
 import { I18nProvider } from "@/lib/i18n/provider"
+import { InitDefaultData } from "@/components/init-default-data"
 import { createServerClient } from "@/lib/supabase/server"
 
 export default async function DashboardLayout({
@@ -12,10 +13,18 @@ export default async function DashboardLayout({
   const supabase = createServerClient()
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Get user settings to determine locale
+  const { data: settings } = await supabase
+    .from('settings')
+    .select('locale')
+    .eq('user_id', user?.id || '')
+    .single()
+
   return (
     <SettingsProvider userId={user?.id || null}>
       <I18nProvider>
         <div className="min-h-screen flex flex-col">
+          {user && <InitDefaultData userId={user.id} locale={settings?.locale || 'es-ES'} />}
           <Nav />
           <main className="flex-1 pb-20 md:pb-0">
             {children}

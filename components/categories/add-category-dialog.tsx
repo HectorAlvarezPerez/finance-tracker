@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -47,6 +48,10 @@ export function AddCategoryDialog({ userId }: { userId: string }) {
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
+  const t = useTranslations("dialogs.addCategory")
+  const tForms = useTranslations("forms")
+  const tMsg = useTranslations("messages")
+  const tTypes = useTranslations("categoryTypes")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
