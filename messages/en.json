@@ -168,6 +168,8 @@
     "balance": "Balance",
     "currency": "Currency",
     "notes": "Notes",
+    "initialBalance": "Initial Balance",
+    "balanceAdjustment": "Balance Adjustment",
     "noCategory": "No category",
     "selectAccount": "Select account",
     "selectCategory": "Select category",

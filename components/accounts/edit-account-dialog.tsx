@@ -40,6 +40,7 @@ export function EditAccountDialog({
   const [name, setName] = useState(account.name)
   const [type, setType] = useState<string>(account.type)
   const [currency, setCurrency] = useState(account.currency)
+  const [balanceAdjustment, setBalanceAdjustment] = useState("")
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
@@ -52,6 +53,7 @@ export function EditAccountDialog({
     setName(account.name)
     setType(account.type)
     setCurrency(account.currency)
+    setBalanceAdjustment("")
   }, [account])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,6 +61,7 @@ export function EditAccountDialog({
     setLoading(true)
 
     try {
+      // Update the account
       const { error } = await supabase
         .from("accounts")
         .update({
@@ -70,9 +73,30 @@ export function EditAccountDialog({
 
       if (error) throw error
 
+      // If there's a balance adjustment, create a transaction
+      if (balanceAdjustment && parseFloat(balanceAdjustment) !== 0) {
+        const { data: userData } = await supabase.auth.getUser()
+        
+        const { error: transactionError } = await supabase
+          .from("transactions")
+          .insert({
+            user_id: userData.user?.id,
+            account_id: account.id,
+            description: "Balance Adjustment",
+            amount: parseFloat(balanceAdjustment),
+            date: new Date().toISOString().split('T')[0],
+            status: "posted",
+            category_id: null,
+          })
+
+        if (transactionError) {
+          console.error("Error creating balance adjustment transaction:", transactionError)
+        }
+      }
+
       toast({
         title: tMsg('success'),
-        description: t('subtitle'),
+        description: t('success'),
       })
 
       onOpenChange(false)
@@ -80,7 +104,7 @@ export function EditAccountDialog({
     } catch (error: any) {
       toast({
         title: tMsg('error'),
-        description: error.message || tMsg('error'),
+        description: error.message || t('error'),
         variant: "destructive",
       })
     } finally {
@@ -127,6 +151,20 @@ export function EditAccountDialog({
                 <span className="text-sm">EUR 🇪🇺</span>
                 <span className="text-xs text-muted-foreground">Default</span>
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="balanceAdjustment">{tForms('balanceAdjustment')}</Label>
+              <Input
+                id="balanceAdjustment"
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                value={balanceAdjustment}
+                onChange={(e) => setBalanceAdjustment(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Optional: Add/subtract amount to adjust current balance
+              </p>
             </div>
           </div>
           <DialogFooter>

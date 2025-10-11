@@ -32,6 +32,7 @@ export function AddAccountDialog({ userId }: { userId: string }) {
   const [name, setName] = useState("")
   const [type, setType] = useState<string>("checking")
   const [currency, setCurrency] = useState("EUR")
+  const [initialBalance, setInitialBalance] = useState("")
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
@@ -45,29 +46,54 @@ export function AddAccountDialog({ userId }: { userId: string }) {
     setLoading(true)
 
     try {
-      const { error } = await supabase.from("accounts").insert({
-        user_id: userId,
-        name,
-        type,
-        currency,
-        is_active: true,
-      })
+      // Create the account
+      const { data: newAccount, error } = await supabase
+        .from("accounts")
+        .insert({
+          user_id: userId,
+          name,
+          type,
+          currency,
+          is_active: true,
+        })
+        .select()
+        .single()
 
       if (error) throw error
 
+      // If there's an initial balance, create a transaction
+      if (initialBalance && parseFloat(initialBalance) !== 0) {
+        const { error: transactionError } = await supabase
+          .from("transactions")
+          .insert({
+            user_id: userId,
+            account_id: newAccount.id,
+            description: "Initial Balance",
+            amount: parseFloat(initialBalance),
+            date: new Date().toISOString().split('T')[0],
+            status: "posted",
+            category_id: null,
+          })
+
+        if (transactionError) {
+          console.error("Error creating initial balance transaction:", transactionError)
+        }
+      }
+
       toast({
         title: tMsg('success'),
-        description: t('subtitle'),
+        description: t('success'),
       })
 
       setOpen(false)
       setName("")
       setType("checking")
+      setInitialBalance("")
       router.refresh()
     } catch (error: any) {
       toast({
         title: tMsg('error'),
-        description: error.message || tMsg('error'),
+        description: error.message || t('error'),
         variant: "destructive",
       })
     } finally {
@@ -122,6 +148,20 @@ export function AddAccountDialog({ userId }: { userId: string }) {
                 <span className="text-sm">EUR 🇪🇺</span>
                 <span className="text-xs text-muted-foreground">Default</span>
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="initialBalance">{tForms('initialBalance')}</Label>
+              <Input
+                id="initialBalance"
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                value={initialBalance}
+                onChange={(e) => setInitialBalance(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Optional: Set the starting balance for this account
+              </p>
             </div>
           </div>
           <DialogFooter>
