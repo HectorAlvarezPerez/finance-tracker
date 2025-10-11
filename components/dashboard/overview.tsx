@@ -115,14 +115,62 @@ export async function DashboardOverview({ userId }: { userId: string }) {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Net Spending by Category</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <SpendingChart transactions={transactions || []} />
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Accounts List */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Account Balances</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {accounts && accounts.length > 0 ? (
+                accounts.map((account) => {
+                  const balance = accountBalances.get(account.id) || 0
+                  return (
+                    <div
+                      key={account.id}
+                      className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${
+                          account.type === 'checking' ? 'bg-blue-500' :
+                          account.type === 'savings' ? 'bg-green-500' :
+                          account.type === 'brokerage' ? 'bg-purple-500' :
+                          account.type === 'crypto' ? 'bg-orange-500' :
+                          'bg-gray-500'
+                        }`} />
+                        <div>
+                          <p className="font-medium text-sm">{account.name}</p>
+                          <p className="text-xs text-muted-foreground capitalize">{account.type}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`font-semibold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {formatCurrency(balance)}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  No accounts found. Create one to get started.
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Spending Chart - Now smaller */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Net Spending by Category</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SpendingChart transactions={transactions || []} />
+          </CardContent>
+        </Card>
+      </div>
     </>
   )
 }
