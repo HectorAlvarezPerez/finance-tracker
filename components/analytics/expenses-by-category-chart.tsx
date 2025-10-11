@@ -17,10 +17,10 @@ export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChar
   const categoryTotals = new Map<string, { name: string; color: string; total: number }>()
   
   transactions
-    .filter((t) => t.amount < 0 && t.status === "posted")
+    .filter((t) => t.amount < 0 && t.status === "posted" && t.categories !== null)
     .forEach((t) => {
-      const categoryName = t.categories?.name || "Uncategorized"
-      const categoryColor = t.categories?.color || "#94a3b8"
+      const categoryName = t.categories!.name
+      const categoryColor = t.categories!.color
       const current = categoryTotals.get(categoryName) || { 
         name: categoryName, 
         color: categoryColor, 
@@ -39,10 +39,10 @@ export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChar
   const monthlyData = new Map<string, Record<string, number>>()
   
   transactions
-    .filter((t) => t.amount < 0 && t.status === "posted")
+    .filter((t) => t.amount < 0 && t.status === "posted" && t.categories !== null)
     .forEach((t) => {
       const month = t.date.substring(0, 7)
-      const categoryName = t.categories?.name || "Uncategorized"
+      const categoryName = t.categories!.name
       
       // Only include top categories
       if (!topCategories.includes(categoryName)) return

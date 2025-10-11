@@ -12,10 +12,10 @@ export function SpendingChart({ transactions }: { transactions: Transaction[] })
   const categoryMap = new Map<string, { name: string; value: number; color: string }>()
 
   transactions
-    .filter((t) => t.amount < 0) // Only expenses
+    .filter((t) => t.amount < 0 && t.categories !== null) // Only expenses with categories
     .forEach((t) => {
-      const categoryName = t.categories?.name || "Uncategorized"
-      const categoryColor = t.categories?.color || "#6366f1"
+      const categoryName = t.categories!.name
+      const categoryColor = t.categories!.color
       const current = categoryMap.get(categoryName) || { name: categoryName, value: 0, color: categoryColor }
       current.value += Math.abs(t.amount)
       categoryMap.set(categoryName, current)

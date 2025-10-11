@@ -29,7 +29,7 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
   }>()
   
   transactions
-    .filter((t) => t.status === "posted")
+    .filter((t) => t.status === "posted" && t.category_id !== null)
     .forEach((t) => {
       const month = t.date.substring(0, 7)
       const current = monthlyData.get(month) || { 

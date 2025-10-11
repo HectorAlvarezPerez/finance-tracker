@@ -15,7 +15,7 @@ export function IncomeVsExpensesChart({ transactions }: IncomeVsExpensesChartPro
   const monthlyData = new Map<string, { income: number; expenses: number }>()
   
   transactions
-    .filter((t) => t.status === "posted")
+    .filter((t) => t.status === "posted" && t.category_id !== null)
     .forEach((t) => {
       const month = t.date.substring(0, 7) // YYYY-MM
       const current = monthlyData.get(month) || { income: 0, expenses: 0 }
