@@ -261,6 +261,19 @@
     },
     "nextDate": "Next Date",
     "noRecurring": "No recurring transactions yet"
+  },
+  "accountTypes": {
+    "checking": "Checking",
+    "savings": "Savings",
+    "brokerage": "Brokerage",
+    "crypto": "Crypto",
+    "other": "Other"
+  },
+  "categoryTypes": {
+    "income": "Income",
+    "expense": "Expense",
+    "transfer": "Transfer",
+    "investment": "Investment"
   }
 }
 
