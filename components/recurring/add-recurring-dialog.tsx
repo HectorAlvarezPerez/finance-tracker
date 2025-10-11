@@ -103,7 +103,7 @@ export function AddRecurringDialog({
           description,
           amount: parseFloat(amount),
           category_id: categoryId === "none" ? null : categoryId,
-          currency: "USD",
+          currency: "EUR",
           frequency,
           interval_value: parseInt(intervalValue),
           day_of_month: frequency === "monthly" ? parseInt(dayOfMonth) : null,

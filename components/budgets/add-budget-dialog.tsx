@@ -55,7 +55,7 @@ export function AddBudgetDialog({
         category_id: categoryId || null,
         month: currentMonth,
         amount_total: parseFloat(amount),
-        currency: "USD",
+        currency: "EUR",
       })
 
       if (error) throw error

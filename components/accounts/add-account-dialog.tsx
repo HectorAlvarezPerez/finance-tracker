@@ -31,7 +31,7 @@ export function AddAccountDialog({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState("")
   const [type, setType] = useState<string>("checking")
-  const [currency, setCurrency] = useState("USD")
+  const [currency, setCurrency] = useState("EUR")
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
@@ -118,18 +118,10 @@ export function AddAccountDialog({ userId }: { userId: string }) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="currency">{tForms('currency')}</Label>
-              <Select value={currency} onValueChange={setCurrency}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="USD">USD</SelectItem>
-                  <SelectItem value="EUR">EUR</SelectItem>
-                  <SelectItem value="GBP">GBP</SelectItem>
-                  <SelectItem value="JPY">JPY</SelectItem>
-                  <SelectItem value="CAD">CAD</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center justify-between p-2 border rounded-md bg-muted/30">
+                <span className="text-sm">EUR 🇪🇺</span>
+                <span className="text-xs text-muted-foreground">Default</span>
+              </div>
             </div>
           </div>
           <DialogFooter>

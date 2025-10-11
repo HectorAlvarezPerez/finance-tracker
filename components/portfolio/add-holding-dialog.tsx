@@ -47,7 +47,7 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
         asset_type: assetType,
         quantity: parseFloat(quantity),
         cost_basis_total: parseFloat(costBasis),
-        currency: "USD",
+        currency: "EUR",
       })
 
       if (error) throw error

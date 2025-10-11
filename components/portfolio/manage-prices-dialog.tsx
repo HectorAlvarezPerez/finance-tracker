@@ -52,7 +52,7 @@ export function ManagePricesDialog({
           user_id: userId,
           asset_symbol: symbol,
           price: parseFloat(price),
-          currency: "USD",
+          currency: "EUR",
           source: "manual" as const,
           as_of: new Date().toISOString(),
         }))

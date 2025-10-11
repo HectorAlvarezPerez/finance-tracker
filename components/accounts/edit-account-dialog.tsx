@@ -123,18 +123,10 @@ export function EditAccountDialog({
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-currency">{tForms('currency')}</Label>
-              <Select value={currency} onValueChange={setCurrency}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="USD">USD</SelectItem>
-                  <SelectItem value="EUR">EUR</SelectItem>
-                  <SelectItem value="GBP">GBP</SelectItem>
-                  <SelectItem value="JPY">JPY</SelectItem>
-                  <SelectItem value="CAD">CAD</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center justify-between p-2 border rounded-md bg-muted/30">
+                <span className="text-sm">EUR 🇪🇺</span>
+                <span className="text-xs text-muted-foreground">Default</span>
+              </div>
             </div>
           </div>
           <DialogFooter>
