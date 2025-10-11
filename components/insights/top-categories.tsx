@@ -6,7 +6,7 @@ import { formatCurrency } from "@/lib/utils"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
-  categories: { name: string; color: string } | null
+  categories: { name: string; color: string; type: string } | null
 }
 
 export function TopCategories({ transactions }: { transactions: Transaction[] }) {
@@ -15,6 +15,7 @@ export function TopCategories({ transactions }: { transactions: Transaction[] })
   
   transactions
     .filter((t) => t.amount < 0 && t.categories)
+    .filter((t) => t.categories!.type !== 'income') // Exclude income categories (like salary)
     .forEach((t) => {
       const name = t.categories!.name
       const color = t.categories!.color

@@ -26,7 +26,7 @@ export default async function InsightsPage() {
 
   const { data: allTransactions } = await supabase
     .from("transactions")
-    .select("*, categories(name, color)")
+    .select("*, categories(name, color, type)")
     .eq("user_id", user.id)
     .gte("date", startDate)
     .order("date", { ascending: true })
@@ -48,7 +48,7 @@ export default async function InsightsPage() {
 
   const { data: currentTransactions } = await supabase
     .from("transactions")
-    .select("*, categories(name, color)")
+    .select("*, categories(name, color, type)")
     .eq("user_id", user.id)
     .gte("date", firstDay)
     .lte("date", lastDay)
@@ -60,7 +60,7 @@ export default async function InsightsPage() {
 
   const { data: historicalTransactions } = await supabase
     .from("transactions")
-    .select("*, categories(name, color)")
+    .select("*, categories(name, color, type)")
     .eq("user_id", user.id)
     .gte("date", sixMonthsAgo)
     .lt("date", firstDay)
