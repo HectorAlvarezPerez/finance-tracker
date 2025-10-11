@@ -112,7 +112,7 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
                 onChange={(e) => setSymbol(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                Used for automatic price updates
+                For reference only
               </p>
             </div>
             <div className="space-y-2">

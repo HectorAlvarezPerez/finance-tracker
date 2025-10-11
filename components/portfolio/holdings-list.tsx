@@ -11,13 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { formatCurrency, calculateROI, calculateProfitLoss } from "@/lib/utils"
-import { TrendingUp, TrendingDown, MoreHorizontal, Edit, Trash2, RefreshCw, PenSquare } from "lucide-react"
+import { TrendingUp, TrendingDown, MoreHorizontal, Edit, Trash2, PenSquare } from "lucide-react"
 import type { Database } from "@/types/database"
 import { DeleteHoldingDialog } from "./delete-holding-dialog"
 import { EditHoldingDialog } from "./edit-holding-dialog"
 import { ManualPriceDialog } from "./manual-price-dialog"
-import { useToast } from "@/components/ui/use-toast"
-import { useRouter } from "next/navigation"
 
 type Holding = Database["public"]["Tables"]["holdings"]["Row"]
 
@@ -33,54 +31,6 @@ export function HoldingsList({
   const [editingHolding, setEditingHolding] = useState<Holding | null>(null)
   const [deletingHolding, setDeletingHolding] = useState<Holding | null>(null)
   const [manualPriceHolding, setManualPriceHolding] = useState<Holding | null>(null)
-  const [updatingPrice, setUpdatingPrice] = useState<string | null>(null)
-  const { toast } = useToast()
-  const router = useRouter()
-
-  const handleUpdatePrice = async (holding: Holding) => {
-    if (!holding.asset_symbol) {
-      toast({
-        title: "No Symbol",
-        description: "This holding doesn't have a symbol for automatic price updates",
-        variant: "destructive",
-      })
-      return
-    }
-
-    setUpdatingPrice(holding.id as string)
-
-    try {
-      const response = await fetch("/api/update-price", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          holdingId: holding.id,
-          symbol: holding.asset_symbol,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to update price")
-      }
-
-      toast({
-        title: "Price Updated",
-        description: `${holding.asset_symbol}: ${formatCurrency(data.price)}`,
-      })
-
-      router.refresh()
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update price",
-        variant: "destructive",
-      })
-    } finally {
-      setUpdatingPrice(null)
-    }
-  }
   if (holdings.length === 0) {
     return (
       <Card>
@@ -99,21 +49,13 @@ export function HoldingsList({
     <>
       <div className="space-y-4">
         {holdings.map((holding) => {
-          // Try to get price from symbol first, then from manual price
-          let currentPrice = 0
-          if (holding.asset_symbol) {
-            currentPrice = prices.get(holding.asset_symbol) || 0
-          } else {
-            // Look for manual price using holding ID
-            currentPrice = prices.get(`manual_${holding.id}`) || 0
-          }
-          
+          // Get manual price using holding ID
+          const currentPrice = prices.get(`manual_${holding.id}`) || 0
           const currentValue = holding.quantity * currentPrice
           const costBasisTotal = holding.quantity * holding.average_buy_price
           const profitLoss = calculateProfitLoss(currentValue, costBasisTotal)
           const roi = calculateROI(currentValue, costBasisTotal)
           const hasPrice = currentPrice > 0
-          const isUpdating = updatingPrice === holding.id
 
           return (
             <Card key={holding.id}>
@@ -135,7 +77,7 @@ export function HoldingsList({
                       </div>
                     ) : (
                       <div className="text-sm text-yellow-600 dark:text-yellow-500">
-                        {holding.asset_symbol ? "⚠️ No price data" : "ℹ️ No symbol for automatic updates"}
+                        ⚠️ No price set - click "Set Price"
                       </div>
                     )}
                   </div>
@@ -149,26 +91,14 @@ export function HoldingsList({
                         </div>
                       )}
                     </div>
-                    {holding.asset_symbol ? (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleUpdatePrice(holding)}
-                        disabled={isUpdating}
-                      >
-                        <RefreshCw className={`h-4 w-4 mr-2 ${isUpdating ? "animate-spin" : ""}`} />
-                        {isUpdating ? "Updating..." : "Update Price"}
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setManualPriceHolding(holding)}
-                      >
-                        <PenSquare className="h-4 w-4 mr-2" />
-                        Set Price
-                      </Button>
-                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setManualPriceHolding(holding)}
+                    >
+                      <PenSquare className="h-4 w-4 mr-2" />
+                      Set Price
+                    </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" className="h-8 w-8">
