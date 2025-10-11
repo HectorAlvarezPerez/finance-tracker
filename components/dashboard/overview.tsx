@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatCurrency } from "@/lib/utils"
-import { TrendingUp, TrendingDown, Wallet, DollarSign } from "lucide-react"
+import { formatCurrency, formatDate } from "@/lib/utils"
+import { TrendingUp, TrendingDown, Wallet, DollarSign, ChevronDown, ChevronUp } from "lucide-react"
 import { SpendingChart } from "./spending-chart"
 import { createBrowserClient } from "@/lib/supabase/client"
 import type { Database } from "@/types/database"
@@ -27,6 +27,8 @@ export function DashboardOverview({
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [allTransactions, setAllTransactions] = useState<{ account_id: string; amount: number }[]>([])
   const [loading, setLoading] = useState(true)
+  const [incomeExpanded, setIncomeExpanded] = useState(false)
+  const [expensesExpanded, setExpensesExpanded] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,17 +82,18 @@ export function DashboardOverview({
     ? transactions
     : transactions.filter((t) => t.account_id === selectedAccountId)
 
-  // Calculate totals (only transactions with categories)
-  const income = filteredTransactions
+  // Get income and expense transactions
+  const incomeTransactions = filteredTransactions
     .filter((t) => t.amount > 0 && t.category_id !== null)
-    .reduce((sum, t) => sum + t.amount, 0)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
-  const expenses = Math.abs(
-    filteredTransactions
-      .filter((t) => t.amount < 0 && t.category_id !== null)
-      .reduce((sum, t) => sum + t.amount, 0)
-  )
+  const expenseTransactions = filteredTransactions
+    .filter((t) => t.amount < 0 && t.category_id !== null)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
+  // Calculate totals (only transactions with categories)
+  const income = incomeTransactions.reduce((sum, t) => sum + t.amount, 0)
+  const expenses = Math.abs(expenseTransactions.reduce((sum, t) => sum + t.amount, 0))
   const netCash = income - expenses
 
   // Calculate account balances from all transactions
@@ -159,26 +162,98 @@ export function DashboardOverview({
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Income</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600" />
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-green-600" />
+              {incomeTransactions.length > 0 && (
+                <button
+                  onClick={() => setIncomeExpanded(!incomeExpanded)}
+                  className="hover:bg-accent p-1 rounded transition-colors"
+                >
+                  {incomeExpanded ? (
+                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </button>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{formatCurrency(income)}</div>
             <p className="text-xs text-muted-foreground">
-              {filteredTransactions.filter((t) => t.amount > 0 && t.category_id !== null).length} transactions ({periodLabel})
+              {incomeTransactions.length} transactions ({periodLabel})
             </p>
+            
+            {incomeExpanded && incomeTransactions.length > 0 && (
+              <div className="mt-4 space-y-2 max-h-64 overflow-y-auto">
+                <div className="text-xs font-semibold text-muted-foreground mb-2">Transactions:</div>
+                {incomeTransactions.map((t) => (
+                  <div
+                    key={t.id}
+                    className="flex items-center justify-between p-2 rounded-md bg-muted/50 text-xs"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{t.description}</p>
+                      <p className="text-muted-foreground">
+                        {formatDate(t.date, "short")} • {t.categories?.name}
+                      </p>
+                    </div>
+                    <div className="font-semibold text-green-600 ml-2">
+                      {formatCurrency(t.amount)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Expenses</CardTitle>
-            <TrendingDown className="h-4 w-4 text-red-600" />
+            <div className="flex items-center gap-2">
+              <TrendingDown className="h-4 w-4 text-red-600" />
+              {expenseTransactions.length > 0 && (
+                <button
+                  onClick={() => setExpensesExpanded(!expensesExpanded)}
+                  className="hover:bg-accent p-1 rounded transition-colors"
+                >
+                  {expensesExpanded ? (
+                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </button>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">{formatCurrency(expenses)}</div>
             <p className="text-xs text-muted-foreground">
-              {filteredTransactions.filter((t) => t.amount < 0 && t.category_id !== null).length} transactions ({periodLabel})
+              {expenseTransactions.length} transactions ({periodLabel})
             </p>
+            
+            {expensesExpanded && expenseTransactions.length > 0 && (
+              <div className="mt-4 space-y-2 max-h-64 overflow-y-auto">
+                <div className="text-xs font-semibold text-muted-foreground mb-2">Transactions:</div>
+                {expenseTransactions.map((t) => (
+                  <div
+                    key={t.id}
+                    className="flex items-center justify-between p-2 rounded-md bg-muted/50 text-xs"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{t.description}</p>
+                      <p className="text-muted-foreground">
+                        {formatDate(t.date, "short")} • {t.categories?.name}
+                      </p>
+                    </div>
+                    <div className="font-semibold text-red-600 ml-2">
+                      {formatCurrency(t.amount)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
