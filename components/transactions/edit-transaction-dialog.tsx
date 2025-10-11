@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { X } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 import type { Database } from "@/types/database"
@@ -166,7 +167,21 @@ export function EditTransactionDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-category">{tForms('category')}</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="edit-category">{tForms('category')}</Label>
+                {categoryId !== "none" && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCategoryId("none")}
+                    className="h-6 px-2 text-xs"
+                  >
+                    <X className="h-3 w-3 mr-1" />
+                    Clear
+                  </Button>
+                )}
+              </div>
               <Select value={categoryId} onValueChange={setCategoryId}>
                 <SelectTrigger>
                   <SelectValue placeholder={tForms('selectCategory')} />

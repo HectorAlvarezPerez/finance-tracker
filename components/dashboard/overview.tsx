@@ -15,10 +15,12 @@ type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
 
 export function DashboardOverview({ 
   userId, 
-  selectedAccountId = "all" 
+  selectedAccountId = "all",
+  selectedMonth
 }: { 
   userId: string
-  selectedAccountId?: string 
+  selectedAccountId?: string
+  selectedMonth?: string
 }) {
   const supabase = createBrowserClient()
   const [accounts, setAccounts] = useState<Account[]>([])
@@ -39,12 +41,15 @@ export function DashboardOverview({
 
       setAccounts(accountsData || [])
 
-      // Get transactions for current month
-      const currentMonth = new Date()
-      const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
+      // Get transactions for selected month
+      const [year, month] = selectedMonth 
+        ? selectedMonth.split('-').map(Number)
+        : [new Date().getFullYear(), new Date().getMonth() + 1]
+      
+      const firstDay = new Date(year, month - 1, 1)
         .toISOString()
         .split("T")[0]
-      const lastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0)
+      const lastDay = new Date(year, month, 0)
         .toISOString()
         .split("T")[0]
 
@@ -68,7 +73,7 @@ export function DashboardOverview({
     }
 
     fetchData()
-  }, [userId, supabase, selectedAccountId])
+  }, [userId, supabase, selectedAccountId, selectedMonth])
 
   // Filter transactions by selected account
   const filteredTransactions = selectedAccountId === "all"
@@ -105,6 +110,25 @@ export function DashboardOverview({
     ? accounts
     : accounts.filter((a) => a.id === selectedAccountId)
 
+  // Get period label
+  const getPeriodLabel = () => {
+    if (!selectedMonth) return "This month"
+    
+    const [year, month] = selectedMonth.split('-').map(Number)
+    const now = new Date()
+    const currentYear = now.getFullYear()
+    const currentMonth = now.getMonth() + 1
+    
+    if (year === currentYear && month === currentMonth) {
+      return "This month"
+    }
+    
+    const date = new Date(year, month - 1)
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+  }
+
+  const periodLabel = getPeriodLabel()
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -134,26 +158,26 @@ export function DashboardOverview({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Income (This Month)</CardTitle>
+            <CardTitle className="text-sm font-medium">Income</CardTitle>
             <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{formatCurrency(income)}</div>
             <p className="text-xs text-muted-foreground">
-              {filteredTransactions.filter((t) => t.amount > 0 && t.category_id !== null).length} transactions
+              {filteredTransactions.filter((t) => t.amount > 0 && t.category_id !== null).length} transactions ({periodLabel})
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Expenses (This Month)</CardTitle>
+            <CardTitle className="text-sm font-medium">Expenses</CardTitle>
             <TrendingDown className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">{formatCurrency(expenses)}</div>
             <p className="text-xs text-muted-foreground">
-              {filteredTransactions.filter((t) => t.amount < 0 && t.category_id !== null).length} transactions
+              {filteredTransactions.filter((t) => t.amount < 0 && t.category_id !== null).length} transactions ({periodLabel})
             </p>
           </CardContent>
         </Card>
@@ -169,7 +193,7 @@ export function DashboardOverview({
             >
               {formatCurrency(netCash)}
             </div>
-            <p className="text-xs text-muted-foreground">This month</p>
+            <p className="text-xs text-muted-foreground">{periodLabel}</p>
           </CardContent>
         </Card>
       </div>
