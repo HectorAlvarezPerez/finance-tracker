@@ -28,10 +28,11 @@ import { useToast } from "@/components/ui/use-toast"
 export function AddHoldingDialog({ userId }: { userId: string }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [name, setName] = useState("")
   const [symbol, setSymbol] = useState("")
-  const [assetType, setAssetType] = useState<string>("index_fund")
+  const [assetType, setAssetType] = useState<string>("etf")
   const [quantity, setQuantity] = useState("")
-  const [costBasis, setCostBasis] = useState("")
+  const [avgBuyPrice, setAvgBuyPrice] = useState("")
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
@@ -43,10 +44,11 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
     try {
       const { error } = await supabase.from("holdings").insert({
         user_id: userId,
-        asset_symbol: symbol.toUpperCase(),
+        asset_name: name,
+        asset_symbol: symbol ? symbol.toUpperCase() : null,
         asset_type: assetType,
         quantity: parseFloat(quantity),
-        cost_basis_total: parseFloat(costBasis),
+        average_buy_price: parseFloat(avgBuyPrice),
         currency: "EUR",
       })
 
@@ -58,9 +60,10 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
       })
 
       setOpen(false)
+      setName("")
       setSymbol("")
       setQuantity("")
-      setCostBasis("")
+      setAvgBuyPrice("")
       router.refresh()
     } catch (error: any) {
       toast({
@@ -91,14 +94,26 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="symbol">Asset Symbol</Label>
+              <Label htmlFor="name">Asset Name</Label>
               <Input
-                id="symbol"
-                placeholder="e.g., SPY, BTC, VTSAX"
-                value={symbol}
-                onChange={(e) => setSymbol(e.target.value)}
+                id="name"
+                placeholder="e.g., iShares MSCI World ETF"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="symbol">Symbol (Optional)</Label>
+              <Input
+                id="symbol"
+                placeholder="e.g., IWDA, SPY, BTC"
+                value={symbol}
+                onChange={(e) => setSymbol(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Used for automatic price updates
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="assetType">Asset Type</Label>
@@ -107,6 +122,7 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="etf">ETF</SelectItem>
                   <SelectItem value="index_fund">Index Fund</SelectItem>
                   <SelectItem value="bond_fund">Bond Fund</SelectItem>
                   <SelectItem value="stock">Stock</SelectItem>
@@ -116,30 +132,30 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="quantity">Quantity</Label>
+              <Label htmlFor="quantity">Number of Shares</Label>
               <Input
                 id="quantity"
                 type="number"
                 step="0.00000001"
-                placeholder="e.g., 10.5"
+                placeholder="e.g., 100"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="costBasis">Total Cost Basis</Label>
+              <Label htmlFor="avgBuyPrice">Average Buy Price (per share)</Label>
               <Input
-                id="costBasis"
+                id="avgBuyPrice"
                 type="number"
                 step="0.01"
-                placeholder="e.g., 5000.00"
-                value={costBasis}
-                onChange={(e) => setCostBasis(e.target.value)}
+                placeholder="e.g., 75.50"
+                value={avgBuyPrice}
+                onChange={(e) => setAvgBuyPrice(e.target.value)}
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Total amount invested (including fees)
+                Price you paid per share on average
               </p>
             </div>
           </div>

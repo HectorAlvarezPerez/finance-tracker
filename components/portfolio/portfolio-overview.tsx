@@ -19,8 +19,9 @@ export function PortfolioOverview({
   let totalCurrentValue = 0
 
   holdings.forEach((holding) => {
-    totalCostBasis += holding.cost_basis_total
-    const currentPrice = prices.get(holding.asset_symbol) || 0
+    const costBasis = holding.quantity * holding.average_buy_price
+    totalCostBasis += costBasis
+    const currentPrice = holding.asset_symbol ? (prices.get(holding.asset_symbol) || 0) : 0
     totalCurrentValue += holding.quantity * currentPrice
   })
 
@@ -30,7 +31,7 @@ export function PortfolioOverview({
   // Calculate allocation by asset type
   const allocationMap = new Map<string, number>()
   holdings.forEach((holding) => {
-    const currentPrice = prices.get(holding.asset_symbol) || 0
+    const currentPrice = holding.asset_symbol ? (prices.get(holding.asset_symbol) || 0) : 0
     const value = holding.quantity * currentPrice
     const current = allocationMap.get(holding.asset_type) || 0
     allocationMap.set(holding.asset_type, current + value)

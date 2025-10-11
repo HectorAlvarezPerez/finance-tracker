@@ -112,14 +112,14 @@ CREATE TABLE IF NOT EXISTS budgets (
 CREATE TABLE IF NOT EXISTS holdings (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  asset_symbol TEXT NOT NULL,
-  asset_type TEXT NOT NULL CHECK (asset_type IN ('index_fund', 'bond_fund', 'crypto', 'stock', 'gold')),
+  asset_name TEXT NOT NULL,
+  asset_symbol TEXT,
+  asset_type TEXT NOT NULL CHECK (asset_type IN ('index_fund', 'bond_fund', 'crypto', 'stock', 'gold', 'etf')),
   quantity DECIMAL(20, 8) NOT NULL,
-  cost_basis_total DECIMAL(15, 2) NOT NULL,
-  currency TEXT NOT NULL DEFAULT 'USD',
+  average_buy_price DECIMAL(15, 4) NOT NULL,
+  currency TEXT NOT NULL DEFAULT 'EUR',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(user_id, asset_symbol)
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Prices for investment valuation

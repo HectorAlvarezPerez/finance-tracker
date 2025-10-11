@@ -36,19 +36,21 @@ export function EditHoldingDialog({
   onOpenChange: (open: boolean) => void
 }) {
   const [loading, setLoading] = useState(false)
-  const [symbol, setSymbol] = useState(holding.asset_symbol)
+  const [name, setName] = useState(holding.asset_name)
+  const [symbol, setSymbol] = useState(holding.asset_symbol || "")
   const [assetType, setAssetType] = useState<string>(holding.asset_type)
   const [quantity, setQuantity] = useState(holding.quantity.toString())
-  const [costBasis, setCostBasis] = useState(holding.cost_basis_total.toString())
+  const [avgBuyPrice, setAvgBuyPrice] = useState(holding.average_buy_price.toString())
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
 
   useEffect(() => {
-    setSymbol(holding.asset_symbol)
+    setName(holding.asset_name)
+    setSymbol(holding.asset_symbol || "")
     setAssetType(holding.asset_type)
     setQuantity(holding.quantity.toString())
-    setCostBasis(holding.cost_basis_total.toString())
+    setAvgBuyPrice(holding.average_buy_price.toString())
   }, [holding])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,10 +61,11 @@ export function EditHoldingDialog({
       const { error } = await supabase
         .from("holdings")
         .update({
-          asset_symbol: symbol.toUpperCase(),
+          asset_name: name,
+          asset_symbol: symbol ? symbol.toUpperCase() : null,
           asset_type: assetType as Holding["asset_type"],
           quantity: parseFloat(quantity),
-          cost_basis_total: parseFloat(costBasis),
+          average_buy_price: parseFloat(avgBuyPrice),
         })
         .eq("id", holding.id)
 
@@ -98,14 +101,26 @@ export function EditHoldingDialog({
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-symbol">Symbol/Ticker</Label>
+              <Label htmlFor="edit-name">Asset Name</Label>
               <Input
-                id="edit-symbol"
-                placeholder="e.g., BTC, SPY, AAPL"
-                value={symbol}
-                onChange={(e) => setSymbol(e.target.value)}
+                id="edit-name"
+                placeholder="e.g., iShares MSCI World ETF"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-symbol">Symbol (Optional)</Label>
+              <Input
+                id="edit-symbol"
+                placeholder="e.g., IWDA, SPY, BTC"
+                value={symbol}
+                onChange={(e) => setSymbol(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Used for automatic price updates
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-type">Asset Type</Label>
@@ -114,41 +129,40 @@ export function EditHoldingDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="stock">Stock</SelectItem>
-                  <SelectItem value="index_fund">Index Fund</SelectItem>
-                  <SelectItem value="crypto">Cryptocurrency</SelectItem>
-                  <SelectItem value="precious_metal">Precious Metal (Gold, Silver)</SelectItem>
-                  <SelectItem value="bond">Bond</SelectItem>
                   <SelectItem value="etf">ETF</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="index_fund">Index Fund</SelectItem>
+                  <SelectItem value="bond_fund">Bond Fund</SelectItem>
+                  <SelectItem value="stock">Stock</SelectItem>
+                  <SelectItem value="crypto">Cryptocurrency</SelectItem>
+                  <SelectItem value="gold">Gold/Precious Metals</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-quantity">Quantity</Label>
+              <Label htmlFor="edit-quantity">Number of Shares</Label>
               <Input
                 id="edit-quantity"
                 type="number"
                 step="0.00000001"
-                placeholder="e.g., 10.5"
+                placeholder="e.g., 100"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-costBasis">Total Cost Basis</Label>
+              <Label htmlFor="edit-avgBuyPrice">Average Buy Price (per share)</Label>
               <Input
-                id="edit-costBasis"
+                id="edit-avgBuyPrice"
                 type="number"
                 step="0.01"
-                placeholder="e.g., 5000.00"
-                value={costBasis}
-                onChange={(e) => setCostBasis(e.target.value)}
+                placeholder="e.g., 75.50"
+                value={avgBuyPrice}
+                onChange={(e) => setAvgBuyPrice(e.target.value)}
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Total amount invested (including fees)
+                Price you paid per share on average
               </p>
             </div>
           </div>
