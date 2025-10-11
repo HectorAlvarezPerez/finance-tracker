@@ -118,23 +118,84 @@ export function debounce<T extends (...args: any[]) => any>(
 // Generate a random color (for categories)
 export function generateRandomColor(): string {
   const colors = [
-    "#ef4444", // red
-    "#f97316", // orange
-    "#f59e0b", // amber
-    "#eab308", // yellow
-    "#84cc16", // lime
-    "#22c55e", // green
-    "#10b981", // emerald
-    "#14b8a6", // teal
-    "#06b6d4", // cyan
-    "#0ea5e9", // sky
-    "#3b82f6", // blue
-    "#6366f1", // indigo
-    "#8b5cf6", // violet
-    "#a855f7", // purple
-    "#d946ef", // fuchsia
-    "#ec4899", // pink
-    "#f43f5e", // rose
+    // Reds
+    "#dc2626", // red-600
+    "#ef4444", // red-500
+    "#f87171", // red-400
+    "#f43f5e", // rose-500
+    "#fb7185", // rose-400
+    
+    // Oranges
+    "#ea580c", // orange-600
+    "#f97316", // orange-500
+    "#fb923c", // orange-400
+    
+    // Ambers & Yellows
+    "#d97706", // amber-600
+    "#f59e0b", // amber-500
+    "#fbbf24", // amber-400
+    "#ca8a04", // yellow-600
+    "#eab308", // yellow-500
+    
+    // Limes & Greens
+    "#65a30d", // lime-600
+    "#84cc16", // lime-500
+    "#a3e635", // lime-400
+    "#16a34a", // green-600
+    "#22c55e", // green-500
+    "#4ade80", // green-400
+    
+    // Emeralds & Teals
+    "#059669", // emerald-600
+    "#10b981", // emerald-500
+    "#34d399", // emerald-400
+    "#0d9488", // teal-600
+    "#14b8a6", // teal-500
+    "#2dd4bf", // teal-400
+    
+    // Cyans & Skys
+    "#0891b2", // cyan-600
+    "#06b6d4", // cyan-500
+    "#22d3ee", // cyan-400
+    "#0284c7", // sky-600
+    "#0ea5e9", // sky-500
+    "#38bdf8", // sky-400
+    
+    // Blues
+    "#2563eb", // blue-600
+    "#3b82f6", // blue-500
+    "#60a5fa", // blue-400
+    
+    // Indigos & Violets
+    "#4f46e5", // indigo-600
+    "#6366f1", // indigo-500
+    "#818cf8", // indigo-400
+    "#7c3aed", // violet-600
+    "#8b5cf6", // violet-500
+    "#a78bfa", // violet-400
+    
+    // Purples & Fuchsias
+    "#9333ea", // purple-600
+    "#a855f7", // purple-500
+    "#c084fc", // purple-400
+    "#c026d3", // fuchsia-600
+    "#d946ef", // fuchsia-500
+    "#e879f9", // fuchsia-400
+    
+    // Pinks
+    "#db2777", // pink-600
+    "#ec4899", // pink-500
+    "#f472b6", // pink-400
+    
+    // Browns & Stones
+    "#92400e", // amber-800 (brown)
+    "#78716c", // stone-500
+    "#a8a29e", // stone-400
+    
+    // Slates & Grays
+    "#475569", // slate-600
+    "#64748b", // slate-500
+    "#94a3b8", // slate-400
   ]
   return colors[Math.floor(Math.random() * colors.length)]
 }
