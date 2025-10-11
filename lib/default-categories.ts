@@ -54,9 +54,9 @@ export const defaultCategories = {
   ],
 }
 
-export function getDefaultCategories(locale: string = "es") {
-  // Default to Spanish, use English only if explicitly requested
-  const lang = locale.startsWith("en") ? "en" : "es"
+export function getDefaultCategories(locale: string = "en") {
+  // Default to English
+  const lang = locale.startsWith("es") ? "es" : "en"
   return defaultCategories[lang]
 }
 

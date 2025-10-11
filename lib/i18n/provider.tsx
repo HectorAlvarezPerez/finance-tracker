@@ -22,7 +22,7 @@ const messages: Record<string, any> = {
 
 export function I18nProvider({ 
   children, 
-  defaultLocale = 'es' 
+  defaultLocale = 'en' 
 }: { 
   children: ReactNode
   defaultLocale?: string 
@@ -31,7 +31,7 @@ export function I18nProvider({
   const settings = settingsContext?.settings
   const loading = settingsContext?.loading ?? true
   
-  const [currentMessages, setCurrentMessages] = useState(esMessages)
+  const [currentMessages, setCurrentMessages] = useState(enMessages)
   const [locale, setLocale] = useState(defaultLocale)
 
   useEffect(() => {

@@ -25,7 +25,7 @@ export default async function DashboardLayout({
       <I18nProvider>
         <div className="min-h-screen flex flex-col">
           {/* Disabled to avoid rate limit issues - categories can be created manually */}
-          {/* {user && <InitDefaultData userId={user.id} locale={settings?.locale || 'es-ES'} />} */}
+          {/* {user && <InitDefaultData userId={user.id} locale={settings?.locale || 'en-US'} />} */}
           <Nav />
           <main className="flex-1 pb-20 md:pb-0">
             {children}

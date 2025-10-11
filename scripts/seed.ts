@@ -124,8 +124,8 @@ async function seed() {
   if (!existingSettings || existingSettings.length === 0) {
     const { error: settingsError } = await supabase.from("settings").insert({
       user_id: userId,
-      default_currency: "EUR",
-      locale: "es-ES",
+      default_currency: "USD",
+      locale: "en-US",
       theme: "system",
       insights_opt_in: true,
     } as any)

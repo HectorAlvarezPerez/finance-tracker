@@ -31,7 +31,7 @@ export default async function CategoriesPage() {
     .eq('user_id', user.id)
     .single()
 
-  const hasCategories = categories && categories.length > 0
+  const hasCategories = !!(categories && categories.length > 0)
 
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
@@ -49,14 +49,14 @@ export default async function CategoriesPage() {
         {!hasCategories && (
           <div className="flex items-center gap-2 p-4 bg-muted rounded-lg">
             <div className="flex-1">
-              <p className="text-sm font-medium">¿Empezando?</p>
+              <p className="text-sm font-medium">Getting Started?</p>
               <p className="text-xs text-muted-foreground">
-                Importa 20+ categorías predeterminadas para comenzar rápidamente
+                Import 20+ default categories to get started quickly
               </p>
             </div>
             <ImportDefaultCategoriesButton 
               userId={user.id} 
-              locale={settings?.locale || 'es-ES'}
+              locale={settings?.locale || 'en-US'}
               hasCategories={hasCategories}
             />
           </div>
