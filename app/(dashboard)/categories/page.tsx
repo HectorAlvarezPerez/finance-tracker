@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { getTranslations } from 'next-intl/server'
 import { CategoriesList } from "@/components/categories/categories-list"
 import { AddCategoryDialog } from "@/components/categories/add-category-dialog"
+import { ImportDefaultCategoriesButton } from "@/components/categories/import-default-categories-button"
 
 export default async function CategoriesPage() {
   const supabase = createServerClient()
@@ -23,16 +24,43 @@ export default async function CategoriesPage() {
     .order("type", { ascending: true })
     .order("name", { ascending: true })
 
+  // Get user locale for default categories
+  const { data: settings } = await supabase
+    .from('settings')
+    .select('locale')
+    .eq('user_id', user.id)
+    .single()
+
+  const hasCategories = categories && categories.length > 0
+
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{t('title')}</h1>
-          <p className="text-muted-foreground">
-            {t('subtitle')}
-          </p>
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">{t('title')}</h1>
+            <p className="text-muted-foreground">
+              {t('subtitle')}
+            </p>
+          </div>
+          <AddCategoryDialog userId={user.id} />
         </div>
-        <AddCategoryDialog userId={user.id} />
+        
+        {!hasCategories && (
+          <div className="flex items-center gap-2 p-4 bg-muted rounded-lg">
+            <div className="flex-1">
+              <p className="text-sm font-medium">¿Empezando?</p>
+              <p className="text-xs text-muted-foreground">
+                Importa 20+ categorías predeterminadas para comenzar rápidamente
+              </p>
+            </div>
+            <ImportDefaultCategoriesButton 
+              userId={user.id} 
+              locale={settings?.locale || 'es-ES'}
+              hasCategories={hasCategories}
+            />
+          </div>
+        )}
       </div>
 
       <CategoriesList categories={categories || []} userId={user.id} />
