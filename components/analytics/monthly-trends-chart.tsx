@@ -12,6 +12,7 @@ import {
   ResponsiveContainer, 
   Legend 
 } from "recharts"
+import { useCurrency } from "@/lib/hooks/use-currency"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"]
@@ -21,6 +22,8 @@ interface MonthlyTrendsChartProps {
 }
 
 export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
+  const { formatCurrency, currency } = useCurrency()
+  
   // Group by month and calculate metrics
   const monthlyData = new Map<string, { 
     income: number
@@ -110,7 +113,10 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
             <YAxis 
               yAxisId="left"
               tick={{ fontSize: 12 }}
-              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              tickFormatter={(value) => {
+                const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
+                return `${symbol}${(value / 1000).toFixed(0)}k`
+              }}
               label={{ value: "Net Income", angle: -90, position: "insideLeft", style: { fontSize: 12 } }}
             />
             <YAxis 
@@ -125,7 +131,7 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
                 if (name === "Savings Rate") {
                   return [`${value}%`, name]
                 }
-                return [`$${value.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, name]
+                return [formatCurrency(value), name]
               }}
               labelStyle={{ color: "hsl(var(--foreground))" }}
               contentStyle={{
@@ -159,10 +165,7 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Avg Net</p>
             <p className="text-lg font-bold">
-              ${(data.reduce((sum, d) => sum + d.net, 0) / data.length).toLocaleString(undefined, { 
-                minimumFractionDigits: 0, 
-                maximumFractionDigits: 0 
-              })}
+              {formatCurrency(data.reduce((sum, d) => sum + d.net, 0) / data.length)}
             </p>
           </div>
           <div className="text-center">

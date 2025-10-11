@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from "recharts"
+import { useCurrency } from "@/lib/hooks/use-currency"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"]
@@ -11,6 +12,8 @@ interface IncomeVsExpensesChartProps {
 }
 
 export function IncomeVsExpensesChart({ transactions }: IncomeVsExpensesChartProps) {
+  const { formatCurrency, currency } = useCurrency()
+  
   // Group by month
   const monthlyData = new Map<string, { income: number; expenses: number }>()
   
@@ -78,7 +81,7 @@ export function IncomeVsExpensesChart({ transactions }: IncomeVsExpensesChartPro
         <CardDescription>
           Last 6 months - Avg Net: 
           <span className={avgNet >= 0 ? "text-green-600 ml-1" : "text-red-600 ml-1"}>
-            ${avgNet.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {formatCurrency(avgNet)}
           </span>
         </CardDescription>
       </CardHeader>
@@ -92,11 +95,14 @@ export function IncomeVsExpensesChart({ transactions }: IncomeVsExpensesChartPro
             />
             <YAxis 
               tick={{ fontSize: 12 }}
-              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              tickFormatter={(value) => {
+                const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
+                return `${symbol}${(value / 1000).toFixed(0)}k`
+              }}
             />
             <Tooltip 
               formatter={(value: number, name: string) => [
-                `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                formatCurrency(value),
                 name.charAt(0).toUpperCase() + name.slice(1)
               ]}
               labelStyle={{ color: "hsl(var(--foreground))" }}
@@ -127,19 +133,19 @@ export function IncomeVsExpensesChart({ transactions }: IncomeVsExpensesChartPro
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Total Income</p>
             <p className="text-lg font-bold text-green-600">
-              ${totals.income.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {formatCurrency(totals.income)}
             </p>
           </div>
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Total Expenses</p>
             <p className="text-lg font-bold text-red-600">
-              ${totals.expenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {formatCurrency(totals.expenses)}
             </p>
           </div>
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Net</p>
             <p className={`text-lg font-bold ${totals.net >= 0 ? "text-green-600" : "text-red-600"}`}>
-              ${totals.net.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {formatCurrency(totals.net)}
             </p>
           </div>
         </div>

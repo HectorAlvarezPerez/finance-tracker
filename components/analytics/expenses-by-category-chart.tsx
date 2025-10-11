@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
+import { useCurrency } from "@/lib/hooks/use-currency"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
@@ -13,6 +14,8 @@ interface ExpensesByCategoryChartProps {
 }
 
 export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChartProps) {
+  const { formatCurrency, currency } = useCurrency()
+  
   // Get top 5 expense categories
   const categoryTotals = new Map<string, { name: string; color: string; total: number }>()
   
@@ -109,10 +112,13 @@ export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChar
             />
             <YAxis 
               tick={{ fontSize: 12 }}
-              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              tickFormatter={(value) => {
+                const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
+                return `${symbol}${(value / 1000).toFixed(0)}k`
+              }}
             />
             <Tooltip 
-              formatter={(value: number) => `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              formatter={(value: number) => formatCurrency(value)}
               labelStyle={{ color: "hsl(var(--foreground))" }}
               contentStyle={{
                 backgroundColor: "hsl(var(--background))",
@@ -145,7 +151,7 @@ export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChar
                 />
                 <p className="text-xs text-muted-foreground truncate">{category}</p>
                 <p className="text-sm font-semibold">
-                  ${total.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                  {formatCurrency(total)}
                 </p>
               </div>
             )

@@ -1,6 +1,7 @@
 "use client"
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
+import { useCurrency } from "@/lib/hooks/use-currency"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
@@ -8,6 +9,8 @@ type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
 }
 
 export function SpendingChart({ transactions }: { transactions: Transaction[] }) {
+  const { formatCurrency } = useCurrency()
+  
   // Group by category and calculate total expenses only
   const categoryMap = new Map<string, { name: string; value: number; color: string }>()
 
@@ -53,7 +56,7 @@ export function SpendingChart({ transactions }: { transactions: Transaction[] })
             <Cell key={`cell-${index}`} fill={entry.color} />
           ))}
         </Pie>
-        <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+        <Tooltip formatter={(value: number) => formatCurrency(value)} />
         <Legend />
       </PieChart>
     </ResponsiveContainer>

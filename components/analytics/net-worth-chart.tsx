@@ -3,6 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
 import { TrendingUp, TrendingDown } from "lucide-react"
+import { useCurrency } from "@/lib/hooks/use-currency"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"]
@@ -14,6 +15,8 @@ interface NetWorthChartProps {
 }
 
 export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
+  const { formatCurrency, currency } = useCurrency()
+  
   // Calculate net worth over time
   const calculateNetWorth = () => {
     // Calculate current balance from all transactions
@@ -111,7 +114,7 @@ export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
             <span>{isPositive ? "+" : ""}{percentChange.toFixed(1)}%</span>
           </div>
         </CardTitle>
-        <CardDescription>Last 90 days - Current: ${lastValue.toLocaleString()}</CardDescription>
+        <CardDescription>Last 90 days - Current: {formatCurrency(lastValue)}</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -124,10 +127,13 @@ export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
             />
             <YAxis 
               tick={{ fontSize: 12 }}
-              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+              tickFormatter={(value) => {
+                const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
+                return `${symbol}${(value / 1000).toFixed(0)}k`
+              }}
             />
             <Tooltip 
-              formatter={(value: number) => [`$${value.toLocaleString()}`, "Net Worth"]}
+              formatter={(value: number) => [formatCurrency(value), "Net Worth"]}
               labelStyle={{ color: "hsl(var(--foreground))" }}
               contentStyle={{
                 backgroundColor: "hsl(var(--background))",
