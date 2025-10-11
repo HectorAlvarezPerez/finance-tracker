@@ -15,6 +15,13 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Upload } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
@@ -39,6 +46,7 @@ export function SmartCSVImportDialog({
   const [statusMessage, setStatusMessage] = useState("")
   const [file, setFile] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [selectedAccountId, setSelectedAccountId] = useState<string>("")
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
@@ -163,7 +171,17 @@ export function SmartCSVImportDialog({
     if (!accounts || accounts.length === 0) {
       toast({
         title: t('error'),
-        description: t('noAccount'),
+        description: "You need to create at least one account first",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Validate that user has selected an account
+    if (!selectedAccountId) {
+      toast({
+        title: t('error'),
+        description: "Please select an account for these transactions",
         variant: "destructive",
       })
       return
@@ -216,7 +234,7 @@ export function SmartCSVImportDialog({
 
       const transactions = rows.map((row: any) => ({
         user_id: userId,
-        account_id: accounts[0]?.id || "",
+        account_id: selectedAccountId,
         date: parseDate(row[dateCol]),
         description: row[descCol],
         amount: parseAmount(row[amountCol]),
@@ -249,6 +267,7 @@ export function SmartCSVImportDialog({
       // Reset after close
       setTimeout(() => {
         setFile(null)
+        setSelectedAccountId("")
         setProgress(0)
         setStatusMessage("")
       }, 500)
@@ -337,6 +356,26 @@ export function SmartCSVImportDialog({
             {t('fileInfo')}
           </p>
 
+          {/* Account Selection */}
+          <div className="space-y-2">
+            <Label htmlFor="account">{tForms('account')}</Label>
+            <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
+              <SelectTrigger>
+                <SelectValue placeholder={tForms('selectAccount')} />
+              </SelectTrigger>
+              <SelectContent>
+                {accounts.map((account) => (
+                  <SelectItem key={account.id} value={account.id}>
+                    {account.name} ({account.type})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              All imported transactions will be assigned to this account
+            </p>
+          </div>
+
           {loading && (
             <div className="space-y-2">
               <Progress value={progress} className="w-full" />
@@ -374,7 +413,7 @@ export function SmartCSVImportDialog({
         <DialogFooter>
           <Button
             onClick={handleImport}
-            disabled={!file || loading}
+            disabled={!file || !selectedAccountId || loading}
             className="w-full"
           >
             {loading ? (
