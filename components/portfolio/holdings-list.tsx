@@ -77,7 +77,7 @@ export function HoldingsList({
                       </div>
                     ) : (
                       <div className="text-sm text-yellow-600 dark:text-yellow-500">
-                        ⚠️ No price set - click "Set Price"
+                        ⚠️ No price set - click &quot;Set Price&quot;
                       </div>
                     )}
                   </div>

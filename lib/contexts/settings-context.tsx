@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import type { Database } from "@/types/database"
 
@@ -25,7 +25,7 @@ export function SettingsProvider({
   const [loading, setLoading] = useState(true)
   const supabase = createBrowserClient()
 
-  const loadSettings = async () => {
+  const loadSettings = useCallback(async () => {
     if (!userId) {
       setSettings(null)
       setLoading(false)
@@ -49,11 +49,11 @@ export function SettingsProvider({
     } finally {
       setLoading(false)
     }
-  }
+  }, [userId, supabase])
 
   useEffect(() => {
     loadSettings()
-  }, [userId])
+  }, [loadSettings])
 
   return (
     <SettingsContext.Provider value={{ 
