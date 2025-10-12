@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { Wallet, Eye, EyeOff } from "lucide-react"
+import { Wallet, Eye, EyeOff, Check, X } from "lucide-react"
 
 export default function SignupPage() {
   const [email, setEmail] = useState("")
@@ -24,8 +24,28 @@ export default function SignupPage() {
   const supabase = createBrowserClient()
   const t = useTranslations('auth.signup')
 
+  // Password validation
+  const passwordRequirements = {
+    minLength: password.length >= 8,
+    hasUppercase: /[A-Z]/.test(password),
+    hasLowercase: /[a-z]/.test(password),
+    hasNumber: /\d/.test(password),
+    hasSpecial: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+  }
+
+  const allRequirementsMet = Object.values(passwordRequirements).every(Boolean)
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!allRequirementsMet) {
+      toast({
+        title: "Error",
+        description: "Please meet all password requirements",
+        variant: "destructive",
+      })
+      return
+    }
 
     if (password !== confirmPassword) {
       toast({
@@ -124,6 +144,33 @@ export default function SignupPage() {
                   )}
                 </button>
               </div>
+              {password && (
+                <div className="space-y-1 p-3 rounded-md bg-muted/50 text-xs">
+                  <p className="font-medium mb-1.5">Password must contain:</p>
+                  <div className="space-y-1">
+                    <div className={`flex items-center gap-1.5 ${passwordRequirements.minLength ? 'text-green-600' : 'text-muted-foreground'}`}>
+                      {passwordRequirements.minLength ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                      <span>At least 8 characters</span>
+                    </div>
+                    <div className={`flex items-center gap-1.5 ${passwordRequirements.hasUppercase ? 'text-green-600' : 'text-muted-foreground'}`}>
+                      {passwordRequirements.hasUppercase ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                      <span>One uppercase letter (A-Z)</span>
+                    </div>
+                    <div className={`flex items-center gap-1.5 ${passwordRequirements.hasLowercase ? 'text-green-600' : 'text-muted-foreground'}`}>
+                      {passwordRequirements.hasLowercase ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                      <span>One lowercase letter (a-z)</span>
+                    </div>
+                    <div className={`flex items-center gap-1.5 ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-muted-foreground'}`}>
+                      {passwordRequirements.hasNumber ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                      <span>One number (0-9)</span>
+                    </div>
+                    <div className={`flex items-center gap-1.5 ${passwordRequirements.hasSpecial ? 'text-green-600' : 'text-muted-foreground'}`}>
+                      {passwordRequirements.hasSpecial ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                      <span>One special character (!@#$...)</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
