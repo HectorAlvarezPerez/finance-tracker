@@ -16,6 +16,7 @@ import {
   Repeat
 } from "lucide-react"
 import { ThemeToggle } from "./theme-toggle"
+import { LogoutButton } from "./logout-button"
 
 export function Nav() {
   const pathname = usePathname()
@@ -101,6 +102,7 @@ export function Nav() {
       </div>
 
       <div className="flex items-center gap-2">
+        <LogoutButton />
         <ThemeToggle />
       </div>
     </nav>
