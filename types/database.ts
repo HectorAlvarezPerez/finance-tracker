@@ -238,10 +238,11 @@ export interface Database {
         Row: {
           id: string
           user_id: string
-          asset_symbol: string
-          asset_type: "index_fund" | "bond_fund" | "crypto" | "stock" | "gold"
+          asset_name: string
+          asset_symbol: string | null
+          asset_type: "index_fund" | "bond_fund" | "crypto" | "stock" | "gold" | "etf"
           quantity: number
-          cost_basis_total: number
+          average_buy_price: number
           currency: string
           created_at: string
           updated_at: string
@@ -249,10 +250,11 @@ export interface Database {
         Insert: {
           id?: string
           user_id: string
-          asset_symbol: string
-          asset_type: "index_fund" | "bond_fund" | "crypto" | "stock" | "gold"
+          asset_name: string
+          asset_symbol?: string | null
+          asset_type: "index_fund" | "bond_fund" | "crypto" | "stock" | "gold" | "etf"
           quantity: number
-          cost_basis_total: number
+          average_buy_price: number
           currency?: string
           created_at?: string
           updated_at?: string
@@ -260,10 +262,11 @@ export interface Database {
         Update: {
           id?: string
           user_id?: string
-          asset_symbol?: string
-          asset_type?: "index_fund" | "bond_fund" | "crypto" | "stock" | "gold"
+          asset_name?: string
+          asset_symbol?: string | null
+          asset_type?: "index_fund" | "bond_fund" | "crypto" | "stock" | "gold" | "etf"
           quantity?: number
-          cost_basis_total?: number
+          average_buy_price?: number
           currency?: string
           created_at?: string
           updated_at?: string
