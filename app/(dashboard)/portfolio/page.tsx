@@ -4,7 +4,6 @@ import { getTranslations } from 'next-intl/server'
 import { PortfolioOverview } from "@/components/portfolio/portfolio-overview"
 import { HoldingsList } from "@/components/portfolio/holdings-list"
 import { AddHoldingDialog } from "@/components/portfolio/add-holding-dialog"
-import { ManagePricesDialog } from "@/components/portfolio/manage-prices-dialog"
 
 export default async function PortfolioPage() {
   const supabase = createServerClient()
@@ -53,7 +52,6 @@ export default async function PortfolioPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <ManagePricesDialog userId={user.id} holdings={holdings || []} />
           <AddHoldingDialog userId={user.id} />
         </div>
       </div>
