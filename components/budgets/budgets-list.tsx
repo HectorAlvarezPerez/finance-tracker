@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
@@ -22,14 +23,16 @@ export function BudgetsList({
   transactions: Transaction[]
   userId: string
 }) {
+  const t = useTranslations('budgets')
+  
   if (budgets.length === 0) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No budgets yet</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('noBudgetsYet')}</h3>
           <p className="text-sm text-muted-foreground text-center mb-4">
-            Create your first budget to start tracking your spending
+            {t('createFirst')}
           </p>
         </CardContent>
       </Card>
@@ -64,7 +67,7 @@ export function BudgetsList({
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base">
-                  {budget.categories?.name || "Overall"}
+                  {budget.categories?.name || t('overall')}
                 </CardTitle>
                 <StatusIcon className={`h-5 w-5 ${statusColor}`} />
               </div>
@@ -72,7 +75,7 @@ export function BudgetsList({
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Spent</span>
+                  <span className="text-muted-foreground">{t('spentLabel')}</span>
                   <span className="font-semibold">{formatCurrency(spent)}</span>
                 </div>
                 <Progress
@@ -86,20 +89,20 @@ export function BudgetsList({
                   }
                 />
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Budget</span>
+                  <span className="text-muted-foreground">{t('budgetLabel')}</span>
                   <span className="font-semibold">{formatCurrency(budget.amount_total)}</span>
                 </div>
               </div>
 
               <div className="pt-4 border-t">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Remaining</span>
+                  <span className="text-sm font-medium">{t('remainingLabel')}</span>
                   <span className={`text-sm font-bold ${remaining >= 0 ? "text-green-600" : "text-red-600"}`}>
                     {formatCurrency(remaining)}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {percentage.toFixed(0)}% of budget used
+                  {percentage.toFixed(0)}{t('budgetUsed')}
                 </p>
               </div>
             </CardContent>

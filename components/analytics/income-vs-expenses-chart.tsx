@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from "recharts"
 import { useCurrency } from "@/lib/hooks/use-currency"
@@ -12,6 +13,7 @@ interface IncomeVsExpensesChartProps {
 }
 
 export function IncomeVsExpensesChart({ transactions }: IncomeVsExpensesChartProps) {
+  const t = useTranslations('insights')
   const { formatCurrency, currency } = useCurrency()
   
   // Group by month
@@ -62,12 +64,12 @@ export function IncomeVsExpensesChart({ transactions }: IncomeVsExpensesChartPro
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Income vs Expenses</CardTitle>
-          <CardDescription>Compare your income and spending by month</CardDescription>
+          <CardTitle>{t('incomeVsExpenses')}</CardTitle>
+          <CardDescription>{t('compareIncome')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-            No transactions yet
+            {t('noTransactions')}
           </div>
         </CardContent>
       </Card>
@@ -77,9 +79,9 @@ export function IncomeVsExpensesChart({ transactions }: IncomeVsExpensesChartPro
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Income vs Expenses</CardTitle>
+        <CardTitle>{t('incomeVsExpenses')}</CardTitle>
         <CardDescription>
-          Last 6 months - Avg Net: 
+          {t('last6Months')} - {t('avgNet')}: 
           <span className={avgNet >= 0 ? "text-green-600 ml-1" : "text-red-600 ml-1"}>
             {formatCurrency(avgNet)}
           </span>
@@ -116,13 +118,13 @@ export function IncomeVsExpensesChart({ transactions }: IncomeVsExpensesChartPro
             <Bar 
               dataKey="income" 
               fill="#22c55e" 
-              name="Income"
+              name={t('income')}
               radius={[8, 8, 0, 0]}
             />
             <Bar 
               dataKey="expenses" 
               fill="#ef4444" 
-              name="Expenses"
+              name={t('expenses')}
               radius={[8, 8, 0, 0]}
             />
           </BarChart>
@@ -131,19 +133,19 @@ export function IncomeVsExpensesChart({ transactions }: IncomeVsExpensesChartPro
         {/* Summary Stats */}
         <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Total Income</p>
+            <p className="text-sm text-muted-foreground">{t('totalIncome')}</p>
             <p className="text-lg font-bold text-green-600">
               {formatCurrency(totals.income)}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Total Expenses</p>
+            <p className="text-sm text-muted-foreground">{t('totalExpenses')}</p>
             <p className="text-lg font-bold text-red-600">
               {formatCurrency(totals.expenses)}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Net</p>
+            <p className="text-sm text-muted-foreground">{t('net')}</p>
             <p className={`text-lg font-bold ${totals.net >= 0 ? "text-green-600" : "text-red-600"}`}>
               {formatCurrency(totals.net)}
             </p>
