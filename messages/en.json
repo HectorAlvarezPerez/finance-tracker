@@ -21,7 +21,8 @@
     "viewAll": "View All",
     "budgetOverview": "Budget Overview",
     "noBudgets": "No budgets for this month",
-    "createBudget": "Create Budget"
+    "createBudget": "Create Budget",
+    "noTransactionsYet": "No transactions yet"
   },
   "transactions": {
     "title": "Transactions",
@@ -86,7 +87,17 @@
     "noBudgets": "No budgets for this month",
     "spent": "spent",
     "of": "of",
-    "remaining": "remaining"
+    "remaining": "remaining",
+    "noBudgetsYet": "No budgets yet",
+    "createFirst": "Create your first budget to start tracking your spending",
+    "overall": "Overall",
+    "spentLabel": "Spent",
+    "budgetLabel": "Budget",
+    "remainingLabel": "Remaining",
+    "budgetUsed": "% of budget used",
+    "setBudgets": "Set budgets",
+    "viewAll": "View all",
+    "noBudgetsThisMonth": "No budgets set for this month. Create your first budget to start tracking your spending."
   },
   "insights": {
     "title": "Analytics & Insights",
@@ -96,7 +107,31 @@
     "expensesByCategory": "Expenses by Category",
     "monthlyTrends": "Monthly Trends",
     "currentMonth": "Current Month Insights",
-    "currentMonthTitle": "Current Month Insights"
+    "currentMonthTitle": "Current Month Insights",
+    "noData": "No data available",
+    "noTransactions": "No transactions yet",
+    "trackWealth": "Track your total wealth across all accounts",
+    "compareIncome": "Compare your income and spending by month",
+    "netIncomeRate": "Net income and savings rate over time",
+    "last90Days": "Last 90 days",
+    "last6Months": "Last 6 months",
+    "current": "Current",
+    "avgNet": "Avg Net",
+    "totalIncome": "Total Income",
+    "totalExpenses": "Total Expenses",
+    "net": "Net",
+    "income": "Income",
+    "expenses": "Expenses",
+    "avgSavingsRate": "Avg Savings Rate",
+    "netIncome": "Net Income",
+    "savingsRate": "Savings Rate",
+    "avgNetLabel": "Avg Net",
+    "bestMonth": "Best Month",
+    "avgTransactions": "Avg Transactions",
+    "trend": "Trend",
+    "up": "Up",
+    "down": "Down",
+    "netWorthLabel": "Net Worth"
   },
   "portfolio": {
     "title": "Portfolio",

@@ -21,7 +21,8 @@
     "viewAll": "Ver Todo",
     "budgetOverview": "Resumen de Presupuestos",
     "noBudgets": "No hay presupuestos para este mes",
-    "createBudget": "Crear Presupuesto"
+    "createBudget": "Crear Presupuesto",
+    "noTransactionsYet": "No hay transacciones todavía"
   },
   "transactions": {
     "title": "Transacciones",
@@ -86,7 +87,17 @@
     "noBudgets": "No hay presupuestos para este mes",
     "spent": "gastado",
     "of": "de",
-    "remaining": "restante"
+    "remaining": "restante",
+    "noBudgetsYet": "No hay presupuestos todavía",
+    "createFirst": "Crea tu primer presupuesto para empezar a controlar tus gastos",
+    "overall": "General",
+    "spentLabel": "Gastado",
+    "budgetLabel": "Presupuesto",
+    "remainingLabel": "Restante",
+    "budgetUsed": "% del presupuesto usado",
+    "setBudgets": "Configurar presupuestos",
+    "viewAll": "Ver todo",
+    "noBudgetsThisMonth": "No hay presupuestos configurados para este mes. Crea tu primer presupuesto para empezar a controlar tus gastos."
   },
   "insights": {
     "title": "Análisis y Estadísticas",
@@ -96,7 +107,31 @@
     "expensesByCategory": "Gastos por Categoría",
     "monthlyTrends": "Tendencias Mensuales",
     "currentMonth": "Estadísticas del Mes Actual",
-    "currentMonthTitle": "Estadísticas del Mes Actual"
+    "currentMonthTitle": "Estadísticas del Mes Actual",
+    "noData": "No hay datos disponibles",
+    "noTransactions": "No hay transacciones todavía",
+    "trackWealth": "Rastrea tu patrimonio total en todas las cuentas",
+    "compareIncome": "Compara tus ingresos y gastos por mes",
+    "netIncomeRate": "Ingreso neto y tasa de ahorro en el tiempo",
+    "last90Days": "Últimos 90 días",
+    "last6Months": "Últimos 6 meses",
+    "current": "Actual",
+    "avgNet": "Neto Promedio",
+    "totalIncome": "Total Ingresos",
+    "totalExpenses": "Total Gastos",
+    "net": "Neto",
+    "income": "Ingresos",
+    "expenses": "Gastos",
+    "avgSavingsRate": "Tasa de Ahorro Promedio",
+    "netIncome": "Ingreso Neto",
+    "savingsRate": "Tasa de Ahorro",
+    "avgNetLabel": "Neto Promedio",
+    "bestMonth": "Mejor Mes",
+    "avgTransactions": "Transacciones Promedio",
+    "trend": "Tendencia",
+    "up": "Subida",
+    "down": "Bajada",
+    "netWorthLabel": "Patrimonio Neto"
   },
   "portfolio": {
     "title": "Portafolio",
