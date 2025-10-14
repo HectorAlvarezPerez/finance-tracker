@@ -11,6 +11,23 @@ export async function middleware(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // Set locale cookie from user settings if logged in and not already set
+  if (user && !req.cookies.get('NEXT_LOCALE')) {
+    const { data: settings } = await supabase
+      .from('settings')
+      .select('locale')
+      .eq('user_id', user.id)
+      .single()
+
+    if (settings?.locale) {
+      res.cookies.set('NEXT_LOCALE', settings.locale, {
+        path: '/',
+        maxAge: 60 * 60 * 24 * 365, // 1 year
+        sameSite: 'lax',
+      })
+    }
+  }
+
   // Protect routes
   const protectedRoutes = [
     "/dashboard",
