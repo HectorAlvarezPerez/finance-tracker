@@ -22,7 +22,13 @@
     "budgetOverview": "Resumen de Presupuestos",
     "noBudgets": "No hay presupuestos para este mes",
     "createBudget": "Crear Presupuesto",
-    "noTransactionsYet": "No hay transacciones todavía"
+    "noTransactionsYet": "No hay transacciones todavía",
+    "selectMonth": "Seleccionar mes",
+    "allAccounts": "Todas las Cuentas",
+    "thisMonth": "Este mes",
+    "selectedAccount": "Cuenta seleccionada",
+    "acrossAccounts": "En {count} cuentas",
+    "loading": "Cargando..."
   },
   "transactions": {
     "title": "Transacciones",
@@ -227,6 +233,16 @@
     "selectAccount": "Seleccionar Cuenta",
     "selectType": "Seleccionar Tipo",
     "selectFrequency": "Seleccionar Frecuencia",
+    "interval": "Intervalo",
+    "dayOfMonth": "Día del Mes",
+    "dayOfWeek": "Día de la Semana",
+    "sunday": "Domingo",
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
     "cancel": "Cancelar",
     "save": "Guardar",
     "saving": "Guardando...",
@@ -284,6 +300,12 @@
     "noRecurring": "No hay transacciones recurrentes todavía"
   },
   "dialogs": {
+    "addRecurring": {
+      "title": "Añadir Transacción Recurrente",
+      "subtitle": "Crear una transacción que se repite automáticamente",
+      "success": "Transacción recurrente creada correctamente",
+      "error": "Error al crear la transacción recurrente"
+    },
     "addTransaction": {
       "title": "Añadir Transacción",
       "subtitle": "Crear una nueva transacción"

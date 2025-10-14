@@ -22,7 +22,13 @@
     "budgetOverview": "Budget Overview",
     "noBudgets": "No budgets for this month",
     "createBudget": "Create Budget",
-    "noTransactionsYet": "No transactions yet"
+    "noTransactionsYet": "No transactions yet",
+    "selectMonth": "Select month",
+    "allAccounts": "All Accounts",
+    "thisMonth": "This month",
+    "selectedAccount": "Selected account",
+    "acrossAccounts": "Across {count} accounts",
+    "loading": "Loading..."
   },
   "transactions": {
     "title": "Transactions",
@@ -218,6 +224,16 @@
     "noCategory": "No category",
     "selectAccount": "Select account",
     "selectCategory": "Select category",
+    "interval": "Interval",
+    "dayOfMonth": "Day of Month",
+    "dayOfWeek": "Day of Week",
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
     "cancel": "Cancel",
     "save": "Save",
     "saving": "Saving...",
@@ -241,6 +257,12 @@
     "cannotBeUndone": "This action cannot be undone."
   },
   "dialogs": {
+    "addRecurring": {
+      "title": "Add Recurring Transaction",
+      "subtitle": "Set up an automated recurring transaction",
+      "success": "Recurring transaction created successfully",
+      "error": "Failed to create recurring transaction"
+    },
     "addTransaction": {
       "title": "Add Transaction",
       "subtitle": "Create a new transaction",

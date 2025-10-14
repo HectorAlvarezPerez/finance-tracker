@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import {
   Select,
   SelectContent,
@@ -16,6 +17,8 @@ import type { Database } from "@/types/database"
 type Account = Database["public"]["Tables"]["accounts"]["Row"]
 
 export function DashboardWrapper({ userId }: { userId: string }) {
+  const t = useTranslations('dashboard')
+  const tForms = useTranslations('forms')
   const supabase = createBrowserClient()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [selectedAccountId, setSelectedAccountId] = useState<string>("all")
@@ -62,9 +65,9 @@ export function DashboardWrapper({ userId }: { userId: string }) {
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <h1 className="text-3xl font-bold">{t('title')}</h1>
             <p className="text-muted-foreground">
-              Overview of your financial data
+              {t('subtitle')}
             </p>
           </div>
         </div>
@@ -76,7 +79,7 @@ export function DashboardWrapper({ userId }: { userId: string }) {
             <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <Select value={selectedMonth} onValueChange={setSelectedMonth}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select month" />
+                <SelectValue placeholder={t('selectMonth')} />
               </SelectTrigger>
               <SelectContent>
                 {monthOptions.map((month) => (
@@ -93,10 +96,10 @@ export function DashboardWrapper({ userId }: { userId: string }) {
             <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select account" />
+                <SelectValue placeholder={tForms('selectAccount')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Accounts</SelectItem>
+                <SelectItem value="all">{t('allAccounts')}</SelectItem>
                 {accounts.map((account) => (
                   <SelectItem key={account.id} value={account.id}>
                     {account.name}

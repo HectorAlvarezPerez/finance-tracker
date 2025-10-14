@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
 import { TrendingUp, TrendingDown } from "lucide-react"
@@ -15,6 +16,7 @@ interface NetWorthChartProps {
 }
 
 export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
+  const t = useTranslations('insights')
   const { formatCurrency, currency } = useCurrency()
   
   // Calculate net worth over time
@@ -87,12 +89,12 @@ export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Net Worth Over Time</CardTitle>
-          <CardDescription>Track your total wealth across all accounts</CardDescription>
+          <CardTitle>{t('netWorth')}</CardTitle>
+          <CardDescription>{t('trackWealth')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-            No data available
+            {t('noData')}
           </div>
         </CardContent>
       </Card>
@@ -103,13 +105,13 @@ export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span>Net Worth Over Time</span>
+          <span>{t('netWorth')}</span>
           <div className={`flex items-center gap-1 text-sm ${isPositive ? "text-green-600" : "text-red-600"}`}>
             {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
             <span>{isPositive ? "+" : ""}{percentChange.toFixed(1)}%</span>
           </div>
         </CardTitle>
-        <CardDescription>Last 90 days - Current: {formatCurrency(lastValue)}</CardDescription>
+        <CardDescription>{t('last90Days')} - {t('current')}: {formatCurrency(lastValue)}</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -128,7 +130,7 @@ export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
               }}
             />
             <Tooltip 
-              formatter={(value: number) => [formatCurrency(value), "Net Worth"]}
+              formatter={(value: number) => [formatCurrency(value), t('netWorthLabel')]}
               labelStyle={{ color: "hsl(var(--foreground))" }}
               contentStyle={{
                 backgroundColor: "hsl(var(--background))",
@@ -142,7 +144,7 @@ export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
               stroke="hsl(var(--primary))" 
               strokeWidth={2}
               dot={false}
-              name="Net Worth"
+              name={t('netWorthLabel')}
             />
           </LineChart>
         </ResponsiveContainer>

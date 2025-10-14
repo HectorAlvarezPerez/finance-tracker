@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { TrendingUp, TrendingDown, Wallet, DollarSign, ChevronDown, ChevronUp } from "lucide-react"
@@ -22,6 +23,8 @@ export function DashboardOverview({
   selectedAccountId?: string
   selectedMonth?: string
 }) {
+  const t = useTranslations('dashboard')
+  const tInsights = useTranslations('insights')
   const supabase = createBrowserClient()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -115,7 +118,7 @@ export function DashboardOverview({
 
   // Get period label
   const getPeriodLabel = () => {
-    if (!selectedMonth) return "This month"
+    if (!selectedMonth) return t('thisMonth')
     
     const [year, month] = selectedMonth.split('-').map(Number)
     const now = new Date()
@@ -123,7 +126,7 @@ export function DashboardOverview({
     const currentMonth = now.getMonth() + 1
     
     if (year === currentYear && month === currentMonth) {
-      return "This month"
+      return t('thisMonth')
     }
     
     const date = new Date(year, month - 1)
@@ -135,7 +138,7 @@ export function DashboardOverview({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Loading dashboard...</p>
+        <p className="text-muted-foreground">{t('loading')}</p>
       </div>
     )
   }
@@ -145,15 +148,15 @@ export function DashboardOverview({
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('totalBalance')}</CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalBalance)}</div>
             <p className="text-xs text-muted-foreground">
               {selectedAccountId === "all" 
-                ? `Across ${accounts.length} accounts`
-                : `${accounts.find(a => a.id === selectedAccountId)?.name || "Selected account"}`
+                ? t('acrossAccounts', { count: accounts.length })
+                : `${accounts.find(a => a.id === selectedAccountId)?.name || t('selectedAccount')}`
               }
             </p>
           </CardContent>
@@ -161,7 +164,7 @@ export function DashboardOverview({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Income</CardTitle>
+            <CardTitle className="text-sm font-medium">{tInsights('income')}</CardTitle>
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-green-600" />
               {incomeTransactions.length > 0 && (
@@ -210,7 +213,7 @@ export function DashboardOverview({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Expenses</CardTitle>
+            <CardTitle className="text-sm font-medium">{tInsights('expenses')}</CardTitle>
             <div className="flex items-center gap-2">
               <TrendingDown className="h-4 w-4 text-red-600" />
               {expenseTransactions.length > 0 && (
@@ -259,7 +262,7 @@ export function DashboardOverview({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Net Cash Flow</CardTitle>
+            <CardTitle className="text-sm font-medium">{tInsights('net')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>

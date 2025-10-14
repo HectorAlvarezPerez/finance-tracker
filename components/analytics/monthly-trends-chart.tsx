@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { 
   ComposedChart, 
@@ -22,6 +23,7 @@ interface MonthlyTrendsChartProps {
 }
 
 export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
+  const t = useTranslations('insights')
   const { formatCurrency, currency } = useCurrency()
   
   // Group by month and calculate metrics
@@ -79,12 +81,12 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Monthly Trends</CardTitle>
-          <CardDescription>Net income and savings rate over time</CardDescription>
+          <CardTitle>{t('monthlyTrends')}</CardTitle>
+          <CardDescription>{t('netIncomeRate')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-            No data available
+            {t('noData')}
           </div>
         </CardContent>
       </Card>
@@ -94,9 +96,9 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Monthly Trends</CardTitle>
+        <CardTitle>{t('monthlyTrends')}</CardTitle>
         <CardDescription>
-          Net income and savings rate - Avg Savings Rate: 
+          {t('netIncomeRate')} - {t('avgSavingsRate')}: 
           <span className={avgSavingsRate >= 0 ? "text-green-600 ml-1" : "text-red-600 ml-1"}>
             {avgSavingsRate.toFixed(1)}%
           </span>
@@ -117,18 +119,18 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
                 const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
                 return `${symbol}${(value / 1000).toFixed(0)}k`
               }}
-              label={{ value: "Net Income", angle: -90, position: "insideLeft", style: { fontSize: 12 } }}
+              label={{ value: t('netIncome'), angle: -90, position: "insideLeft", style: { fontSize: 12 } }}
             />
             <YAxis 
               yAxisId="right"
               orientation="right"
               tick={{ fontSize: 12 }}
               tickFormatter={(value) => `${value}%`}
-              label={{ value: "Savings Rate", angle: 90, position: "insideRight", style: { fontSize: 12 } }}
+              label={{ value: t('savingsRate'), angle: 90, position: "insideRight", style: { fontSize: 12 } }}
             />
             <Tooltip 
               formatter={(value: number, name: string) => {
-                if (name === "Savings Rate") {
+                if (name === t('savingsRate')) {
                   return [`${value}%`, name]
                 }
                 return [formatCurrency(value), name]
@@ -145,7 +147,7 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
               yAxisId="left"
               dataKey="net" 
               fill="#3b82f6" 
-              name="Net Income"
+              name={t('netIncome')}
               radius={[8, 8, 0, 0]}
             />
             <Line 
@@ -155,7 +157,7 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
               stroke="#22c55e" 
               strokeWidth={2}
               dot={{ r: 4 }}
-              name="Savings Rate"
+              name={t('savingsRate')}
             />
           </ComposedChart>
         </ResponsiveContainer>
@@ -163,29 +165,29 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
         {/* Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Avg Net</p>
+            <p className="text-sm text-muted-foreground">{t('avgNetLabel')}</p>
             <p className="text-lg font-bold">
               {formatCurrency(data.reduce((sum, d) => sum + d.net, 0) / data.length)}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Best Month</p>
+            <p className="text-sm text-muted-foreground">{t('bestMonth')}</p>
             <p className="text-lg font-bold text-green-600">
               {data.reduce((max, d) => d.net > max.net ? d : max, data[0]).month}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Avg Transactions</p>
+            <p className="text-sm text-muted-foreground">{t('avgTransactions')}</p>
             <p className="text-lg font-bold">
               {Math.round(data.reduce((sum, d) => sum + d.transactions, 0) / data.length)}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Trend</p>
+            <p className="text-sm text-muted-foreground">{t('trend')}</p>
             <p className={`text-lg font-bold ${
               data[data.length - 1].net > data[0].net ? "text-green-600" : "text-red-600"
             }`}>
-              {data[data.length - 1].net > data[0].net ? "↑ Up" : "↓ Down"}
+              {data[data.length - 1].net > data[0].net ? `↑ ${t('up')}` : `↓ ${t('down')}`}
             </p>
           </div>
         </div>

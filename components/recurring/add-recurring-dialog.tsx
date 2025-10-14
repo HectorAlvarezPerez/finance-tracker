@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -38,6 +39,10 @@ export function AddRecurringDialog({
   accounts: Account[]
   categories: Category[]
 }) {
+  const t = useTranslations('forms')
+  const tDialog = useTranslations('dialogs.addRecurring')
+  const tFreq = useTranslations('recurring.frequency')
+  const tMessages = useTranslations('messages')
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [description, setDescription] = useState("")
@@ -116,8 +121,8 @@ export function AddRecurringDialog({
       if (error) throw error
 
       toast({
-        title: "Success",
-        description: "Recurring transaction created successfully",
+        title: tMessages('success'),
+        description: tDialog('success'),
       })
 
       setOpen(false)
@@ -125,8 +130,8 @@ export function AddRecurringDialog({
       router.refresh()
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to create recurring transaction",
+        title: tMessages('error'),
+        description: error.message || tDialog('error'),
         variant: "destructive",
       })
     } finally {
@@ -151,48 +156,43 @@ export function AddRecurringDialog({
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
-          Add Recurring
+          {tDialog('title')}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add Recurring Transaction</DialogTitle>
+            <DialogTitle>{tDialog('title')}</DialogTitle>
             <DialogDescription>
-              Set up an automated recurring transaction
+              {tDialog('subtitle')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('description')}</Label>
               <Input
                 id="description"
-                placeholder="e.g., Monthly Salary, Netflix Subscription"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount</Label>
+              <Label htmlFor="amount">{t('amount')}</Label>
               <Input
                 id="amount"
                 type="number"
                 step="0.01"
-                placeholder="e.g., 3000.00 or -15.99"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                Use negative for expenses, positive for income
-              </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="account">Account</Label>
+              <Label htmlFor="account">{t('account')}</Label>
               <Select value={accountId} onValueChange={setAccountId} required>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select account" />
+                  <SelectValue placeholder={t('selectAccount')} />
                 </SelectTrigger>
                 <SelectContent>
                   {accounts.map((account) => (
@@ -204,13 +204,13 @@ export function AddRecurringDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="category">Category (Optional)</Label>
+              <Label htmlFor="category">{t('category')}</Label>
               <Select value={categoryId} onValueChange={setCategoryId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={t('selectCategory')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">No category</SelectItem>
+                  <SelectItem value="none">{t('noCategory')}</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
@@ -221,21 +221,21 @@ export function AddRecurringDialog({
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="frequency">Frequency</Label>
+                <Label htmlFor="frequency">{t('frequency')}</Label>
                 <Select value={frequency} onValueChange={setFrequency}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="daily">Daily</SelectItem>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                    <SelectItem value="yearly">Yearly</SelectItem>
+                    <SelectItem value="daily">{tFreq('daily')}</SelectItem>
+                    <SelectItem value="weekly">{tFreq('weekly')}</SelectItem>
+                    <SelectItem value="monthly">{tFreq('monthly')}</SelectItem>
+                    <SelectItem value="yearly">{tFreq('yearly')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="interval">Every</Label>
+                <Label htmlFor="interval">{t('interval')}</Label>
                 <Input
                   id="interval"
                   type="number"
@@ -244,14 +244,11 @@ export function AddRecurringDialog({
                   onChange={(e) => setIntervalValue(e.target.value)}
                   required
                 />
-                <p className="text-xs text-muted-foreground">
-                  e.g., 1 = every {frequency}, 2 = every 2 {frequency}s
-                </p>
               </div>
             </div>
             {frequency === "monthly" && (
               <div className="space-y-2">
-                <Label htmlFor="dayOfMonth">Day of Month</Label>
+                <Label htmlFor="dayOfMonth">{t('dayOfMonth')}</Label>
                 <Input
                   id="dayOfMonth"
                   type="number"
@@ -261,32 +258,29 @@ export function AddRecurringDialog({
                   onChange={(e) => setDayOfMonth(e.target.value)}
                   required
                 />
-                <p className="text-xs text-muted-foreground">
-                  Day of the month (1-31)
-                </p>
               </div>
             )}
             {frequency === "weekly" && (
               <div className="space-y-2">
-                <Label htmlFor="dayOfWeek">Day of Week</Label>
+                <Label htmlFor="dayOfWeek">{t('dayOfWeek')}</Label>
                 <Select value={dayOfWeek} onValueChange={setDayOfWeek}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="0">Sunday</SelectItem>
-                    <SelectItem value="1">Monday</SelectItem>
-                    <SelectItem value="2">Tuesday</SelectItem>
-                    <SelectItem value="3">Wednesday</SelectItem>
-                    <SelectItem value="4">Thursday</SelectItem>
-                    <SelectItem value="5">Friday</SelectItem>
-                    <SelectItem value="6">Saturday</SelectItem>
+                    <SelectItem value="0">{t('sunday')}</SelectItem>
+                    <SelectItem value="1">{t('monday')}</SelectItem>
+                    <SelectItem value="2">{t('tuesday')}</SelectItem>
+                    <SelectItem value="3">{t('wednesday')}</SelectItem>
+                    <SelectItem value="4">{t('thursday')}</SelectItem>
+                    <SelectItem value="5">{t('friday')}</SelectItem>
+                    <SelectItem value="6">{t('saturday')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date</Label>
+              <Label htmlFor="startDate">{t('startDate')}</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -294,9 +288,6 @@ export function AddRecurringDialog({
                 onChange={(e) => setStartDate(e.target.value)}
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                First occurrence will be on or after this date
-              </p>
             </div>
           </div>
           <DialogFooter>
@@ -306,10 +297,10 @@ export function AddRecurringDialog({
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Recurring Transaction"}
+              {loading ? t('creating') : t('create')}
             </Button>
           </DialogFooter>
         </form>
