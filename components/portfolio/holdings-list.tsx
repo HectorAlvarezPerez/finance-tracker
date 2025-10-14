@@ -125,19 +125,19 @@ export function HoldingsList({
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Quantity</p>
+                    <p className="text-sm text-muted-foreground">{t('quantity')}</p>
                     <p className="text-lg font-semibold">{holding.quantity.toFixed(8).replace(/\.?0+$/, '')}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Avg Buy Price</p>
+                    <p className="text-sm text-muted-foreground">{t('avgBuyPrice')}</p>
                     <p className="text-lg font-semibold">{formatCurrency(holding.average_buy_price)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Invested</p>
+                    <p className="text-sm text-muted-foreground">{t('totalInvested')}</p>
                     <p className="text-lg font-semibold">{formatCurrency(costBasisTotal)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Current Value</p>
+                    <p className="text-sm text-muted-foreground">{t('currentValue')}</p>
                     <p className="text-lg font-semibold">{formatCurrency(currentValue)}</p>
                   </div>
                 </div>

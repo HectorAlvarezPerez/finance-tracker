@@ -151,7 +151,17 @@
     "totalValue": "Valor Total",
     "totalGain": "Ganancia/Pérdida Total",
     "noHoldings": "No hay inversiones todavía",
-    "addFirstHolding": "Añade tu primera inversión para comenzar a rastrear tu portafolio"
+    "addFirstHolding": "Añade tu primera inversión para comenzar a rastrear tu portafolio",
+    "currentMarketValue": "Valor de mercado actual",
+    "costBasis": "Base de Coste",
+    "totalInvested": "Total invertido",
+    "profitLoss": "Ganancia/Pérdida",
+    "unrealizedGains": "Ganancias/pérdidas no realizadas",
+    "roi": "ROI",
+    "returnOnInvestment": "Retorno de inversión",
+    "quantity": "Cantidad",
+    "avgBuyPrice": "Precio Promedio de Compra",
+    "currentValue": "Valor Actual"
   },
   "settings": {
     "title": "Ajustes",

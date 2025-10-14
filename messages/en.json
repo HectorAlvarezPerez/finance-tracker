@@ -151,7 +151,17 @@
     "totalValue": "Total Value",
     "totalGain": "Total Gain/Loss",
     "noHoldings": "No holdings yet",
-    "addFirstHolding": "Add your first investment to start tracking your portfolio"
+    "addFirstHolding": "Add your first investment to start tracking your portfolio",
+    "currentMarketValue": "Current market value",
+    "costBasis": "Cost Basis",
+    "totalInvested": "Total invested",
+    "profitLoss": "Profit/Loss",
+    "unrealizedGains": "Unrealized gains/losses",
+    "roi": "ROI",
+    "returnOnInvestment": "Return on investment",
+    "quantity": "Quantity",
+    "avgBuyPrice": "Avg Buy Price",
+    "currentValue": "Current Value"
   },
   "settings": {
     "title": "Settings",
