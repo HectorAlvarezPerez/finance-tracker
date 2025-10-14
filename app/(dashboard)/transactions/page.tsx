@@ -6,6 +6,8 @@ import { TransactionFilters } from "@/components/transactions/transaction-filter
 import { AddTransactionDialog } from "@/components/transactions/add-transaction-dialog"
 import { SmartCSVImportDialog } from "@/components/transactions/smart-csv-import-dialog"
 
+export const dynamic = 'force-dynamic'
+
 export default async function TransactionsPage({
   searchParams,
 }: {

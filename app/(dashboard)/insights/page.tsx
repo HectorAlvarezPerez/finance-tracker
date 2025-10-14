@@ -7,6 +7,8 @@ import { MonthlyTrendsChart } from "@/components/analytics/monthly-trends-chart"
 import { SpendingInsights } from "@/components/insights/spending-insights"
 import { TopCategories } from "@/components/insights/top-categories"
 
+export const dynamic = 'force-dynamic'
+
 export default async function InsightsPage() {
   const supabase = createServerClient()
   const t = await getTranslations('insights')

@@ -4,6 +4,8 @@ import { getTranslations } from 'next-intl/server'
 import { BudgetsList } from "@/components/budgets/budgets-list"
 import { AddBudgetDialog } from "@/components/budgets/add-budget-dialog"
 
+export const dynamic = 'force-dynamic'
+
 export default async function BudgetsPage() {
   const supabase = createServerClient()
   const t = await getTranslations('budgets')

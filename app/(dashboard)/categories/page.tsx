@@ -5,6 +5,8 @@ import { CategoriesList } from "@/components/categories/categories-list"
 import { AddCategoryDialog } from "@/components/categories/add-category-dialog"
 import { ImportDefaultCategoriesButton } from "@/components/categories/import-default-categories-button"
 
+export const dynamic = 'force-dynamic'
+
 export default async function CategoriesPage() {
   const supabase = createServerClient()
   const t = await getTranslations('categories')

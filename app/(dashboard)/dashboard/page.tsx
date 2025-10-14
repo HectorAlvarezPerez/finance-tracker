@@ -4,6 +4,8 @@ import { DashboardWrapper } from "@/components/dashboard/dashboard-wrapper"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { BudgetOverview } from "@/components/dashboard/budget-overview"
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const supabase = createServerClient()
   

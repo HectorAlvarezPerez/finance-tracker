@@ -4,6 +4,8 @@ import { getTranslations } from 'next-intl/server'
 import { RecurringTransactionsList } from "@/components/recurring/recurring-list"
 import { AddRecurringDialog } from "@/components/recurring/add-recurring-dialog"
 
+export const dynamic = 'force-dynamic'
+
 export default async function RecurringPage() {
   const supabase = createServerClient()
   const t = await getTranslations('recurring')

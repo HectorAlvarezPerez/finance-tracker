@@ -4,6 +4,8 @@ import { getTranslations } from 'next-intl/server'
 import { SettingsForm } from "@/components/settings/settings-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
+export const dynamic = 'force-dynamic'
+
 export default async function SettingsPage() {
   const supabase = createServerClient()
   const t = await getTranslations('settings')

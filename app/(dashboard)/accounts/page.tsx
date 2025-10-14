@@ -4,6 +4,8 @@ import { getTranslations } from 'next-intl/server'
 import { AccountsList } from "@/components/accounts/accounts-list"
 import { AddAccountDialog } from "@/components/accounts/add-account-dialog"
 
+export const dynamic = 'force-dynamic'
+
 export default async function AccountsPage() {
   const supabase = createServerClient()
   const t = await getTranslations('accounts')

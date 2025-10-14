@@ -5,6 +5,8 @@ import { PortfolioOverview } from "@/components/portfolio/portfolio-overview"
 import { HoldingsList } from "@/components/portfolio/holdings-list"
 import { AddHoldingDialog } from "@/components/portfolio/add-holding-dialog"
 
+export const dynamic = 'force-dynamic'
+
 export default async function PortfolioPage() {
   const supabase = createServerClient()
   const t = await getTranslations('portfolio')
