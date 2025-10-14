@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import {
   Table,
   TableBody,
@@ -13,9 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { formatCurrency, formatDate } from "@/lib/utils"
-import { Edit, Trash2, Download } from "lucide-react"
-import { createBrowserClient } from "@/lib/supabase/client"
-import { useToast } from "@/components/ui/use-toast"
+import { Edit, Trash2 } from "lucide-react"
 import { EditTransactionDialog } from "./edit-transaction-dialog"
 import { DeleteTransactionDialog } from "./delete-transaction-dialog"
 import type { Database } from "@/types/database"
@@ -39,43 +36,8 @@ export function TransactionsTable({
   categories: Category[]
   userId: string
 }) {
-  const router = useRouter()
-  const { toast } = useToast()
-  const supabase = createBrowserClient()
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null)
   const [deletingTransaction, setDeletingTransaction] = useState<Transaction | null>(null)
-
-
-  const handleExportCSV = () => {
-    const headers = ["Date", "Description", "Amount", "Category", "Account", "Status", "Notes"]
-    const rows = transactions.map((t) => [
-      t.date,
-      t.description,
-      t.amount.toString(),
-      t.categories?.name || "",
-      t.accounts?.name || "",
-      t.status,
-      t.notes || "",
-    ])
-
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
-    ].join("\n")
-
-    const blob = new Blob([csvContent], { type: "text/csv" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `transactions_${new Date().toISOString().split("T")[0]}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-
-    toast({
-      title: "Success",
-      description: "Transactions exported successfully",
-    })
-  }
 
   if (transactions.length === 0) {
     return (
@@ -87,13 +49,6 @@ export function TransactionsTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button variant="outline" size="sm" onClick={handleExportCSV}>
-          <Download className="h-4 w-4 mr-2" />
-          Export CSV
-        </Button>
-      </div>
-
       <div className="rounded-md border">
         <Table>
           <TableHeader>
