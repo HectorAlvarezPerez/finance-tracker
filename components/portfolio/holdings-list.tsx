@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -28,6 +29,7 @@ export function HoldingsList({
   prices: Map<string, number>
   userId: string
 }) {
+  const t = useTranslations('portfolio')
   const [editingHolding, setEditingHolding] = useState<Holding | null>(null)
   const [deletingHolding, setDeletingHolding] = useState<Holding | null>(null)
   const [manualPriceHolding, setManualPriceHolding] = useState<Holding | null>(null)
