@@ -316,8 +316,8 @@ export function DashboardOverview({
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-4">
                   {selectedAccountId === "all" 
-                    ? "No accounts found. Create one to get started."
-                    : "Account not found."}
+                    ? t('noAccountsMessage')
+                    : t('accountNotFound')}
                 </p>
               )}
             </div>
@@ -327,7 +327,7 @@ export function DashboardOverview({
         {/* Spending Chart - Now smaller */}
         <Card>
           <CardHeader>
-            <CardTitle>Net Spending by Category</CardTitle>
+            <CardTitle>{tInsights('expensesByCategory')}</CardTitle>
           </CardHeader>
           <CardContent>
             <SpendingChart transactions={filteredTransactions} />

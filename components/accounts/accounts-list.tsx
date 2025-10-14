@@ -66,9 +66,9 @@ export function AccountsList({ accounts, userId }: { accounts: Account[]; userId
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Wallet className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No accounts yet</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('noAccounts')}</h3>
           <p className="text-sm text-muted-foreground text-center mb-4">
-            Add your first account to start tracking your finances
+            {t('addFirstAccount')}
           </p>
         </CardContent>
       </Card>

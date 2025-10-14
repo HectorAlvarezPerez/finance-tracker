@@ -28,7 +28,9 @@
     "thisMonth": "This month",
     "selectedAccount": "Selected account",
     "acrossAccounts": "Across {count} accounts",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "noAccountsMessage": "No accounts found. Create one to get started.",
+    "accountNotFound": "Account not found."
   },
   "transactions": {
     "title": "Transactions",
@@ -71,6 +73,7 @@
       "cash": "Cash"
     },
     "noAccounts": "No accounts yet",
+    "addFirstAccount": "Add your first account to start tracking your finances",
     "edit": "Edit Account",
     "delete": "Delete Account"
   },
@@ -81,6 +84,7 @@
     "income": "Income",
     "expense": "Expense",
     "noCategories": "No categories yet",
+    "createFirstCategory": "Create your first category to start organizing your transactions",
     "edit": "Edit Category",
     "delete": "Delete Category",
     "gettingStarted": "Getting Started?",
@@ -146,7 +150,8 @@
     "managePrices": "Manage Prices",
     "totalValue": "Total Value",
     "totalGain": "Total Gain/Loss",
-    "noHoldings": "No holdings yet"
+    "noHoldings": "No holdings yet",
+    "addFirstHolding": "Add your first investment to start tracking your portfolio"
   },
   "settings": {
     "title": "Settings",

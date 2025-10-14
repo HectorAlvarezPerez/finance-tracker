@@ -36,9 +36,9 @@ export function HoldingsList({
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <TrendingUp className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No holdings yet</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('noHoldings')}</h3>
           <p className="text-sm text-muted-foreground text-center mb-4">
-            Add your first investment to start tracking your portfolio
+            {t('addFirstHolding')}
           </p>
         </CardContent>
       </Card>
