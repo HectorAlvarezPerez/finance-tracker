@@ -93,7 +93,7 @@ export default async function InsightsPage() {
 
       {/* Current Month Insights */}
       <div className="pt-6 border-t">
-        <h2 className="text-2xl font-bold mb-4">Current Month Insights</h2>
+        <h2 className="text-2xl font-bold mb-4">{t('currentMonthTitle')}</h2>
         
         <div className="grid gap-6 lg:grid-cols-2">
           <SpendingInsights

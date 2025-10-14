@@ -75,7 +75,9 @@
     "expense": "Gasto",
     "noCategories": "No hay categorías todavía",
     "edit": "Editar Categoría",
-    "delete": "Eliminar Categoría"
+    "delete": "Eliminar Categoría",
+    "gettingStarted": "¿Comenzando?",
+    "importDefault": "Importa 20+ categorías predeterminadas para empezar rápidamente"
   },
   "budgets": {
     "title": "Presupuestos",
@@ -93,7 +95,8 @@
     "incomeVsExpenses": "Ingresos vs Gastos",
     "expensesByCategory": "Gastos por Categoría",
     "monthlyTrends": "Tendencias Mensuales",
-    "currentMonth": "Estadísticas del Mes Actual"
+    "currentMonth": "Estadísticas del Mes Actual",
+    "currentMonthTitle": "Estadísticas del Mes Actual"
   },
   "portfolio": {
     "title": "Portafolio",
@@ -108,6 +111,7 @@
     "title": "Ajustes",
     "subtitle": "Gestiona las preferencias de tu cuenta y la configuración de la aplicación",
     "accountInfo": "Información de la Cuenta",
+    "accountDetails": "Detalles de tu cuenta",
     "email": "Correo Electrónico",
     "userId": "ID de Usuario",
     "preferences": "Preferencias",
@@ -341,7 +345,8 @@
       "errorDesc": "Error al importar transacciones",
       "noAccount": "Necesitas crear al menos una cuenta antes de importar transacciones.",
       "invalidFormat": "Formato no válido",
-      "invalidFormatDesc": "Por favor sube un archivo CSV o Excel (.csv, .xlsx, .xls)"
+      "invalidFormatDesc": "Por favor sube un archivo CSV o Excel (.csv, .xlsx, .xls)",
+      "accountAssignment": "Todas las transacciones importadas se asignarán a esta cuenta"
     },
     "forgotPassword": {
       "title": "Restablecer Contraseña",

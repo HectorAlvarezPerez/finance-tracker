@@ -51,9 +51,9 @@ export default async function CategoriesPage() {
         {!hasCategories && (
           <div className="flex items-center gap-2 p-4 bg-muted rounded-lg">
             <div className="flex-1">
-              <p className="text-sm font-medium">Getting Started?</p>
+              <p className="text-sm font-medium">{t('gettingStarted')}</p>
               <p className="text-xs text-muted-foreground">
-                Import 20+ default categories to get started quickly
+                {t('importDefault')}
               </p>
             </div>
             <ImportDefaultCategoriesButton 

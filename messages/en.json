@@ -75,7 +75,9 @@
     "expense": "Expense",
     "noCategories": "No categories yet",
     "edit": "Edit Category",
-    "delete": "Delete Category"
+    "delete": "Delete Category",
+    "gettingStarted": "Getting Started?",
+    "importDefault": "Import 20+ default categories to get started quickly"
   },
   "budgets": {
     "title": "Budgets",
@@ -93,7 +95,8 @@
     "incomeVsExpenses": "Income vs Expenses",
     "expensesByCategory": "Expenses by Category",
     "monthlyTrends": "Monthly Trends",
-    "currentMonth": "Current Month Insights"
+    "currentMonth": "Current Month Insights",
+    "currentMonthTitle": "Current Month Insights"
   },
   "portfolio": {
     "title": "Portfolio",
@@ -108,6 +111,7 @@
     "title": "Settings",
     "subtitle": "Manage your account preferences and application settings",
     "accountInfo": "Account Information",
+    "accountDetails": "Your account details",
     "email": "Email",
     "userId": "User ID",
     "preferences": "Preferences",
@@ -252,7 +256,8 @@
       "invalidFormat": "Invalid file format",
       "invalidFormatDesc": "Please upload a CSV or Excel file",
       "success": "Transactions imported successfully",
-      "error": "Failed to import transactions"
+      "error": "Failed to import transactions",
+      "accountAssignment": "All imported transactions will be assigned to this account"
     }
   },
   "ai": {

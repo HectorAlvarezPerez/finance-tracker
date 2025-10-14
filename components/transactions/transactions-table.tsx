@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import {
   Table,
   TableBody,
@@ -36,13 +37,14 @@ export function TransactionsTable({
   categories: Category[]
   userId: string
 }) {
+  const t = useTranslations('transactions')
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null)
   const [deletingTransaction, setDeletingTransaction] = useState<Transaction | null>(null)
 
   if (transactions.length === 0) {
     return (
       <div className="rounded-md border p-12 text-center">
-        <p className="text-muted-foreground">No transactions found</p>
+        <p className="text-muted-foreground">{t('noTransactions')}</p>
       </div>
     )
   }

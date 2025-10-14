@@ -54,6 +54,7 @@ export function SmartCSVImportDialog({
   const supabase = createBrowserClient()
   const t = useTranslations('dialogs.importCSV')
   const tForms = useTranslations('forms')
+  const tMessages = useTranslations('messages')
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -428,7 +429,7 @@ export function SmartCSVImportDialog({
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              All imported transactions will be assigned to this account
+              {t('accountAssignment')}
             </p>
           </div>
 

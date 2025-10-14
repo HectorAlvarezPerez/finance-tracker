@@ -38,7 +38,7 @@ export default async function SettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>{t('accountInfo')}</CardTitle>
-            <CardDescription>Your account details</CardDescription>
+            <CardDescription>{t('accountDetails')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
