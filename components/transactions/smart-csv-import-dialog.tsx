@@ -22,7 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Upload } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Upload, Sparkles } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 import Papa from "papaparse"
@@ -47,6 +48,7 @@ export function SmartCSVImportDialog({
   const [file, setFile] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [selectedAccountId, setSelectedAccountId] = useState<string>("")
+  const [useAICategorization, setUseAICategorization] = useState(true)
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
@@ -228,20 +230,68 @@ export function SmartCSVImportDialog({
         throw new Error(t('errorDesc'))
       }
 
-      // Prepare transactions directly without AI categorization
-      setProgress(50)
+      // Prepare transactions
+      setProgress(40)
       setStatusMessage(t('preparing'))
 
-      const transactions = rows.map((row: any) => ({
+      let transactions = rows.map((row: any) => ({
         user_id: userId,
         account_id: selectedAccountId,
         date: parseDate(row[dateCol]),
         description: row[descCol],
         amount: parseAmount(row[amountCol]),
-        category_id: null, // No category assigned
+        category_id: null, // No category assigned yet
         status: "posted" as const,
         notes: null,
       }))
+
+      // AI Categorization if enabled
+      if (useAICategorization && categories.length > 0) {
+        setProgress(50)
+        setStatusMessage('Categorizando con IA...')
+
+        try {
+          const response = await fetch('/api/ai-categorize', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              transactions: transactions.map(t => ({
+                description: t.description,
+                amount: t.amount,
+              })),
+              userId,
+            }),
+          })
+
+          if (!response.ok) {
+            throw new Error('Error al categorizar con IA')
+          }
+
+          const { categorizations } = await response.json()
+
+          // Apply categorizations to transactions
+          transactions = transactions.map((t, index) => {
+            const categorization = categorizations.find((c: any) => c.index === index)
+            return {
+              ...t,
+              category_id: categorization?.categoryId || null,
+            }
+          })
+
+          const categorizedCount = transactions.filter(t => t.category_id !== null).length
+          console.log(`✅ ${categorizedCount} de ${transactions.length} transacciones categorizadas`)
+        } catch (error) {
+          console.error('Error en categorización con IA:', error)
+          // Continue without categorization if AI fails
+          toast({
+            title: 'Aviso',
+            description: 'No se pudo categorizar con IA. Las transacciones se importarán sin categoría.',
+            variant: 'default',
+          })
+        }
+      }
 
       setProgress(80)
       setStatusMessage(t('saving'))
@@ -256,9 +306,14 @@ export function SmartCSVImportDialog({
       setProgress(100)
       setStatusMessage(t('complete'))
 
+      const categorizedCount = transactions.filter(t => t.category_id !== null).length
+      const successMessage = useAICategorization && categorizedCount > 0
+        ? `${transactions.length} transacciones importadas (${categorizedCount} categorizadas con IA)`
+        : `${transactions.length} ${t('successDesc')}`
+
       toast({
         title: t('success'),
-        description: `${transactions.length} ${t('successDesc')}`,
+        description: successMessage,
       })
 
       setOpen(false)
@@ -268,6 +323,7 @@ export function SmartCSVImportDialog({
       setTimeout(() => {
         setFile(null)
         setSelectedAccountId("")
+        setUseAICategorization(true)
         setProgress(0)
         setStatusMessage("")
       }, 500)
@@ -374,6 +430,31 @@ export function SmartCSVImportDialog({
             <p className="text-xs text-muted-foreground">
               All imported transactions will be assigned to this account
             </p>
+          </div>
+
+          {/* AI Categorization Toggle */}
+          <div className="flex items-start space-x-3 rounded-lg border p-4 bg-primary/5">
+            <Checkbox 
+              id="use-ai" 
+              checked={useAICategorization}
+              onCheckedChange={(checked) => setUseAICategorization(checked as boolean)}
+              disabled={loading || categories.length === 0}
+            />
+            <div className="flex-1 space-y-1">
+              <label
+                htmlFor="use-ai"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2 cursor-pointer"
+              >
+                <Sparkles className="h-4 w-4 text-primary" />
+                Categorizar automáticamente con IA
+              </label>
+              <p className="text-xs text-muted-foreground">
+                {categories.length === 0 
+                  ? "Necesitas crear al menos una categoría primero"
+                  : "Asignará automáticamente las transacciones a tus categorías existentes usando inteligencia artificial"
+                }
+              </p>
+            </div>
           </div>
 
           {loading && (

@@ -21,20 +21,24 @@ export async function POST(request: Request) {
     const supabase = createServerClient()
     const { data: existingCategories } = await supabase
       .from('categories')
-      .select('name, type')
+      .select('id, name, type')
       .eq('user_id', userId)
 
     const categoryList = existingCategories?.map(c => `${c.name} (${c.type})`) || []
 
     // Prepare transactions summary for AI
-    const transactionsSummary = transactions.slice(0, 50).map((t: any, i: number) => 
+    const transactionsSummary = transactions.map((t: any, i: number) => 
       `${i + 1}. "${t.description}" - Amount: ${t.amount}`
     ).join('\n')
 
     // Ask AI to categorize all transactions
-    const prompt = `Analyze these financial transactions and for each one determine:
-1. If it's income (positive) or expense (negative) based on description
-2. Suggest an appropriate category
+    const prompt = `Analyze these financial transactions and assign each one to an existing category.
+
+IMPORTANT RULES:
+- You can ONLY use categories from the existing list below
+- DO NOT create new categories
+- If you're not confident about a category match, return null for that transaction
+- Match categories based on the transaction description
 
 Existing categories: ${categoryList.join(', ')}
 
@@ -45,17 +49,15 @@ Respond with a JSON array (one object per transaction) in this exact format:
 [
   {
     "index": 0,
-    "type": "income" or "expense",
-    "category": "category name",
+    "categoryName": "exact category name from list" or null,
     "confidence": "high" or "medium" or "low"
   }
 ]
 
-Rules:
-- Use existing categories when possible
-- For new categories, suggest short, clear names in Spanish if description is Spanish, English otherwise
-- Common categories: Salary (income), Groceries, Transport, Entertainment, Bills, Shopping, Restaurants, Health (expenses)
-- Be conservative: if unsure, use "Other"`
+Return null for categoryName if:
+- No existing category fits well
+- You're uncertain about the match
+- The confidence would be "low"`
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -88,7 +90,24 @@ Rules:
     // Parse AI response
     const categorizations = JSON.parse(cleanedResponse)
 
-    return NextResponse.json({ categorizations })
+    // Map category names to IDs
+    const categorizationsWithIds = categorizations.map((cat: any) => {
+      let categoryId = null
+      if (cat.categoryName) {
+        const foundCategory = existingCategories?.find(
+          c => c.name.toLowerCase() === cat.categoryName.toLowerCase()
+        )
+        categoryId = foundCategory?.id || null
+      }
+      return {
+        index: cat.index,
+        categoryId,
+        categoryName: cat.categoryName,
+        confidence: cat.confidence,
+      }
+    })
+
+    return NextResponse.json({ categorizations: categorizationsWithIds })
   } catch (error: any) {
     console.error('AI categorization error:', error)
     return NextResponse.json(

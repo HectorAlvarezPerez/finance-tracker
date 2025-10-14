@@ -4,10 +4,10 @@
 
 El **Smart Import** usa Inteligencia Artificial para analizar automáticamente tus transacciones cuando subes un CSV o Excel, detectando:
 
-- ✅ Si es un **ingreso** o **gasto**
-- ✅ Qué **categoría** corresponde
-- ✅ **Crea categorías nuevas** si no existen
+- ✅ Qué **categoría** corresponde de tus categorías existentes
+- ✅ Detecta automáticamente columnas de fecha, descripción y cantidad
 - ✅ Funciona con **cualquier formato** de archivo
+- ✅ **Opción de activar/desactivar** la categorización con IA
 
 ---
 
@@ -22,9 +22,9 @@ El **Smart Import** usa Inteligencia Artificial para analizar automáticamente t
 
 ### Smart Import (nuevo):
 - ✅ Detecta columnas automáticamente
-- ✅ Categoriza todas las transacciones
-- ✅ Crea categorías que faltan
-- ✅ Detecta ingreso/gasto automáticamente
+- ✅ Categoriza transacciones usando tus categorías existentes
+- ✅ Opción de activar/desactivar IA
+- ✅ Deja sin categoría si no hay match seguro
 - ⏰ Tiempo: **~30 segundos** para 100 transacciones
 
 **¡60x más rápido!**
@@ -68,29 +68,25 @@ ID,Fecha,Hora,Merchant,Categoría Banco,Value,Moneda
 ## 🧠 Cómo Funciona la IA
 
 ### Paso 1: Análisis
-La IA lee cada descripción y determina:
+La IA lee cada descripción y busca coincidencias con tus categorías existentes:
 
-**Ejemplos de Gastos:**
-- "Mercadona" → Categoría: **Comida** (Groceries)
-- "Gasolina Shell" → Categoría: **Transporte**
-- "Netflix" → Categoría: **Suscripciones** (auto-creada)
-- "Farmacia" → Categoría: **Salud**
-- "Zara" → Categoría: **Ropa**
+**Ejemplos de Categorización:**
+- "Mercadona" → Categoría: **Comida** (si existe)
+- "Gasolina Shell" → Categoría: **Transporte** (si existe)
+- "Netflix" → Categoría: **Suscripciones** (si existe)
+- "Farmacia" → Categoría: **Salud** (si existe)
+- "Zara" → Categoría: **Compras** (si existe)
 
-**Ejemplos de Ingresos:**
-- "Nómina" / "Salary" → Categoría: **Salario**
-- "Freelance proyecto" → Categoría: **Trabajo**
-- "Transferencia José" → Categoría: **Otros Ingresos**
+### Paso 2: Asignación Inteligente
+- ✅ **Usa SOLO categorías existentes** en tu sistema
+- ✅ **NO crea categorías nuevas**
+- ✅ Si no hay match seguro, deja **sin categoría**
+- ✅ Analiza el contexto de cada transacción
 
-### Paso 2: Categorización
-- **Usa categorías existentes** cuando coinciden
-- **Crea nuevas** si no existe una apropiada
-- **Detecta idioma** de las descripciones para crear categorías en el idioma correcto
-
-### Paso 3: Signo de Cantidad
-- Automáticamente hace **negativo** los gastos
-- Mantiene **positivo** los ingresos
-- No importa cómo vengan en tu CSV
+### Paso 3: Opción Manual
+- 🔘 Puedes **activar o desactivar** la IA antes de importar
+- 🔘 Si está desactivada, todas las transacciones se importan sin categoría
+- 🔘 Útil si prefieres categorizar manualmente después
 
 ---
 
@@ -103,29 +99,31 @@ Banco → Exportar movimientos → CSV / Excel
 
 ### 2. Ve a Transacciones
 ```
-Dashboard → Transactions → Smart Import
+Dashboard → Transactions → Import (botón arriba a la derecha)
 ```
 
-### 3. Sube tu Archivo
+### 3. Sube tu Archivo y Configura
 ```
-Click "Smart Import" → Selecciona tu CSV → "Importar con IA"
+1. Arrastra o selecciona tu archivo CSV/XLSX
+2. Selecciona la cuenta a la que asignar las transacciones
+3. Activa/Desactiva la categorización con IA ✨
+4. Click "Importar"
 ```
 
 ### 4. Espera (~30 segundos)
 ```
 ✓ Leyendo archivo...
 ✓ Procesando transacciones...
-✓ Analizando con IA...
-✓ Creando categorías...
+✓ Categorizando con IA... (si está activado)
 ✓ Guardando...
 ✓ ¡Completado!
 ```
 
 ### 5. ¡Listo!
-Todas tus transacciones están:
-- ✅ Categorizadas correctamente
-- ✅ Con el signo correcto (ingreso/gasto)
-- ✅ Listas para analizar
+Tus transacciones están:
+- ✅ Importadas en la cuenta seleccionada
+- ✅ Categorizadas automáticamente (si activaste IA)
+- ✅ Listas para revisar y analizar
 
 ---
 
@@ -141,12 +139,12 @@ Fecha,Concepto,Importe
 05/11/2024,Spotify Premium,-9,99
 ```
 
-**Resultado:**
-- Mercadona → **Gasto**, Categoría: **Comida**
-- Gasolinera → **Gasto**, Categoría: **Transporte**
-- Salario → **Ingreso**, Categoría: **Salario**
-- Restaurante → **Gasto**, Categoría: **Restaurantes**
-- Spotify → **Gasto**, Categoría: **Suscripciones** (creada)
+**Resultado (con IA activada):**
+- Mercadona → Categoría: **Comida** (si existe)
+- Gasolinera → Categoría: **Transporte** (si existe)
+- Salario → Categoría: **Salario** (si existe)
+- Restaurante → Categoría: **Restaurantes** (si existe)
+- Spotify → Categoría: **Suscripciones** (si existe), sino **sin categoría**
 
 ### Caso 2: Mixed Languages
 ```csv
@@ -157,17 +155,17 @@ Date,Merchant,Amount
 2024-11-04,Amazon purchase,-89.99
 ```
 
-**Resultado:**
-- Starbucks → **Expense**, Category: **Restaurants**
-- Uber → **Expense**, Category: **Transport**
-- Salary → **Income**, Category: **Salary**
-- Amazon → **Expense**, Category: **Shopping**
+**Resultado (con IA activada):**
+- Starbucks → Category: **Restaurants** (si existe)
+- Uber → Category: **Transport** (si existe)
+- Salary → Category: **Salary** (si existe)
+- Amazon → Category: **Shopping** (si existe)
 
 ---
 
-## 🎨 Categorías Auto-Creadas
+## 🎨 Categorías Recomendadas
 
-Si no existen, la IA crea estas categorías comunes:
+Para aprovechar al máximo la categorización con IA, te recomendamos crear estas categorías comunes antes de importar:
 
 ### 💰 Ingresos:
 - Salario / Salary
@@ -182,12 +180,14 @@ Si no existen, la IA crea estas categorías comunes:
 - Salud / Health
 - Entretenimiento / Entertainment
 - Suscripciones / Subscriptions
-- Ropa / Shopping
+- Compras / Shopping
 - Servicios / Bills
 - Educación / Education
 - Hogar / Home
 - Mascotas / Pets
 - Regalos / Gifts
+
+**Nota:** La IA solo usará las categorías que tengas creadas. Si no tienes ninguna categoría que coincida, la transacción quedará sin categorizar.
 
 ---
 
@@ -237,18 +237,31 @@ OPENAI_API_KEY=tu_api_key_aqui
 
 ### "Error al categorizar con IA"
 - **Solución**: Verifica que `OPENAI_API_KEY` esté configurado en Vercel
+- Si falla la IA, las transacciones se importarán sin categoría automáticamente
 
-### Categorías en Idioma Incorrecto
-- **Solución**: Las descripciones deben estar en el idioma que quieres para las categorías
+### "No se categorizó ninguna transacción"
+- **Solución**: Asegúrate de tener categorías creadas en tu sistema
+- La IA necesita categorías existentes para asignar
+- Activa el checkbox de "Categorizar con IA" antes de importar
 
 ---
 
-## 🚀 Próximas Mejoras
+## 🚀 Características Actuales
+
+- ✅ Detección automática de columnas (fecha, descripción, cantidad)
+- ✅ Categorización con IA usando categorías existentes
+- ✅ Opción de activar/desactivar IA antes de importar
+- ✅ Compatible con CSV, XLSX, XLS
+- ✅ Drag & Drop para subir archivos
+- ✅ Progreso en tiempo real durante la importación
+
+## 💡 Próximas Mejoras
 
 - [ ] Aprender de correcciones manuales
 - [ ] Sugerencias de categorías basadas en historial
 - [ ] Detección de transacciones duplicadas
 - [ ] Reglas personalizadas por usuario
+- [ ] Vista previa antes de importar
 - [ ] Batch processing para archivos muy grandes
 
 ---
