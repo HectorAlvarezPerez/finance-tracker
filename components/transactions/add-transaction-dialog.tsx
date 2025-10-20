@@ -44,6 +44,7 @@ export function AddTransactionDialog({
   const [date, setDate] = useState(new Date().toISOString().split("T")[0])
   const [description, setDescription] = useState("")
   const [amount, setAmount] = useState("")
+  const [txnType, setTxnType] = useState<'expense' | 'income'>('expense')
   const [accountId, setAccountId] = useState("")
   const [categoryId, setCategoryId] = useState("")
   const [notes, setNotes] = useState("")
@@ -58,12 +59,14 @@ export function AddTransactionDialog({
     setLoading(true)
 
     try {
+      const parsedAmount = parseFloat(amount)
+      const signedAmount = txnType === 'expense' ? -Math.abs(parsedAmount) : Math.abs(parsedAmount)
       const { error } = await supabase.from("transactions").insert({
         user_id: userId,
         account_id: accountId,
         date,
         description,
-        amount: parseFloat(amount),
+        amount: signedAmount,
         category_id: categoryId || null,
         notes: notes || null,
         status: "posted",
@@ -79,6 +82,7 @@ export function AddTransactionDialog({
       setOpen(false)
       setDescription("")
       setAmount("")
+      setTxnType('expense')
       setNotes("")
       router.refresh()
     } catch (error: any) {
@@ -110,6 +114,18 @@ export function AddTransactionDialog({
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
+              <Label htmlFor="txnType">{tForms('transactionType')}</Label>
+              <Select value={txnType} onValueChange={(v) => setTxnType(v as 'expense' | 'income')}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="expense">{tForms('expense')}</SelectItem>
+                  <SelectItem value="income">{tForms('income')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="date">{tForms('date')}</Label>
               <Input
                 id="date"
@@ -134,8 +150,17 @@ export function AddTransactionDialog({
                 id="amount"
                 type="number"
                 step="0.01"
+                min="0"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => {
+                  const raw = e.target.value
+                  // Keep only digits and a single dot; strip negatives
+                  const sanitized = raw
+                    .replace(/-/g, '')
+                    .replace(/[^0-9.]/g, '')
+                    .replace(/(\..*)\./g, '$1')
+                  setAmount(sanitized)
+                }}
                 required
               />
             </div>
