@@ -16,6 +16,7 @@ import { useState, useEffect } from "react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { EditAccountDialog } from "./edit-account-dialog"
 import { DeleteAccountDialog } from "./delete-account-dialog"
+import { useTranslations } from "next-intl"
 
 type Account = Database["public"]["Tables"]["accounts"]["Row"]
 
@@ -40,6 +41,7 @@ export function AccountsList({ accounts, userId }: { accounts: Account[]; userId
   const [editingAccount, setEditingAccount] = useState<Account | null>(null)
   const [deletingAccount, setDeletingAccount] = useState<Account | null>(null)
   const supabase = createBrowserClient()
+  const t = useTranslations('accounts')
 
   useEffect(() => {
     async function fetchBalances() {
