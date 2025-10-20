@@ -8,6 +8,7 @@ import type { Database } from "@/types/database"
 import { useState } from "react"
 import { EditCategoryDialog } from "./edit-category-dialog"
 import { DeleteCategoryDialog } from "./delete-category-dialog"
+import { useTranslations } from "next-intl"
 
 type Category = Database["public"]["Tables"]["categories"]["Row"]
 
@@ -20,6 +21,8 @@ export function CategoriesList({
 }) {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
+  const t = useTranslations('accounts')
+
 
   // Group categories by type
   const incomeCategories = categories.filter((c) => c.type === "income")
