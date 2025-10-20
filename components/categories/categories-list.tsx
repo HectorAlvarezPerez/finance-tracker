@@ -21,7 +21,7 @@ export function CategoriesList({
 }) {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
-  const t = useTranslations('accounts')
+  const t = useTranslations('categories')
 
 
   // Group categories by type
