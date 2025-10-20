@@ -238,6 +238,8 @@
     "shares": "Acciones",
     "price": "Precio",
     "currency": "Moneda",
+    "initialBalance": "Balance Inicial",
+    "balanceAdjustment": "Ajustar Balance",
     "period": "Período",
     "limit": "Límite",
     "frequency": "Frecuencia",
