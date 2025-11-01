@@ -2,10 +2,6 @@ import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { createServerClient } from '@/lib/supabase/server'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
-
 export async function POST(request: Request) {
   try {
     const { transactions, userId } = await request.json()
@@ -58,6 +54,17 @@ Return null for categoryName if:
 - No existing category fits well
 - You're uncertain about the match
 - The confidence would be "low"`
+
+    const apiKey = process.env.OPENAI_API_KEY
+    if (!apiKey) {
+      console.error('AI categorize error: OPENAI_API_KEY is not configured')
+      return NextResponse.json(
+        { error: 'AI categorization is currently unavailable. Please contact support.' },
+        { status: 503 }
+      )
+    }
+
+    const openai = new OpenAI({ apiKey })
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -116,4 +123,3 @@ Return null for categoryName if:
     )
   }
 }
-
