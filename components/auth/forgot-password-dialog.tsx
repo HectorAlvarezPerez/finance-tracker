@@ -33,14 +33,48 @@ export function ForgotPasswordDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    const normalizedEmail = email.trim()
+    if (!normalizedEmail) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setLoading(true)
 
     try {
+      const checkResponse = await fetch("/api/auth/check-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: normalizedEmail }),
+      })
+
+      const checkData = await checkResponse.json()
+
+      if (!checkResponse.ok) {
+        throw new Error(checkData.error || "Failed to verify email")
+      }
+
+      if (!checkData.exists) {
+        toast({
+          title: "Email not found",
+          description: "We couldn't find an account with that email address.",
+          variant: "destructive",
+        })
+        return
+      }
+
       const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(
         "/reset-password"
       )}`
 
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
         redirectTo,
       })
 
