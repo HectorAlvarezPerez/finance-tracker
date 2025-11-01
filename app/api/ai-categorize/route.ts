@@ -1,6 +1,22 @@
 import { NextResponse } from 'next/server'
-import OpenAI from 'openai'
 import { createServerClient } from '@/lib/supabase/server'
+
+export const runtime = 'nodejs'
+
+let OpenAICtor: typeof import('openai').default | null = null
+
+async function createOpenAIClient(apiKey: string) {
+  if (!OpenAICtor) {
+    const { default: OpenAI } = await import('openai')
+    OpenAICtor = OpenAI
+  }
+
+  const OpenAIClient = OpenAICtor
+  if (!OpenAIClient) {
+    throw new Error('Failed to initialize OpenAI client')
+  }
+  return new OpenAIClient({ apiKey })
+}
 
 export async function POST(request: Request) {
   try {
@@ -55,7 +71,7 @@ Return null for categoryName if:
 - You're uncertain about the match
 - The confidence would be "low"`
 
-    const apiKey = process.env.OPENAI_API_KEY
+    const apiKey = process.env.OPENAI_API_KEY?.trim()
     if (!apiKey) {
       console.error('AI categorize error: OPENAI_API_KEY is not configured')
       return NextResponse.json(
@@ -64,7 +80,7 @@ Return null for categoryName if:
       )
     }
 
-    const openai = new OpenAI({ apiKey })
+    const openai = await createOpenAIClient(apiKey)
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',

@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase/server"
-import OpenAI from "openai"
+
+export const runtime = "nodejs"
+
+let OpenAICtor: typeof import("openai").default | null = null
+
+async function createOpenAIClient(apiKey: string) {
+  if (!OpenAICtor) {
+    const { default: OpenAI } = await import("openai")
+    OpenAICtor = OpenAI
+  }
+
+  const OpenAIClient = OpenAICtor
+  if (!OpenAIClient) {
+    throw new Error("Failed to initialize OpenAI client")
+  }
+  return new OpenAIClient({ apiKey })
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,7 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User ID required" }, { status: 400 })
     }
 
-    const apiKey = process.env.OPENAI_API_KEY
+    const apiKey = process.env.OPENAI_API_KEY?.trim()
     if (!apiKey) {
       console.error("AI Assistant error: OPENAI_API_KEY is not configured")
       return NextResponse.json(
@@ -19,7 +35,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const openai = new OpenAI({ apiKey })
+    const openai = await createOpenAIClient(apiKey)
 
     // Get user context (accounts, categories, etc.)
     const supabase = createServerClient()
