@@ -80,7 +80,16 @@ Return null for categoryName if:
       )
     }
 
-    const openai = await createOpenAIClient(apiKey)
+    let openai
+    try {
+      openai = await createOpenAIClient(apiKey)
+    } catch (error: any) {
+      console.error('AI categorize error: failed to initialize OpenAI client', error)
+      return NextResponse.json(
+        { error: 'AI categorization is currently unavailable. Please contact support.' },
+        { status: 503 }
+      )
+    }
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',

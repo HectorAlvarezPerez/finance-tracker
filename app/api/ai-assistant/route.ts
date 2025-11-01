@@ -35,7 +35,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const openai = await createOpenAIClient(apiKey)
+    let openai
+    try {
+      openai = await createOpenAIClient(apiKey)
+    } catch (error: any) {
+      console.error("AI Assistant error: failed to initialize OpenAI client", error)
+      return NextResponse.json(
+        { error: "AI assistant is currently unavailable. Please contact support." },
+        { status: 503 }
+      )
+    }
 
     // Get user context (accounts, categories, etc.)
     const supabase = createServerClient()
