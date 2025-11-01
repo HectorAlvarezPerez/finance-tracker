@@ -7,7 +7,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { processRecurringTransactions } from "@/lib/services/recurring-processor"
 
-export const runtime = "edge"
 export const dynamic = "force-dynamic"
 
 /**

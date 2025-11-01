@@ -36,8 +36,12 @@ export function ForgotPasswordDialog({
     setLoading(true)
 
     try {
+      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(
+        "/reset-password"
+      )}`
+
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo,
       })
 
       if (error) throw error
@@ -120,4 +124,3 @@ export function ForgotPasswordDialog({
     </Dialog>
   )
 }
-

@@ -268,7 +268,6 @@ async function createTransaction(supabase: any, userId: string, args: any) {
       amount: args.amount,
       description: args.description,
       date: args.date || new Date().toISOString().split("T")[0],
-      type: args.amount > 0 ? "income" : "expense",
     } as any)
     .select()
     .single()
@@ -300,7 +299,7 @@ async function createBudget(supabase: any, userId: string, args: any) {
     .insert({
       user_id: userId,
       category_id: args.category_id,
-      amount: args.amount,
+      amount_total: args.amount,
       month: args.month,
     } as any)
     .select()
@@ -319,4 +318,3 @@ function getDefaultColor(type: string): string {
   }
   return colors[type] || "#6b7280"
 }
-

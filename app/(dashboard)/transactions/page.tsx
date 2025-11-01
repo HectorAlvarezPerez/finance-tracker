@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 export default async function TransactionsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const supabase = createServerClient()
   const t = await getTranslations('transactions')
@@ -23,6 +23,9 @@ export default async function TransactionsPage({
   if (!user) {
     redirect("/login")
   }
+
+  // Await searchParams
+  const params = await searchParams
 
   // Get accounts for filters
   const { data: accounts } = await supabase
@@ -45,24 +48,24 @@ export default async function TransactionsPage({
     .eq("user_id", user.id)
     .order("date", { ascending: false })
 
-  if (searchParams.account) {
-    query = query.eq("account_id", searchParams.account as string)
+  if (params.account) {
+    query = query.eq("account_id", params.account as string)
   }
 
-  if (searchParams.category) {
-    query = query.eq("category_id", searchParams.category as string)
+  if (params.category) {
+    query = query.eq("category_id", params.category as string)
   }
 
-  if (searchParams.startDate) {
-    query = query.gte("date", searchParams.startDate as string)
+  if (params.startDate) {
+    query = query.gte("date", params.startDate as string)
   }
 
-  if (searchParams.endDate) {
-    query = query.lte("date", searchParams.endDate as string)
+  if (params.endDate) {
+    query = query.lte("date", params.endDate as string)
   }
 
-  if (searchParams.search) {
-    query = query.ilike("description", `%${searchParams.search}%`)
+  if (params.search) {
+    query = query.ilike("description", `%${params.search}%`)
   }
 
   const { data: transactions } = await query.limit(100)

@@ -4,7 +4,9 @@ import { NextResponse } from "next/server"
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get("code")
-  const next = requestUrl.searchParams.get("next") || "/dashboard"
+  const type = requestUrl.searchParams.get("type")
+  const defaultNext = type === "recovery" ? "/reset-password" : "/dashboard"
+  const next = requestUrl.searchParams.get("next") || defaultNext
 
   if (code) {
     const supabase = createServerClient()
@@ -23,4 +25,3 @@ export async function GET(request: Request) {
     new URL("/login?error=verification_failed", requestUrl.origin)
   )
 }
-
