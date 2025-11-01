@@ -26,19 +26,22 @@ export async function POST(request: Request) {
     }
 
     const supabase = createServiceClient()
-    const { data, error } = await supabase.auth.admin.getUserByEmail(
-      trimmedEmail
-    )
+    const authSchema = (supabase as any).schema("auth")
+    const { data, error } = await authSchema
+      .from("users")
+      .select("id")
+      .eq("email", trimmedEmail)
+      .maybeSingle()
 
     if (error) {
-      console.error("Email check error:", error.message)
+      console.error("Email check error:", error)
       return NextResponse.json(
         { error: "Unable to verify email at this time" },
         { status: 500 }
       )
     }
 
-    return NextResponse.json({ exists: Boolean(data?.user) })
+    return NextResponse.json({ exists: Boolean(data) })
   } catch (error: any) {
     console.error("Email check error:", error)
     return NextResponse.json(
