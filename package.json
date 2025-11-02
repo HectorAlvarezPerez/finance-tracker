@@ -9,7 +9,7 @@
     "start": "next start",
     "cf:build": "opennextjs-cloudflare build",
     "cf:preview": "wrangler pages dev .open-next",
-    "cf:deploy": "wrangler pages deploy .open-next --project-name \"$CF_PAGES_PROJECT\"",
+    "cf:deploy": "opennextjs-cloudflare upload",
     "deploy": "npm run cf:build && npm run cf:deploy"
   },
   "dependencies": {
