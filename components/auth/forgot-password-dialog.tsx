@@ -73,8 +73,8 @@ export function ForgotPasswordDialog({
 
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin
       // Route through auth callback so the session is established server-side,
-      // then we redirect to the reset form.
-      const redirectTo = `${appUrl.replace(/\/$/, "")}/auth/callback`
+      // then we redirect to the reset form. Explicitly pass next=/reset-password.
+      const redirectTo = `${appUrl.replace(/\/$/, "")}/auth/callback?next=/reset-password`
 
       const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
         redirectTo,
