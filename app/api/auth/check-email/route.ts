@@ -1,3 +1,4 @@
+import { AuthApiError } from "@supabase/supabase-js"
 import { NextResponse } from "next/server"
 import { createServiceClient } from "@/lib/supabase/client"
 
@@ -28,14 +29,20 @@ export async function POST(request: Request) {
     }
 
     const supabase = createServiceClient()
-    const authSchema = (supabase as any).schema("auth")
-    const { data, error } = await authSchema
-      .from("users")
-      .select("id")
-      .eq("email", trimmedEmail)
-      .maybeSingle()
+    const { data, error } = await (supabase.auth.admin.listUsers as any)({
+      page: 1,
+      perPage: 1,
+      email: trimmedEmail,
+    })
 
     if (error) {
+      if (
+        error instanceof AuthApiError &&
+        (error.status === 400 || error.status === 404)
+      ) {
+        return NextResponse.json({ exists: false })
+      }
+
       console.error("Email check error:", error)
       return NextResponse.json(
         { error: "Unable to verify email at this time" },
@@ -43,7 +50,12 @@ export async function POST(request: Request) {
       )
     }
 
-    return NextResponse.json({ exists: Boolean(data) })
+    const exists = Boolean(
+      data?.users?.some((user: { email?: string }) => {
+        return user.email?.toLowerCase() === trimmedEmail
+      })
+    )
+    return NextResponse.json({ exists })
   } catch (error: any) {
     console.error("Email check error:", error)
     return NextResponse.json(

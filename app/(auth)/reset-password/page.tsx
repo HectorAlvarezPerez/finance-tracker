@@ -22,20 +22,38 @@ export default function ResetPasswordPage() {
   const supabase = createBrowserClient()
 
   useEffect(() => {
-    // Check if we have a valid session (from the email link)
-    const checkSession = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (user) {
-        setValidToken(true)
-      } else {
+    const processRecovery = async () => {
+      try {
+        // Try to establish a session from the recovery link if one isn't set yet
+        const { data: existingSession } = await supabase.auth.getSession()
+        if (!existingSession.session) {
+          const { data, error } = await supabase.auth.getSessionFromUrl({
+            storeSession: true,
+          })
+
+          if (error) throw error
+
+          if (data.session) {
+            // Clean up the hash parameters from the URL once they're processed
+            router.replace("/reset-password")
+          }
+        }
+
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+
+        setValidToken(Boolean(user))
+      } catch (error) {
+        console.error("Reset password session error:", error)
         setValidToken(false)
+      } finally {
+        setChecking(false)
       }
-      setChecking(false)
     }
 
-    checkSession()
-  }, [supabase.auth])
+    processRecovery()
+  }, [router, supabase])
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -178,4 +196,3 @@ export default function ResetPasswordPage() {
     </div>
   )
 }
-
