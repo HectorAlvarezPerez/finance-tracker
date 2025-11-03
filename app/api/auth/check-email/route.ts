@@ -29,9 +29,8 @@ export async function POST(request: Request) {
     }
 
     const supabase = createServiceClient()
-    const { data, error } = await (supabase.auth.admin.listUsers as any)({
-      page: 1,
-      perPage: 1,
+    const { data, error } = await supabase.auth.admin.generateLink({
+      type: "recovery",
       email: trimmedEmail,
     })
 
@@ -50,11 +49,7 @@ export async function POST(request: Request) {
       )
     }
 
-    const exists = Boolean(
-      data?.users?.some((user: { email?: string }) => {
-        return user.email?.toLowerCase() === trimmedEmail
-      })
-    )
+    const exists = Boolean(data?.user)
     return NextResponse.json({ exists })
   } catch (error: any) {
     console.error("Email check error:", error)
