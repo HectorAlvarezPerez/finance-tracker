@@ -78,7 +78,18 @@ export function ForgotPasswordDialog({
         redirectTo,
       })
 
-      if (error) throw error
+      if (error) {
+        const message = error.message?.toLowerCase() || ""
+        if (error.status === 429 || message.includes("for security purposes")) {
+          toast({
+            title: "Email already sent",
+            description: "Please check your inbox and wait a moment before requesting another reset link.",
+          })
+          return
+        }
+
+        throw error
+      }
 
       setSent(true)
       toast({

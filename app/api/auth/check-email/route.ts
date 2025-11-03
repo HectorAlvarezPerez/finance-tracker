@@ -29,27 +29,52 @@ export async function POST(request: Request) {
     }
 
     const supabase = createServiceClient()
-    const { data, error } = await supabase.auth.admin.generateLink({
-      type: "recovery",
-      email: trimmedEmail,
-    })
 
-    if (error) {
-      if (
-        error instanceof AuthApiError &&
-        (error.status === 400 || error.status === 404)
-      ) {
-        return NextResponse.json({ exists: false })
+    let page = 1
+    const perPage = 200
+    let exists = false
+
+    while (true) {
+      const { data, error } = await supabase.auth.admin.listUsers({
+        page,
+        perPage,
+      })
+
+      if (error) {
+        if (
+          error instanceof AuthApiError &&
+          (error.status === 400 || error.status === 404)
+        ) {
+          break
+        }
+
+        console.error("Email check error:", error)
+        return NextResponse.json(
+          { error: "Unable to verify email at this time" },
+          { status: 500 }
+        )
       }
 
-      console.error("Email check error:", error)
-      return NextResponse.json(
-        { error: "Unable to verify email at this time" },
-        { status: 500 }
-      )
+      const users = Array.isArray((data as any)?.users)
+        ? (data as any).users
+        : []
+
+      if (
+        users.some(
+          (user: { email?: string }) => user.email?.toLowerCase() === trimmedEmail
+        )
+      ) {
+        exists = true
+        break
+      }
+
+      const nextPage = (data as any)?.nextPage
+      if (!nextPage || nextPage <= page) {
+        break
+      }
+      page = nextPage
     }
 
-    const exists = Boolean(data?.user)
     return NextResponse.json({ exists })
   } catch (error: any) {
     console.error("Email check error:", error)
