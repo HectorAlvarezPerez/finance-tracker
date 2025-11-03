@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev": "next dev",
     "build": "next build",
+    "start": "next start",
     "cf:build": "opennextjs-cloudflare build",
-    "cf:deploy": "opennextjs-cloudflare deploy",
-    "cf:upload": "opennextjs-cloudflare upload"
+    "cf:preview": "wrangler pages dev .open-next",
+    "cf:deploy": "opennextjs-cloudflare upload",
+    "deploy": "npm run cf:build && npm run cf:deploy"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",

@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-    if (!supabaseUrl) {
+    if (!supabaseUrl || !serviceKey) {
       console.error("Email check error: Supabase service credentials missing")
       return NextResponse.json(
         { error: "Unable to verify email at this time" },
