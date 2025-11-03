@@ -24,7 +24,6 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     const processRecovery = async () => {
       try {
-        // If we already have a user session, we're good to go
         const {
           data: { user: existingUser },
         } = await supabase.auth.getUser()
@@ -34,10 +33,12 @@ export default function ResetPasswordPage() {
           return
         }
 
-        // Parse recovery tokens from hash fragment
-        const hashParams = new URLSearchParams(
-          typeof window !== "undefined" ? window.location.hash.slice(1) : ""
-        )
+        if (typeof window === "undefined") {
+          setValidToken(false)
+          return
+        }
+
+        const hashParams = new URLSearchParams(window.location.hash.slice(1))
         const accessToken = hashParams.get("access_token")
         const refreshToken = hashParams.get("refresh_token")
 
@@ -50,9 +51,8 @@ export default function ResetPasswordPage() {
           if (error) throw error
 
           if (data?.session) {
-            // Remove tokens from the URL bar after storing the session
-            router.replace("/reset-password")
-            setValidToken(Boolean(data?.user))
+            window.history.replaceState(null, "", "/reset-password")
+            setValidToken(Boolean(data.user))
             return
           }
         }
@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
     }
 
     processRecovery()
-  }, [router, supabase])
+  }, [supabase])
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault()
