@@ -1,6 +1,4 @@
-import { AuthApiError } from "@supabase/supabase-js"
 import { NextResponse } from "next/server"
-import { createServiceClient } from "@/lib/supabase/client"
 
 export const runtime = "nodejs"
 
@@ -28,51 +26,51 @@ export async function POST(request: Request) {
       )
     }
 
-    const supabase = createServiceClient()
+    const adminUrl = new URL("/auth/v1/admin/users", supabaseUrl)
+    adminUrl.searchParams.set("email", trimmedEmail)
 
-    let page = 1
-    const perPage = 200
-    let exists = false
+    const response = await fetch(adminUrl, {
+      method: "GET",
+      headers: {
+        apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
+      },
+    })
 
-    while (true) {
-      const { data, error } = await supabase.auth.admin.listUsers({
-        page,
-        perPage,
+    if (response.status === 404) {
+      return NextResponse.json({ exists: false })
+    }
+
+    if (!response.ok) {
+      let details: any = null
+      try {
+        details = await response.json()
+      } catch (jsonError) {
+        // no-op; response not JSON
+      }
+      console.error("Email check error: admin fetch failed", {
+        status: response.status,
+        details,
       })
+      return NextResponse.json(
+        { error: "Unable to verify email at this time" },
+        { status: 500 }
+      )
+    }
 
-      if (error) {
-        if (
-          error instanceof AuthApiError &&
-          (error.status === 400 || error.status === 404)
-        ) {
-          break
-        }
-
-        console.error("Email check error:", error)
-        return NextResponse.json(
-          { error: "Unable to verify email at this time" },
-          { status: 500 }
-        )
-      }
-
-      const users = Array.isArray((data as any)?.users)
-        ? (data as any).users
-        : []
-
-      if (
-        users.some(
-          (user: { email?: string }) => user.email?.toLowerCase() === trimmedEmail
-        )
-      ) {
-        exists = true
-        break
-      }
-
-      const nextPage = (data as any)?.nextPage
-      if (!nextPage || nextPage <= page) {
-        break
-      }
-      page = nextPage
+    let exists = false
+    try {
+      const data = await response.json()
+      const users = Array.isArray(data?.users) ? data.users : []
+      exists = users.some(
+        (user: { email?: string }) => user.email?.toLowerCase() === trimmedEmail
+      )
+    } catch (jsonError) {
+      console.error("Email check error: failed to parse admin response", jsonError)
+      return NextResponse.json(
+        { error: "Unable to verify email at this time" },
+        { status: 500 }
+      )
     }
 
     return NextResponse.json({ exists })
