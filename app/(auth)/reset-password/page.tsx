@@ -24,26 +24,40 @@ export default function ResetPasswordPage() {
   useEffect(() => {
     const processRecovery = async () => {
       try {
-        // Try to establish a session from the recovery link if one isn't set yet
-        const { data: existingSession } = await supabase.auth.getSession()
-        if (!existingSession.session) {
-          const { data, error } = await supabase.auth.getSessionFromUrl({
-            storeSession: true,
+        // If we already have a user session, we're good to go
+        const {
+          data: { user: existingUser },
+        } = await supabase.auth.getUser()
+
+        if (existingUser) {
+          setValidToken(true)
+          return
+        }
+
+        // Parse recovery tokens from hash fragment
+        const hashParams = new URLSearchParams(
+          typeof window !== "undefined" ? window.location.hash.slice(1) : ""
+        )
+        const accessToken = hashParams.get("access_token")
+        const refreshToken = hashParams.get("refresh_token")
+
+        if (accessToken && refreshToken) {
+          const { data, error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
           })
 
           if (error) throw error
 
-          if (data.session) {
-            // Clean up the hash parameters from the URL once they're processed
+          if (data?.session) {
+            // Remove tokens from the URL bar after storing the session
             router.replace("/reset-password")
+            setValidToken(Boolean(data?.user))
+            return
           }
         }
 
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-
-        setValidToken(Boolean(user))
+        setValidToken(false)
       } catch (error) {
         console.error("Reset password session error:", error)
         setValidToken(false)
