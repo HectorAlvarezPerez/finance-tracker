@@ -38,7 +38,31 @@ export default function ResetPasswordPage() {
           return
         }
 
-        const hashParams = new URLSearchParams(window.location.hash.slice(1))
+        const currentUrl = new URL(window.location.href)
+        const searchParams = currentUrl.searchParams
+        const hashParams = new URLSearchParams(currentUrl.hash.slice(1))
+
+        const errorParam =
+          searchParams.get("error") || hashParams.get("error")
+        if (errorParam) {
+          console.error(
+            "Reset password error:",
+            searchParams.get("error_description") ||
+              hashParams.get("error_description")
+          )
+          setValidToken(false)
+          return
+        }
+
+        const code = searchParams.get("code")
+        if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(code)
+          if (error) throw error
+          router.replace("/reset-password")
+          setValidToken(true)
+          return
+        }
+
         const accessToken = hashParams.get("access_token")
         const refreshToken = hashParams.get("refresh_token")
 
@@ -60,14 +84,14 @@ export default function ResetPasswordPage() {
         setValidToken(false)
       } catch (error) {
         console.error("Reset password session error:", error)
-        setValidToken(false)
-      } finally {
-        setChecking(false)
-      }
-    }
+    setValidToken(false)
+  } finally {
+    setChecking(false)
+  }
+}
 
-    processRecovery()
-  }, [supabase])
+processRecovery()
+  }, [supabase, router])
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault()
