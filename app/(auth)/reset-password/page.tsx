@@ -56,11 +56,22 @@ export default function ResetPasswordPage() {
 
         const code = searchParams.get("code")
         if (code) {
-          const { error } = await supabase.auth.exchangeCodeForSession(code)
-          if (error) throw error
-          router.replace("/reset-password")
-          setValidToken(true)
-          return
+          try {
+            const { error } = await supabase.auth.exchangeCodeForSession(code)
+            if (error) throw error
+            // Mark as valid before removing the query param to avoid race conditions
+            setValidToken(true)
+            // Clean up the URL without remounting the page
+            if (typeof window !== "undefined") {
+              window.history.replaceState(null, "", "/reset-password")
+            }
+            return
+          } catch (err) {
+            // Fallback: let the server callback attempt the exchange and redirect back
+            const next = encodeURIComponent("/reset-password")
+            window.location.href = `/auth/callback?type=recovery&code=${encodeURIComponent(code)}&next=${next}`
+            return
+          }
         }
 
         const accessToken = hashParams.get("access_token")
