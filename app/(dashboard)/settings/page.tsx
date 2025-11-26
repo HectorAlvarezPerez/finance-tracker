@@ -3,6 +3,8 @@ import { redirect } from "next/navigation"
 import { getTranslations } from 'next-intl/server'
 import { SettingsForm } from "@/components/settings/settings-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export const dynamic = 'force-dynamic'
 
@@ -52,6 +54,26 @@ export default async function SettingsPage() {
               <p className="text-sm text-muted-foreground font-mono text-xs">
                 {user.id}
               </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Automation</CardTitle>
+            <CardDescription>Manage automated rules and behaviors</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">Transaction Rules</p>
+                <p className="text-sm text-muted-foreground">
+                  Automatically categorize transactions based on patterns
+                </p>
+              </div>
+              <Button asChild variant="outline">
+                <Link href="/settings/rules">Manage Rules</Link>
+              </Button>
             </div>
           </CardContent>
         </Card>
