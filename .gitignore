@@ -29,9 +29,11 @@ yarn-error.log*
 .env
 
 # vercel
-.vercel
+
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 
+# python env
+finance_env/

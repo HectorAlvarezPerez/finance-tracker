@@ -77,7 +77,7 @@ export function RulesList({
                             <div className="flex items-center justify-between">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-medium text-lg">"{rule.pattern}"</span>
+                                        <span className="font-medium text-lg">&quot;{rule.pattern}&quot;</span>
                                         {!rule.enabled && <Badge variant="secondary">Disabled</Badge>}
                                     </div>
                                     <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">

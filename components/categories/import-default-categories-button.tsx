@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
-import { getDefaultCategories } from "@/lib/default-categories"
+import { getDefaultCategories } from "@/lib/data/default-categories"
 
-export function ImportDefaultCategoriesButton({ 
-  userId, 
+export function ImportDefaultCategoriesButton({
+  userId,
   locale = 'es',
-  hasCategories 
-}: { 
+  hasCategories
+}: {
   userId: string
   locale?: string
   hasCategories: boolean
@@ -68,8 +68,8 @@ export function ImportDefaultCategoriesButton({
   }
 
   return (
-    <Button 
-      onClick={handleImport} 
+    <Button
+      onClick={handleImport}
       disabled={loading}
       variant="outline"
       className="gap-2"

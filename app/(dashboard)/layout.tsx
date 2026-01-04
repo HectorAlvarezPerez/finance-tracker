@@ -1,8 +1,8 @@
-import { Nav, MobileNav } from "@/components/nav"
+import { Nav, MobileNav } from "@/components/layout/nav"
 import { AIChatWrapper } from "@/components/ai-assistant/ai-chat-wrapper"
 import { SettingsProvider } from "@/lib/contexts/settings-context"
 import { I18nProvider } from "@/lib/i18n/provider"
-import { InitDefaultData } from "@/components/init-default-data"
+import { InitDefaultData } from "@/components/providers/init-default-data"
 import { createServerClient } from "@/lib/supabase/server"
 
 export default async function DashboardLayout({

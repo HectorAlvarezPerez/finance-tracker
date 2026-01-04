@@ -51,7 +51,7 @@ export function DeleteRuleDialog({
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently delete the rule
-                        for "{rule.pattern}".
+                        for &quot;{rule.pattern}&quot;.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
