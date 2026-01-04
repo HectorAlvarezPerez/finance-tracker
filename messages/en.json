@@ -40,8 +40,7 @@
     "exportCSV": "Export CSV",
     "filters": {
       "allAccounts": "All Accounts",
-      "allCategories": "All Categories",
-      "allStatuses": "All Statuses"
+      "allCategories": "All Categories"
     },
     "table": {
       "date": "Date",
@@ -49,12 +48,7 @@
       "category": "Category",
       "account": "Account",
       "amount": "Amount",
-      "status": "Status",
       "actions": "Actions"
-    },
-    "status": {
-      "posted": "Posted",
-      "pending": "Pending"
     },
     "noTransactions": "No transactions found",
     "edit": "Edit",
@@ -232,7 +226,6 @@
     "type": "Type",
     "category": "Category",
     "account": "Account",
-    "status": "Status",
     "color": "Color",
     "balance": "Balance",
     "currency": "Currency",
@@ -368,4 +361,3 @@
     "investment": "Investment"
   }
 }
-

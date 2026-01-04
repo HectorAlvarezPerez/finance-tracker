@@ -40,8 +40,7 @@
     "exportCSV": "Exportar CSV",
     "filters": {
       "allAccounts": "Todas las Cuentas",
-      "allCategories": "Todas las Categorías",
-      "allStatuses": "Todos los Estados"
+      "allCategories": "Todas las Categorías"
     },
     "table": {
       "date": "Fecha",
@@ -49,12 +48,7 @@
       "category": "Categoría",
       "account": "Cuenta",
       "amount": "Cantidad",
-      "status": "Estado",
       "actions": "Acciones"
-    },
-    "status": {
-      "posted": "Registrado",
-      "pending": "Pendiente"
     },
     "noTransactions": "No se encontraron transacciones",
     "edit": "Editar",
@@ -232,7 +226,6 @@
     "type": "Tipo",
     "category": "Categoría",
     "account": "Cuenta",
-    "status": "Estado",
     "color": "Color",
     "balance": "Balance",
     "notes": "Notas",
@@ -390,10 +383,6 @@
       "lastUpdated": "Última actualización",
       "never": "Nunca"
     },
-    "addRecurring": {
-      "title": "Añadir Transacción Recurrente",
-      "subtitle": "Crear una transacción que se repite automáticamente"
-    },
     "editRecurring": {
       "title": "Editar Transacción Recurrente",
       "subtitle": "Modificar transacción recurrente existente"
@@ -448,4 +437,3 @@
     "investment": "Inversión"
   }
 }
-
