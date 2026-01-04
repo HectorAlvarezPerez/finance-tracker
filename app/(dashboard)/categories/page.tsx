@@ -44,10 +44,15 @@ export default async function CategoriesPage() {
             <p className="text-muted-foreground">
               {t('subtitle')}
             </p>
+            {hasCategories && (
+              <div className="mt-2 text-sm text-muted-foreground bg-muted/50 inline-block px-2 py-1 rounded-md">
+                {categories?.length || 0} Total
+              </div>
+            )}
           </div>
           <AddCategoryDialog userId={user.id} />
         </div>
-        
+
         {!hasCategories && (
           <div className="flex items-center gap-2 p-4 bg-muted rounded-lg">
             <div className="flex-1">
@@ -56,8 +61,8 @@ export default async function CategoriesPage() {
                 {t('importDefault')}
               </p>
             </div>
-            <ImportDefaultCategoriesButton 
-              userId={user.id} 
+            <ImportDefaultCategoriesButton
+              userId={user.id}
               locale={settings?.locale || 'en-US'}
               hasCategories={hasCategories}
             />
@@ -66,7 +71,7 @@ export default async function CategoriesPage() {
       </div>
 
       <CategoriesList categories={categories || []} userId={user.id} />
-    </div>
+    </div >
   )
 }
 

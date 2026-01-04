@@ -81,7 +81,10 @@
     "edit": "Edit Category",
     "delete": "Delete Category",
     "gettingStarted": "Getting Started?",
-    "importDefault": "Import 20+ default categories to get started quickly"
+    "importDefault": "Import 20+ default categories to get started quickly",
+    "search": "Search categories...",
+    "noResults": "No categories found",
+    "noSearchResults": "No categories found matching your search"
   },
   "budgets": {
     "title": "Budgets",

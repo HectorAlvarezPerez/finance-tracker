@@ -81,7 +81,10 @@
     "edit": "Editar Categoría",
     "delete": "Eliminar Categoría",
     "gettingStarted": "¿Comenzando?",
-    "importDefault": "Importa 20+ categorías predeterminadas para empezar rápidamente"
+    "importDefault": "Importa 20+ categorías predeterminadas para empezar rápidamente",
+    "search": "Buscar categorías...",
+    "noResults": "No se encontraron categorías",
+    "noSearchResults": "No se encontraron categorías que coincidan con tu búsqueda"
   },
   "budgets": {
     "title": "Presupuestos",
