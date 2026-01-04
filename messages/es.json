@@ -2,7 +2,6 @@
   "nav": {
     "dashboard": "Panel",
     "transactions": "Transacciones",
-    "recurring": "Recurrentes",
     "accounts": "Cuentas",
     "categories": "Categorías",
     "budgets": "Presupuestos",
@@ -299,26 +298,7 @@
     "placeholder": "Escribe tu mensaje...",
     "initialMessage": "¡Hola! Soy tu asistente financiero especializado. Puedo ayudarte a gestionar tus finanzas:\n\n✅ Crear categorías, transacciones, cuentas y presupuestos\n✅ Responder preguntas sobre tus datos financieros\n✅ Proporcionar consejos y tips financieros\n\n⚠️ Solo respondo preguntas relacionadas con finanzas.\n\nPrueba: 'Crea una categoría llamada Salario para ingresos' o 'Añade una transacción de 50€ en comida'"
   },
-  "recurring": {
-    "title": "Transacciones Recurrentes",
-    "subtitle": "Gestiona transacciones recurrentes automáticas",
-    "add": "Añadir Recurrente",
-    "frequency": {
-      "daily": "Diario",
-      "weekly": "Semanal",
-      "monthly": "Mensual",
-      "yearly": "Anual"
-    },
-    "nextDate": "Próxima Fecha",
-    "noRecurring": "No hay transacciones recurrentes todavía"
-  },
   "dialogs": {
-    "addRecurring": {
-      "title": "Añadir Transacción Recurrente",
-      "subtitle": "Crear una transacción que se repite automáticamente",
-      "success": "Transacción recurrente creada correctamente",
-      "error": "Error al crear la transacción recurrente"
-    },
     "addTransaction": {
       "title": "Añadir Transacción",
       "subtitle": "Crear una nueva transacción"
@@ -382,15 +362,6 @@
       "updating": "Actualizando...",
       "lastUpdated": "Última actualización",
       "never": "Nunca"
-    },
-    "editRecurring": {
-      "title": "Editar Transacción Recurrente",
-      "subtitle": "Modificar transacción recurrente existente"
-    },
-    "deleteRecurring": {
-      "title": "Eliminar Transacción Recurrente",
-      "message": "¿Estás seguro de que quieres eliminar esta transacción recurrente?",
-      "description": "Esto no eliminará las transacciones ya creadas."
     },
     "importCSV": {
       "title": "Importar Transacciones",

@@ -13,7 +13,7 @@ import {
   Settings,
   LineChart,
   Tag,
-  Repeat
+
 } from "lucide-react"
 import { ThemeToggle } from "../theme/theme-toggle"
 import { LogoutButton } from "./logout-button"
@@ -33,11 +33,7 @@ export function Nav() {
       href: "/transactions",
       icon: CreditCard,
     },
-    {
-      title: t('recurring'),
-      href: "/recurring",
-      icon: Repeat,
-    },
+
     {
       title: t('accounts'),
       href: "/accounts",
@@ -124,11 +120,7 @@ export function MobileNav() {
       href: "/transactions",
       icon: CreditCard,
     },
-    {
-      title: t('recurring'),
-      href: "/recurring",
-      icon: Repeat,
-    },
+
     {
       title: t('accounts'),
       href: "/accounts",

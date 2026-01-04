@@ -2,7 +2,6 @@
   "nav": {
     "dashboard": "Dashboard",
     "transactions": "Transactions",
-    "recurring": "Recurring",
     "accounts": "Accounts",
     "categories": "Categories",
     "budgets": "Budgets",
@@ -268,12 +267,6 @@
     "cannotBeUndone": "This action cannot be undone."
   },
   "dialogs": {
-    "addRecurring": {
-      "title": "Add Recurring Transaction",
-      "subtitle": "Set up an automated recurring transaction",
-      "success": "Recurring transaction created successfully",
-      "error": "Failed to create recurring transaction"
-    },
     "addTransaction": {
       "title": "Add Transaction",
       "subtitle": "Create a new transaction",
@@ -333,19 +326,6 @@
     "subtitle": "Ask me anything about your finances or tell me what to do",
     "placeholder": "Type your message...",
     "initialMessage": "Hi! I'm your specialized financial assistant. I can help you manage your finances:\n\n✅ Create categories, transactions, accounts, and budgets\n✅ Answer questions about your financial data\n✅ Provide financial advice and tips\n\n⚠️ I only respond to finance-related questions.\n\nTry: 'Create a category called Salary for income' or 'Add a transaction for $50 on groceries'"
-  },
-  "recurring": {
-    "title": "Recurring Transactions",
-    "subtitle": "Manage automatic recurring transactions",
-    "add": "Add Recurring",
-    "frequency": {
-      "daily": "Daily",
-      "weekly": "Weekly",
-      "monthly": "Monthly",
-      "yearly": "Yearly"
-    },
-    "nextDate": "Next Date",
-    "noRecurring": "No recurring transactions yet"
   },
   "accountTypes": {
     "checking": "Checking",

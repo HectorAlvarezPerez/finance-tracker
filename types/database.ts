@@ -140,62 +140,7 @@ export interface Database {
           updated_at?: string
         }
       }
-      recurring_transactions: {
-        Row: {
-          id: string
-          user_id: string
-          account_id: string
-          description: string
-          amount: number
-          category_id: string | null
-          currency: string
-          frequency: "daily" | "weekly" | "monthly" | "yearly"
-          interval_value: number
-          day_of_month: number | null
-          day_of_week: number | null
-          next_run_at: string
-          timezone: string
-          enabled: boolean
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          account_id: string
-          description: string
-          amount: number
-          category_id?: string | null
-          currency?: string
-          frequency: "daily" | "weekly" | "monthly" | "yearly"
-          interval_value?: number
-          day_of_month?: number | null
-          day_of_week?: number | null
-          next_run_at: string
-          timezone?: string
-          enabled?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          account_id?: string
-          description?: string
-          amount?: number
-          category_id?: string | null
-          currency?: string
-          frequency?: "daily" | "weekly" | "monthly" | "yearly"
-          interval_value?: number
-          day_of_month?: number | null
-          day_of_week?: number | null
-          next_run_at?: string
-          timezone?: string
-          enabled?: boolean
-          created_at?: string
-          updated_at?: string
-        }
-      }
+
       budgets: {
         Row: {
           id: string
