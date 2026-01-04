@@ -60,7 +60,6 @@ export function TransactionsTable({
               <TableHead>Category</TableHead>
               <TableHead>Account</TableHead>
               <TableHead className="text-right">Amount</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -91,24 +90,18 @@ export function TransactionsTable({
                 </TableCell>
                 <TableCell className="text-right">
                   <span
-                    className={`font-semibold ${
-                      transaction.amount >= 0 ? "text-green-600" : "text-red-600"
-                    }`}
+                    className={`font-semibold ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"
+                      }`}
                   >
                     {transaction.amount >= 0 ? "+" : ""}
                     {formatCurrency(transaction.amount)}
                   </span>
                 </TableCell>
-                <TableCell>
-                  <Badge variant={transaction.status === "posted" ? "default" : "outline"}>
-                    {transaction.status}
-                  </Badge>
-                </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       className="h-8 w-8"
                       onClick={() => setEditingTransaction(transaction)}
                     >

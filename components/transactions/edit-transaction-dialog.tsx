@@ -54,7 +54,6 @@ export function EditTransactionDialog({
   const [date, setDate] = useState(transaction.date)
   const [accountId, setAccountId] = useState(transaction.account_id)
   const [categoryId, setCategoryId] = useState(transaction.category_id || "none")
-  const [status, setStatus] = useState(transaction.status)
   const [notes, setNotes] = useState(transaction.notes || "")
   const router = useRouter()
   const { toast } = useToast()
@@ -68,7 +67,6 @@ export function EditTransactionDialog({
     setDate(transaction.date)
     setAccountId(transaction.account_id)
     setCategoryId(transaction.category_id || "none")
-    setStatus(transaction.status)
     setNotes(transaction.notes || "")
   }, [transaction])
 
@@ -85,7 +83,6 @@ export function EditTransactionDialog({
           date,
           account_id: accountId,
           category_id: categoryId === "none" ? null : categoryId,
-          status: status as Transaction["status"],
           notes: notes || null,
         })
         .eq("id", transaction.id)
@@ -196,19 +193,7 @@ export function EditTransactionDialog({
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-status">{tForms('status')}</Label>
-              <Select value={status} onValueChange={(value) => setStatus(value as Transaction["status"])}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">Pendiente</SelectItem>
-                  <SelectItem value="posted">Registrado</SelectItem>
-                  <SelectItem value="reconciled">Reconciliado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+
             <div className="space-y-2">
               <Label htmlFor="edit-notes">{tForms('notes')}</Label>
               <Textarea

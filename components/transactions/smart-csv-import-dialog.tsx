@@ -98,18 +98,18 @@ export function SmartCSVImportDialog({
   // Detect column names flexibly
   const detectColumns = (headers: string[]) => {
     const lowerHeaders = headers.map(h => h.toLowerCase())
-    
-    const dateCol = headers[lowerHeaders.findIndex(h => 
+
+    const dateCol = headers[lowerHeaders.findIndex(h =>
       h.includes('date') || h.includes('fecha') || h.includes('data')
     )]
-    
-    const descCol = headers[lowerHeaders.findIndex(h => 
-      h.includes('desc') || h.includes('concept') || h.includes('detail') || 
+
+    const descCol = headers[lowerHeaders.findIndex(h =>
+      h.includes('desc') || h.includes('concept') || h.includes('detail') ||
       h.includes('name') || h.includes('merchant')
     )]
-    
-    const amountCol = headers[lowerHeaders.findIndex(h => 
-      h.includes('amount') || h.includes('value') || h.includes('import') || 
+
+    const amountCol = headers[lowerHeaders.findIndex(h =>
+      h.includes('amount') || h.includes('value') || h.includes('import') ||
       h.includes('cantidad') || h.includes('monto')
     )]
 
@@ -119,22 +119,22 @@ export function SmartCSVImportDialog({
   // Parse date flexibly (handles different formats)
   const parseDate = (value: string): string => {
     if (!value) return new Date().toISOString().split('T')[0]
-    
+
     const str = value.toString().trim()
-    
+
     // Try different date formats
     // Format: YYYY-MM-DD (ISO)
     if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
       return str.split(' ')[0] // Remove time if present
     }
-    
+
     // Format: DD/MM/YYYY or DD-MM-YYYY
     const ddmmyyyy = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/)
     if (ddmmyyyy) {
       const [, day, month, year] = ddmmyyyy
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     }
-    
+
     // Format: MM/DD/YYYY or MM-DD-YYYY (American)
     const mmddyyyy = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/)
     if (mmddyyyy) {
@@ -145,13 +145,13 @@ export function SmartCSVImportDialog({
       }
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     }
-    
+
     // Try parsing as Date object
     const date = new Date(str)
     if (!isNaN(date.getTime())) {
       return date.toISOString().split('T')[0]
     }
-    
+
     // Fallback to today
     return new Date().toISOString().split('T')[0]
   }
@@ -242,8 +242,8 @@ export function SmartCSVImportDialog({
         description: row[descCol],
         amount: parseAmount(row[amountCol]),
         category_id: null, // No category assigned yet
-        status: "posted" as const,
         notes: null,
+        // status removed
       }))
 
       // AI Categorization if enabled
@@ -319,7 +319,7 @@ export function SmartCSVImportDialog({
 
       setOpen(false)
       router.refresh()
-      
+
       // Reset after close
       setTimeout(() => {
         setFile(null)
@@ -366,8 +366,8 @@ export function SmartCSVImportDialog({
             onDrop={handleDrop}
             className={`
               relative border-2 border-dashed rounded-lg p-8 transition-all cursor-pointer
-              ${isDragging 
-                ? 'border-primary bg-primary/5 scale-105' 
+              ${isDragging
+                ? 'border-primary bg-primary/5 scale-105'
                 : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-accent/50'
               }
               ${loading ? 'pointer-events-none opacity-50' : ''}
@@ -381,17 +381,16 @@ export function SmartCSVImportDialog({
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               disabled={loading}
             />
-            
+
             <div className="flex flex-col items-center justify-center text-center space-y-3">
-              <div className={`p-3 rounded-full transition-all ${
-                isDragging ? 'bg-primary text-primary-foreground scale-110' : 'bg-muted'
-              }`}>
+              <div className={`p-3 rounded-full transition-all ${isDragging ? 'bg-primary text-primary-foreground scale-110' : 'bg-muted'
+                }`}>
                 <Upload className={`h-8 w-8 ${isDragging ? 'animate-bounce' : ''}`} />
               </div>
-              
+
               <div>
                 <p className="text-sm font-medium">
-                  {isDragging 
+                  {isDragging
                     ? t('dropHere')
                     : t('dragDrop')
                   }
@@ -400,7 +399,7 @@ export function SmartCSVImportDialog({
                   {t('orClick')}
                 </p>
               </div>
-              
+
               <div className="flex gap-2 text-xs text-muted-foreground">
                 <span className="px-2 py-1 bg-muted rounded">CSV</span>
                 <span className="px-2 py-1 bg-muted rounded">XLSX</span>
@@ -435,8 +434,8 @@ export function SmartCSVImportDialog({
 
           {/* AI Categorization Toggle */}
           <div className="flex items-start space-x-3 rounded-lg border p-4 bg-primary/5">
-            <Checkbox 
-              id="use-ai" 
+            <Checkbox
+              id="use-ai"
               checked={useAICategorization}
               onCheckedChange={(checked) => setUseAICategorization(checked as boolean)}
               disabled={loading || categories.length === 0}
@@ -450,7 +449,7 @@ export function SmartCSVImportDialog({
                 Categorizar automáticamente con IA
               </label>
               <p className="text-xs text-muted-foreground">
-                {categories.length === 0 
+                {categories.length === 0
                   ? "Necesitas crear al menos una categoría primero"
                   : "Asignará automáticamente las transacciones a tus categorías existentes usando inteligencia artificial"
                 }

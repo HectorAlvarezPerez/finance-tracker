@@ -62,7 +62,6 @@ export function CSVImportDialog({
               description: row.description,
               amount: parseFloat(row.amount),
               category_id: null,
-              status: "posted",
               notes: row.notes || null,
             }))
 

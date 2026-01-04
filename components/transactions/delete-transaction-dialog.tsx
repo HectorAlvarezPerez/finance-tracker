@@ -53,7 +53,6 @@ export function DeleteTransactionDialog({
         description: transaction.description,
         amount: transaction.amount,
         date: transaction.date,
-        status: transaction.status,
         notes: transaction.notes,
       }
 

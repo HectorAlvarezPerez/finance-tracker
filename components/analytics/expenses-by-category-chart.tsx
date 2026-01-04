@@ -15,46 +15,46 @@ interface ExpensesByCategoryChartProps {
 
 export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChartProps) {
   const { formatCurrency, currency } = useCurrency()
-  
+
   // Get top 5 expense categories
   const categoryTotals = new Map<string, { name: string; color: string; total: number }>()
-  
+
   transactions
-    .filter((t) => t.amount < 0 && t.status === "posted" && t.categories !== null)
+    .filter((t) => t.amount < 0 && t.categories !== null)
     .forEach((t) => {
       const categoryName = t.categories!.name
       const categoryColor = t.categories!.color
-      const current = categoryTotals.get(categoryName) || { 
-        name: categoryName, 
-        color: categoryColor, 
-        total: 0 
+      const current = categoryTotals.get(categoryName) || {
+        name: categoryName,
+        color: categoryColor,
+        total: 0
       }
       current.total += Math.abs(t.amount)
       categoryTotals.set(categoryName, current)
     })
-  
+
   const topCategories = Array.from(categoryTotals.values())
     .sort((a, b) => b.total - a.total)
     .slice(0, 5)
     .map((c) => c.name)
-  
+
   // Group by month and category
   const monthlyData = new Map<string, Record<string, number>>()
-  
+
   transactions
-    .filter((t) => t.amount < 0 && t.status === "posted" && t.categories !== null)
+    .filter((t) => t.amount < 0 && t.categories !== null)
     .forEach((t) => {
       const month = t.date.substring(0, 7)
       const categoryName = t.categories!.name
-      
+
       // Only include top categories
       if (!topCategories.includes(categoryName)) return
-      
+
       const monthData = monthlyData.get(month) || {}
       monthData[categoryName] = (monthData[categoryName] || 0) + Math.abs(t.amount)
       monthlyData.set(month, monthData)
     })
-  
+
   // Convert to array format for chart
   const data = Array.from(monthlyData.entries())
     .sort((a, b) => a[0].localeCompare(b[0]))
@@ -62,15 +62,15 @@ export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChar
     .map(([month, categories]) => {
       const date = new Date(month + "-01")
       const monthStr = date.toLocaleDateString("en-US", { month: "short", year: "2-digit" })
-      
+
       const result: any = { month: monthStr }
       topCategories.forEach((cat) => {
         result[cat] = parseFloat((categories[cat] || 0).toFixed(2))
       })
-      
+
       return result
     })
-  
+
   if (data.length === 0 || topCategories.length === 0) {
     return (
       <Card>
@@ -86,7 +86,7 @@ export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChar
       </Card>
     )
   }
-  
+
   // Generate colors for categories
   const colors = [
     "#ef4444", // red
@@ -95,7 +95,7 @@ export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChar
     "#06b6d4", // cyan
     "#ec4899", // pink
   ]
-  
+
   return (
     <Card>
       <CardHeader>
@@ -106,18 +106,18 @@ export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChar
         <ResponsiveContainer width="100%" height={350}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-            <XAxis 
-              dataKey="month" 
+            <XAxis
+              dataKey="month"
               tick={{ fontSize: 12 }}
             />
-            <YAxis 
+            <YAxis
               tick={{ fontSize: 12 }}
               tickFormatter={(value) => {
                 const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
                 return `${symbol}${(value / 1000).toFixed(0)}k`
               }}
             />
-            <Tooltip 
+            <Tooltip
               formatter={(value: number) => formatCurrency(value)}
               labelStyle={{ color: "hsl(var(--foreground))" }}
               contentStyle={{
@@ -138,15 +138,15 @@ export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChar
             ))}
           </BarChart>
         </ResponsiveContainer>
-        
+
         {/* Category Legend with Totals */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4 pt-4 border-t">
           {topCategories.map((category, index) => {
             const total = categoryTotals.get(category)?.total || 0
             return (
               <div key={category} className="text-center">
-                <div 
-                  className="w-3 h-3 rounded-full mx-auto mb-1" 
+                <div
+                  className="w-3 h-3 rounded-full mx-auto mb-1"
                   style={{ backgroundColor: colors[index % colors.length] }}
                 />
                 <p className="text-xs text-muted-foreground truncate">{category}</p>

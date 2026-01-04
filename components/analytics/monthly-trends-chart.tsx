@@ -2,16 +2,16 @@
 
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { 
-  ComposedChart, 
-  Line, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  Legend 
+import {
+  ComposedChart,
+  Line,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend
 } from "recharts"
 import { useCurrency } from "@/lib/hooks/use-currency"
 import type { Database } from "@/types/database"
@@ -25,34 +25,34 @@ interface MonthlyTrendsChartProps {
 export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
   const t = useTranslations('insights')
   const { formatCurrency, currency } = useCurrency()
-  
+
   // Group by month and calculate metrics
-  const monthlyData = new Map<string, { 
+  const monthlyData = new Map<string, {
     income: number
     expenses: number
-    transactions: number 
+    transactions: number
   }>()
-  
+
   transactions
-    .filter((t) => t.status === "posted" && t.category_id !== null)
+    .filter((t) => t.category_id !== null)
     .forEach((t) => {
       const month = t.date.substring(0, 7)
-      const current = monthlyData.get(month) || { 
-        income: 0, 
-        expenses: 0, 
-        transactions: 0 
+      const current = monthlyData.get(month) || {
+        income: 0,
+        expenses: 0,
+        transactions: 0
       }
-      
+
       if (t.amount > 0) {
         current.income += t.amount
       } else {
         current.expenses += Math.abs(t.amount)
       }
       current.transactions += 1
-      
+
       monthlyData.set(month, current)
     })
-  
+
   // Convert to array and calculate derived metrics
   const data = Array.from(monthlyData.entries())
     .sort((a, b) => a[0].localeCompare(b[0]))
@@ -61,7 +61,7 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
       const date = new Date(month + "-01")
       const net = metrics.income - metrics.expenses
       const savingsRate = metrics.income > 0 ? (net / metrics.income) * 100 : 0
-      
+
       return {
         month: date.toLocaleDateString("en-US", { month: "short", year: "2-digit" }),
         net: parseFloat(net.toFixed(2)),
@@ -71,12 +71,12 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
         expenses: parseFloat(metrics.expenses.toFixed(2)),
       }
     })
-  
+
   // Calculate average savings rate
-  const avgSavingsRate = data.length > 0 
-    ? data.reduce((sum, d) => sum + d.savingsRate, 0) / data.length 
+  const avgSavingsRate = data.length > 0
+    ? data.reduce((sum, d) => sum + d.savingsRate, 0) / data.length
     : 0
-  
+
   if (data.length === 0) {
     return (
       <Card>
@@ -92,13 +92,13 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
       </Card>
     )
   }
-  
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>{t('monthlyTrends')}</CardTitle>
         <CardDescription>
-          {t('netIncomeRate')} - {t('avgSavingsRate')}: 
+          {t('netIncomeRate')} - {t('avgSavingsRate')}:
           <span className={avgSavingsRate >= 0 ? "text-green-600 ml-1" : "text-red-600 ml-1"}>
             {avgSavingsRate.toFixed(1)}%
           </span>
@@ -108,11 +108,11 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
         <ResponsiveContainer width="100%" height={350}>
           <ComposedChart data={data}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-            <XAxis 
-              dataKey="month" 
+            <XAxis
+              dataKey="month"
               tick={{ fontSize: 12 }}
             />
-            <YAxis 
+            <YAxis
               yAxisId="left"
               tick={{ fontSize: 12 }}
               tickFormatter={(value) => {
@@ -121,14 +121,14 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
               }}
               label={{ value: t('netIncome'), angle: -90, position: "insideLeft", style: { fontSize: 12 } }}
             />
-            <YAxis 
+            <YAxis
               yAxisId="right"
               orientation="right"
               tick={{ fontSize: 12 }}
               tickFormatter={(value) => `${value}%`}
               label={{ value: t('savingsRate'), angle: 90, position: "insideRight", style: { fontSize: 12 } }}
             />
-            <Tooltip 
+            <Tooltip
               formatter={(value: number, name: string) => {
                 if (name === t('savingsRate')) {
                   return [`${value}%`, name]
@@ -143,25 +143,25 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
               }}
             />
             <Legend />
-            <Bar 
+            <Bar
               yAxisId="left"
-              dataKey="net" 
-              fill="#3b82f6" 
+              dataKey="net"
+              fill="#3b82f6"
               name={t('netIncome')}
               radius={[8, 8, 0, 0]}
             />
-            <Line 
+            <Line
               yAxisId="right"
-              type="monotone" 
-              dataKey="savingsRate" 
-              stroke="#22c55e" 
+              type="monotone"
+              dataKey="savingsRate"
+              stroke="#22c55e"
               strokeWidth={2}
               dot={{ r: 4 }}
               name={t('savingsRate')}
             />
           </ComposedChart>
         </ResponsiveContainer>
-        
+
         {/* Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t">
           <div className="text-center">
@@ -184,9 +184,8 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
           </div>
           <div className="text-center">
             <p className="text-sm text-muted-foreground">{t('trend')}</p>
-            <p className={`text-lg font-bold ${
-              data[data.length - 1].net > data[0].net ? "text-green-600" : "text-red-600"
-            }`}>
+            <p className={`text-lg font-bold ${data[data.length - 1].net > data[0].net ? "text-green-600" : "text-red-600"
+              }`}>
               {data[data.length - 1].net > data[0].net ? `↑ ${t('up')}` : `↓ ${t('down')}`}
             </p>
           </div>

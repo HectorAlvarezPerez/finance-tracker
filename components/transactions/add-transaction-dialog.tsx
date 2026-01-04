@@ -69,7 +69,6 @@ export function AddTransactionDialog({
         amount: signedAmount,
         category_id: categoryId || null,
         notes: notes || null,
-        status: "posted",
       })
 
       if (error) throw error

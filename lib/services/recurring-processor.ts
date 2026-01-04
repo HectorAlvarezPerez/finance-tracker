@@ -123,7 +123,6 @@ export async function processRecurringTransactions() {
           category_id: recurring.category_id,
           currency: recurring.currency,
           date: new Date().toISOString().split("T")[0], // Today's date
-          status: "posted",
           notes: `Auto-generated from recurring transaction`,
         })
 

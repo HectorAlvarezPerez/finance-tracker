@@ -74,7 +74,6 @@ export interface Database {
           currency: string
           description: string
           category_id: string | null
-          status: "posted" | "pending"
           notes: string | null
           created_at: string
           updated_at: string
@@ -88,7 +87,6 @@ export interface Database {
           currency?: string
           description: string
           category_id?: string | null
-          status?: "posted" | "pending"
           notes?: string | null
           created_at?: string
           updated_at?: string
@@ -102,7 +100,6 @@ export interface Database {
           currency?: string
           description?: string
           category_id?: string | null
-          status?: "posted" | "pending"
           notes?: string | null
           created_at?: string
           updated_at?: string
