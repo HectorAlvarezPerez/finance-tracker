@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { Wallet, Eye, EyeOff, Check, X } from "lucide-react"
+import { Wallet, Eye, EyeOff, Check, X, Sparkles } from "lucide-react"
+import { loginAsDemoUser } from "@/app/actions/auth"
 
 export default function SignupPage() {
   const [email, setEmail] = useState("")
@@ -23,6 +24,21 @@ export default function SignupPage() {
   const { toast } = useToast()
   const supabase = createBrowserClient()
   const t = useTranslations('auth.signup')
+  const [isDemoLoading, setIsDemoLoading] = useState(false)
+
+  const handleDemoLogin = async () => {
+    setIsDemoLoading(true)
+    try {
+      await loginAsDemoUser()
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create demo session",
+        variant: "destructive",
+      })
+      setIsDemoLoading(false)
+    }
+  }
 
   // Password validation
   const passwordRequirements = {
@@ -210,6 +226,33 @@ export default function SignupPage() {
             </p>
           </CardFooter>
         </form>
+
+        <div className="px-6 pb-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or try it out
+              </span>
+            </div>
+          </div>
+
+          <Button
+            variant="outline"
+            className="w-full mt-4 gap-2"
+            onClick={handleDemoLogin}
+            disabled={loading || isDemoLoading}
+          >
+            {isDemoLoading ? (
+              <Sparkles className="h-4 w-4 animate-spin" />
+            ) : (
+              <Sparkles className="h-4 w-4 text-amber-500" />
+            )}
+            {isDemoLoading ? "Creating Demo..." : "Try Demo Mode"}
+          </Button>
+        </div>
       </Card>
     </div>
   )

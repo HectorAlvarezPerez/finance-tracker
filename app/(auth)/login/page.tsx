@@ -13,6 +13,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from "@/components/ui/use-toast"
 import { Wallet, Eye, EyeOff } from "lucide-react"
 import { ForgotPasswordDialog } from "@/components/auth/forgot-password-dialog"
+import { loginAsDemoUser } from "@/app/actions/auth"
+import { Sparkles } from "lucide-react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -24,6 +26,34 @@ export default function LoginPage() {
   const { toast } = useToast()
   const supabase = createBrowserClient()
   const t = useTranslations('auth.login')
+  const [isDemoLoading, setIsDemoLoading] = useState(false)
+
+  // Import dynamically if needed or just use regular import at top, 
+  // but for client component using server action we can import it.
+  // Note: We need to change imports at the top of the file to include loginAsDemoUser.
+  // I will do that in a separate replacement chunk or just add it here if I can view the imports.
+  // I'll assume I need to add the import at the top first.
+
+  const handleDemoLogin = async () => {
+    setIsDemoLoading(true)
+    try {
+      // We need to import loginAsDemoUser from "@/app/actions/auth"
+      // Since I can't add import here easily without context, I'll add the import in a separate call 
+      // and just use the function here assuming it will be available.
+      // But wait, I need to define the function usage.
+
+      // I'll leave this empty for now and do it properly with multiple chunks.
+      // Let's cancel this tool call and use multi_replace for the whole file update.
+      await loginAsDemoUser()
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create demo session",
+        variant: "destructive",
+      })
+      setIsDemoLoading(false)
+    }
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -127,6 +157,33 @@ export default function LoginPage() {
             </p>
           </CardFooter>
         </form>
+
+        <div className="px-6 pb-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or try it out
+              </span>
+            </div>
+          </div>
+
+          <Button
+            variant="outline"
+            className="w-full mt-4 gap-2"
+            onClick={handleDemoLogin}
+            disabled={loading || isDemoLoading}
+          >
+            {isDemoLoading ? (
+              <Sparkles className="h-4 w-4 animate-spin" />
+            ) : (
+              <Sparkles className="h-4 w-4 text-amber-500" />
+            )}
+            {isDemoLoading ? "Creating Demo..." : "Try Demo Mode"}
+          </Button>
+        </div>
       </Card>
 
       <ForgotPasswordDialog
