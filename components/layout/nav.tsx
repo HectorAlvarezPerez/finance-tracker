@@ -8,7 +8,7 @@ import {
   LayoutDashboard,
   CreditCard,
   Wallet,
-  PiggyBank,
+
   TrendingUp,
   Settings,
   LineChart,
@@ -44,11 +44,7 @@ export function Nav() {
       href: "/categories",
       icon: Tag,
     },
-    {
-      title: t('budgets'),
-      href: "/budgets",
-      icon: PiggyBank,
-    },
+
     {
       title: t('insights'),
       href: "/insights",
@@ -59,11 +55,7 @@ export function Nav() {
       href: "/portfolio",
       icon: TrendingUp,
     },
-    {
-      title: t('settings'),
-      href: "/settings",
-      icon: Settings,
-    },
+
   ]
 
   return (
@@ -100,6 +92,13 @@ export function Nav() {
       <div className="flex items-center gap-2">
         <LogoutButton />
         <ThemeToggle />
+        <Link
+          href="/settings"
+          className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-9 w-9"
+          title={t('settings')}
+        >
+          <Settings className="h-5 w-5" />
+        </Link>
       </div>
     </nav>
   )
@@ -131,11 +130,7 @@ export function MobileNav() {
       href: "/categories",
       icon: Tag,
     },
-    {
-      title: t('budgets'),
-      href: "/budgets",
-      icon: PiggyBank,
-    },
+
     {
       title: t('insights'),
       href: "/insights",
@@ -146,11 +141,7 @@ export function MobileNav() {
       href: "/portfolio",
       icon: TrendingUp,
     },
-    {
-      title: t('settings'),
-      href: "/settings",
-      icon: Settings,
-    },
+
   ]
 
   return (

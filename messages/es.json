@@ -86,25 +86,6 @@
     "noResults": "No se encontraron categorías",
     "noSearchResults": "No se encontraron categorías que coincidan con tu búsqueda"
   },
-  "budgets": {
-    "title": "Presupuestos",
-    "subtitle": "Controla tus límites de gasto",
-    "addBudget": "Añadir Presupuesto",
-    "noBudgets": "No hay presupuestos para este mes",
-    "spent": "gastado",
-    "of": "de",
-    "remaining": "restante",
-    "noBudgetsYet": "No hay presupuestos todavía",
-    "createFirst": "Crea tu primer presupuesto para empezar a controlar tus gastos",
-    "overall": "General",
-    "spentLabel": "Gastado",
-    "budgetLabel": "Presupuesto",
-    "remainingLabel": "Restante",
-    "budgetUsed": "% del presupuesto usado",
-    "setBudgets": "Configurar presupuestos",
-    "viewAll": "Ver todo",
-    "noBudgetsThisMonth": "No hay presupuestos configurados para este mes. Crea tu primer presupuesto para empezar a controlar tus gastos."
-  },
   "insights": {
     "title": "Análisis y Estadísticas",
     "subtitle": "Análisis completo de tu salud financiera y patrones de gasto",
@@ -340,10 +321,6 @@
       "title": "Eliminar Categoría",
       "message": "¿Estás seguro de que quieres eliminar esta categoría?",
       "description": "Esta acción no se puede deshacer."
-    },
-    "addBudget": {
-      "title": "Añadir Presupuesto",
-      "subtitle": "Establecer un límite de gasto"
     },
     "addHolding": {
       "title": "Añadir Inversión",

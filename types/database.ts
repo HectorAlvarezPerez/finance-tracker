@@ -141,41 +141,7 @@ export interface Database {
         }
       }
 
-      budgets: {
-        Row: {
-          id: string
-          user_id: string
-          category_id: string | null
-          month: string
-          currency: string
-          amount_total: number
-          notes: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          category_id?: string | null
-          month: string
-          currency?: string
-          amount_total: number
-          notes?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          category_id?: string | null
-          month?: string
-          currency?: string
-          amount_total?: number
-          notes?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
+
       holdings: {
         Row: {
           id: string

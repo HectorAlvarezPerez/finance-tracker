@@ -86,25 +86,6 @@
     "noResults": "No categories found",
     "noSearchResults": "No categories found matching your search"
   },
-  "budgets": {
-    "title": "Budgets",
-    "subtitle": "Track your spending limits",
-    "addBudget": "Add Budget",
-    "noBudgets": "No budgets for this month",
-    "spent": "spent",
-    "of": "of",
-    "remaining": "remaining",
-    "noBudgetsYet": "No budgets yet",
-    "createFirst": "Create your first budget to start tracking your spending",
-    "overall": "Overall",
-    "spentLabel": "Spent",
-    "budgetLabel": "Budget",
-    "remainingLabel": "Remaining",
-    "budgetUsed": "% of budget used",
-    "setBudgets": "Set budgets",
-    "viewAll": "View all",
-    "noBudgetsThisMonth": "No budgets set for this month. Create your first budget to start tracking your spending."
-  },
   "insights": {
     "title": "Analytics & Insights",
     "subtitle": "Comprehensive analysis of your financial health and spending patterns",
