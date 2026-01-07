@@ -69,7 +69,7 @@ export function AddTransactionDialog({
         amount: signedAmount,
         category_id: categoryId || null,
         notes: notes || null,
-      })
+      }).select('id').single()
 
       if (error) throw error
 

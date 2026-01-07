@@ -12,7 +12,7 @@ export async function RecentTransactions({ userId }: { userId: string }) {
 
   const { data: transactions } = await supabase
     .from("transactions")
-    .select("*, categories(name, color), accounts(name)")
+    .select("id, user_id, description, amount, currency, date, category_id, account_id, created_at, updated_at, categories(name, color), accounts(name)")
     .eq("user_id", userId)
     .order("date", { ascending: false })
     .limit(5)
@@ -55,9 +55,8 @@ export async function RecentTransactions({ userId }: { userId: string }) {
                   </div>
                 </div>
                 <div
-                  className={`text-sm font-semibold ${
-                    transaction.amount >= 0 ? "text-green-600" : "text-red-600"
-                  }`}
+                  className={`text-sm font-semibold ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"
+                    }`}
                 >
                   {transaction.amount >= 0 ? "+" : ""}
                   {formatCurrency(transaction.amount)}

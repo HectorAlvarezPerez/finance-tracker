@@ -44,7 +44,7 @@ export default async function TransactionsPage({
   // Build query based on filters
   let query = supabase
     .from("transactions")
-    .select("*, categories(name, color, icon), accounts(name, type)")
+    .select("id, user_id, description, amount, currency, date, category_id, account_id, notes, created_at, updated_at, categories(name, color, icon), accounts(name, type)")
     .eq("user_id", user.id)
     .order("date", { ascending: false })
 
