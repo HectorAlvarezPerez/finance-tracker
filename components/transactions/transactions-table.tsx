@@ -19,7 +19,7 @@ import { DeleteTransactionDialog } from "./delete-transaction-dialog"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
-  categories: Database["public"]["Tables"]["categories"]["Row"] | null
+  categories: { name: string; color: string; icon: string } | null
   accounts: { name: string; type: string } | null
 }
 

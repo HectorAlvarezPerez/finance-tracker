@@ -68,7 +68,13 @@ export default async function TransactionsPage({
     query = query.ilike("description", `%${params.search}%`)
   }
 
-  const { data: transactions } = await query.limit(100)
+  const { data: rawTransactions } = await query.limit(100)
+
+  const transactions = rawTransactions?.map(t => ({
+    ...t,
+    categories: Array.isArray(t.categories) ? t.categories[0] : t.categories,
+    accounts: Array.isArray(t.accounts) ? t.accounts[0] : t.accounts
+  }))
 
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">

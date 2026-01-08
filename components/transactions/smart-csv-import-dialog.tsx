@@ -243,7 +243,6 @@ export function SmartCSVImportDialog({
         amount: parseAmount(row[amountCol]),
         category_id: null, // No category assigned yet
         notes: null,
-        // status removed
       }))
 
       // AI Categorization if enabled

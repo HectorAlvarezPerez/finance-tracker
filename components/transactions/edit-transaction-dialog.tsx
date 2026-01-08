@@ -28,7 +28,7 @@ import { useToast } from "@/components/ui/use-toast"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
-  categories: Database["public"]["Tables"]["categories"]["Row"] | null
+  categories: { name: string; color: string; icon: string } | null
   accounts: { name: string; type: string } | null
 }
 

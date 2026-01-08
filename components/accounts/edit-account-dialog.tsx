@@ -76,7 +76,7 @@ export function EditAccountDialog({
       // If there's a balance adjustment, create a transaction
       if (balanceAdjustment && parseFloat(balanceAdjustment) !== 0) {
         const { data: userData } = await supabase.auth.getUser()
-        
+
         const { error: transactionError } = await supabase
           .from("transactions")
           .insert({
@@ -85,7 +85,6 @@ export function EditAccountDialog({
             description: "Balance Adjustment",
             amount: parseFloat(balanceAdjustment),
             date: new Date().toISOString().split('T')[0],
-            status: "posted",
             category_id: null,
           })
 

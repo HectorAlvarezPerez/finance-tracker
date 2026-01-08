@@ -71,7 +71,6 @@ export function AddAccountDialog({ userId }: { userId: string }) {
             description: "Initial Balance",
             amount: parseFloat(initialBalance),
             date: new Date().toISOString().split('T')[0],
-            status: "posted",
             category_id: null,
           })
 
