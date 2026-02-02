@@ -3,7 +3,6 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
-import logoUrl from "../finance-logo.png"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -11,10 +10,6 @@ export const metadata: Metadata = {
   title: "Finance Tracker - Manage Your Money",
   description: "Track your income, expenses, budgets, and investments all in one place",
   manifest: "/manifest.json",
-  icons: {
-    icon: [{ url: logoUrl.src, type: "image/png" }],
-    apple: [{ url: logoUrl.src, type: "image/png" }],
-  },
 }
 
 export const viewport: Viewport = {
