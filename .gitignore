@@ -37,3 +37,7 @@ next-env.d.ts
 
 # python env
 finance_env/
+
+# Cloudflare / OpenNext
+.open-next/
+.wrangler/
