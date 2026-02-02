@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   title: "Finance Tracker - Manage Your Money",
   description: "Track your income, expenses, budgets, and investments all in one place",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/apple-touch-icon.png",
+  },
 }
 
 export const viewport: Viewport = {
