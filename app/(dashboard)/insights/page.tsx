@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server'
 import { NetWorthChart } from "@/components/analytics/net-worth-chart"
 import { IncomeVsExpensesChart } from "@/components/analytics/income-vs-expenses-chart"
 import { MonthlyTrendsChart } from "@/components/analytics/monthly-trends-chart"
+import { ExpensesByCategoryChart } from "@/components/analytics/expenses-by-category-chart"
 import { SpendingInsights } from "@/components/insights/spending-insights"
 import { TopCategories } from "@/components/insights/top-categories"
 
@@ -28,7 +29,7 @@ export default async function InsightsPage() {
 
   const { data: allTransactions } = await supabase
     .from("transactions")
-    .select("*, categories(name, color, type)")
+    .select("*, categories(*)")
     .eq("user_id", user.id)
     .gte("date", startDate)
     .order("date", { ascending: true })
@@ -50,7 +51,7 @@ export default async function InsightsPage() {
 
   const { data: currentTransactions } = await supabase
     .from("transactions")
-    .select("*, categories(name, color, type)")
+    .select("*, categories(*)")
     .eq("user_id", user.id)
     .gte("date", firstDay)
     .lte("date", lastDay)
@@ -62,7 +63,7 @@ export default async function InsightsPage() {
 
   const { data: historicalTransactions } = await supabase
     .from("transactions")
-    .select("*, categories(name, color, type)")
+    .select("*, categories(*)")
     .eq("user_id", user.id)
     .gte("date", sixMonthsAgo)
     .lt("date", firstDay)
@@ -83,6 +84,8 @@ export default async function InsightsPage() {
           transactions={allTransactions || []} 
           accounts={accounts || []}
         />
+
+        <ExpensesByCategoryChart transactions={allTransactions || []} />
 
         {/* Income vs Expenses and Monthly Trends */}
         <div className="grid gap-6 lg:grid-cols-2">
@@ -106,4 +109,3 @@ export default async function InsightsPage() {
     </div>
   )
 }
-

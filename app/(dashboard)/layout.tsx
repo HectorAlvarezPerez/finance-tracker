@@ -26,7 +26,7 @@ export default async function DashboardLayout({
           {/* Disabled to avoid rate limit issues - categories can be created manually */}
           {/* {user && <InitDefaultData userId={user.id} locale={settings?.locale || 'en-US'} />} */}
           <Nav />
-          <main className="flex-1 pb-20 md:pb-0">
+          <main className="flex-1 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0">
             {children}
           </main>
           <MobileNav />
@@ -35,4 +35,3 @@ export default async function DashboardLayout({
     </SettingsProvider>
   )
 }
-

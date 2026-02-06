@@ -29,7 +29,7 @@ export default async function CategoriesPage() {
   // Get user locale for default categories
   const { data: settings } = await supabase
     .from('settings')
-    .select('locale')
+    .select('*')
     .eq('user_id', user.id)
     .single()
 
@@ -38,7 +38,7 @@ export default async function CategoriesPage() {
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <div>
             <h1 className="text-3xl font-bold">{t('title')}</h1>
             <p className="text-muted-foreground">
@@ -74,4 +74,3 @@ export default async function CategoriesPage() {
     </div >
   )
 }
-

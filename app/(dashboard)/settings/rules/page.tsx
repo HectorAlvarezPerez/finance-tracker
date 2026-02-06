@@ -35,7 +35,7 @@ export default async function RulesPage() {
 
     return (
         <div className="container mx-auto p-4 md:p-6 space-y-6">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                 <Link href="/settings">
                     <Button variant="ghost" size="icon">
                         <ArrowLeft className="h-4 w-4" />
@@ -47,7 +47,7 @@ export default async function RulesPage() {
                         Manage auto-categorization rules for your transactions.
                     </p>
                 </div>
-                <div className="ml-auto">
+                <div className="sm:ml-auto">
                     <AddRuleDialog
                         categories={categories || []}
                         accounts={accounts || []}

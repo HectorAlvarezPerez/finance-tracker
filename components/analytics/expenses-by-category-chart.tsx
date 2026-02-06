@@ -3,6 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
 import { useCurrency } from "@/lib/hooks/use-currency"
+import { useIsMobile } from "@/lib/hooks/use-mobile"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
@@ -15,6 +16,7 @@ interface ExpensesByCategoryChartProps {
 
 export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChartProps) {
   const { formatCurrency, currency } = useCurrency()
+  const isMobile = useIsMobile()
 
   // Get top 5 expense categories
   const categoryTotals = new Map<string, { name: string; color: string; total: number }>()
@@ -103,41 +105,46 @@ export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChar
         <CardDescription>Monthly breakdown of your top 5 spending categories</CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-            <XAxis
-              dataKey="month"
-              tick={{ fontSize: 12 }}
-            />
-            <YAxis
-              tick={{ fontSize: 12 }}
-              tickFormatter={(value) => {
-                const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
-                return `${symbol}${(value / 1000).toFixed(0)}k`
-              }}
-            />
-            <Tooltip
-              formatter={(value: number) => formatCurrency(value)}
-              labelStyle={{ color: "hsl(var(--foreground))" }}
-              contentStyle={{
-                backgroundColor: "hsl(var(--background))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: "8px",
-              }}
-            />
-            <Legend />
-            {topCategories.map((category, index) => (
-              <Bar
-                key={category}
-                dataKey={category}
-                stackId="a"
-                fill={colors[index % colors.length]}
-                radius={index === topCategories.length - 1 ? [8, 8, 0, 0] : [0, 0, 0, 0]}
-              />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="w-full overflow-x-auto pb-2">
+          <div className={isMobile ? "h-[300px] min-w-[560px]" : "h-[350px] w-full"}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fontSize: isMobile ? 11 : 12 }}
+                />
+                <YAxis
+                  width={isMobile ? 48 : 56}
+                  tick={{ fontSize: isMobile ? 11 : 12 }}
+                  tickFormatter={(value) => {
+                    const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
+                    return `${symbol}${(value / 1000).toFixed(0)}k`
+                  }}
+                />
+                <Tooltip
+                  formatter={(value: number) => formatCurrency(value)}
+                  labelStyle={{ color: "hsl(var(--foreground))" }}
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--background))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "8px",
+                  }}
+                />
+                {!isMobile && <Legend />}
+                {topCategories.map((category, index) => (
+                  <Bar
+                    key={category}
+                    dataKey={category}
+                    stackId="a"
+                    fill={colors[index % colors.length]}
+                    radius={index === topCategories.length - 1 ? [8, 8, 0, 0] : [0, 0, 0, 0]}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
         {/* Category Legend with Totals */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-4 pt-4 border-t">
@@ -161,4 +168,3 @@ export function ExpensesByCategoryChart({ transactions }: ExpensesByCategoryChar
     </Card>
   )
 }
-

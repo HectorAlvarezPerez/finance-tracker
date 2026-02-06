@@ -34,9 +34,9 @@ export async function RecentTransactions({ userId }: { userId: string }) {
         ) : (
           <div className="space-y-4">
             {transactions.map((transaction: any) => (
-              <div key={transaction.id} className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">{transaction.description}</p>
+              <div key={transaction.id} className="flex items-center justify-between gap-3">
+                <div className="min-w-0 flex-1 space-y-1">
+                  <p className="truncate text-sm font-medium">{transaction.description}</p>
                   <div className="flex items-center gap-2">
                     <p className="text-xs text-muted-foreground">
                       {formatDate(transaction.date, "short")}
@@ -55,7 +55,7 @@ export async function RecentTransactions({ userId }: { userId: string }) {
                   </div>
                 </div>
                 <div
-                  className={`text-sm font-semibold ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"
+                  className={`shrink-0 text-right text-sm font-semibold ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"
                     }`}
                 >
                   {transaction.amount >= 0 ? "+" : ""}
@@ -69,4 +69,3 @@ export async function RecentTransactions({ userId }: { userId: string }) {
     </Card>
   )
 }
-

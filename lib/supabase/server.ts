@@ -3,10 +3,10 @@ import { cookies } from "next/headers"
 import type { Database } from "@/types/database"
 
 export const createServerClient = () => {
-  return createServerComponentClient<Database>({ cookies })
+  return createServerComponentClient<any>({ cookies })
 }
 
 export const createServerActionClient = () => {
-  return createSAClient<Database>({ cookies })
+  return createSAClient<any>({ cookies })
 }
 

@@ -14,6 +14,7 @@ import {
   Legend
 } from "recharts"
 import { useCurrency } from "@/lib/hooks/use-currency"
+import { useIsMobile } from "@/lib/hooks/use-mobile"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"]
@@ -25,6 +26,7 @@ interface MonthlyTrendsChartProps {
 export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
   const t = useTranslations('insights')
   const { formatCurrency, currency } = useCurrency()
+  const isMobile = useIsMobile()
 
   // Group by month and calculate metrics
   const monthlyData = new Map<string, {
@@ -105,62 +107,68 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={350}>
-          <ComposedChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-            <XAxis
-              dataKey="month"
-              tick={{ fontSize: 12 }}
-            />
-            <YAxis
-              yAxisId="left"
-              tick={{ fontSize: 12 }}
-              tickFormatter={(value) => {
-                const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
-                return `${symbol}${(value / 1000).toFixed(0)}k`
-              }}
-              label={{ value: t('netIncome'), angle: -90, position: "insideLeft", style: { fontSize: 12 } }}
-            />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
-              tick={{ fontSize: 12 }}
-              tickFormatter={(value) => `${value}%`}
-              label={{ value: t('savingsRate'), angle: 90, position: "insideRight", style: { fontSize: 12 } }}
-            />
-            <Tooltip
-              formatter={(value: number, name: string) => {
-                if (name === t('savingsRate')) {
-                  return [`${value}%`, name]
-                }
-                return [formatCurrency(value), name]
-              }}
-              labelStyle={{ color: "hsl(var(--foreground))" }}
-              contentStyle={{
-                backgroundColor: "hsl(var(--background))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: "8px",
-              }}
-            />
-            <Legend />
-            <Bar
-              yAxisId="left"
-              dataKey="net"
-              fill="#3b82f6"
-              name={t('netIncome')}
-              radius={[8, 8, 0, 0]}
-            />
-            <Line
-              yAxisId="right"
-              type="monotone"
-              dataKey="savingsRate"
-              stroke="#22c55e"
-              strokeWidth={2}
-              dot={{ r: 4 }}
-              name={t('savingsRate')}
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
+        <div className="w-full overflow-x-auto pb-2">
+          <div className={isMobile ? "h-[300px] min-w-[560px]" : "h-[350px] w-full"}>
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fontSize: isMobile ? 11 : 12 }}
+                />
+                <YAxis
+                  yAxisId="left"
+                  width={isMobile ? 48 : 56}
+                  tick={{ fontSize: isMobile ? 11 : 12 }}
+                  tickFormatter={(value) => {
+                    const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
+                    return `${symbol}${(value / 1000).toFixed(0)}k`
+                  }}
+                  label={isMobile ? undefined : { value: t('netIncome'), angle: -90, position: "insideLeft", style: { fontSize: 12 } }}
+                />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  width={isMobile ? 40 : 52}
+                  tick={{ fontSize: isMobile ? 11 : 12 }}
+                  tickFormatter={(value) => `${value}%`}
+                  label={isMobile ? undefined : { value: t('savingsRate'), angle: 90, position: "insideRight", style: { fontSize: 12 } }}
+                />
+                <Tooltip
+                  formatter={(value: number, name: string) => {
+                    if (name === t('savingsRate')) {
+                      return [`${value}%`, name]
+                    }
+                    return [formatCurrency(value), name]
+                  }}
+                  labelStyle={{ color: "hsl(var(--foreground))" }}
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--background))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "8px",
+                  }}
+                />
+                {!isMobile && <Legend />}
+                <Bar
+                  yAxisId="left"
+                  dataKey="net"
+                  fill="#3b82f6"
+                  name={t('netIncome')}
+                  radius={[8, 8, 0, 0]}
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="savingsRate"
+                  stroke="#22c55e"
+                  strokeWidth={2}
+                  dot={{ r: isMobile ? 3 : 4 }}
+                  name={t('savingsRate')}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
         {/* Summary Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t">
@@ -194,4 +202,3 @@ export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
     </Card>
   )
 }
-

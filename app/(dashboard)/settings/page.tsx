@@ -64,14 +64,14 @@ export default async function SettingsPage() {
             <CardDescription>Manage automated rules and behaviors</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
               <div>
                 <p className="font-medium">Transaction Rules</p>
                 <p className="text-sm text-muted-foreground">
                   Automatically categorize transactions based on patterns
                 </p>
               </div>
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" className="w-full sm:w-auto">
                 <Link href="/settings/rules">Manage Rules</Link>
               </Button>
             </div>
@@ -83,4 +83,3 @@ export default async function SettingsPage() {
     </div>
   )
 }
-

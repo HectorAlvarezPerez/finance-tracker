@@ -8,7 +8,7 @@ import {
   LayoutDashboard,
   CreditCard,
   Wallet,
-
+  Menu,
   TrendingUp,
   Settings,
   LineChart,
@@ -17,6 +17,12 @@ import {
 } from "lucide-react"
 import { ThemeToggle } from "../theme/theme-toggle"
 import { LogoutButton } from "./logout-button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export function Nav() {
   const pathname = usePathname()
@@ -108,7 +114,7 @@ export function MobileNav() {
   const pathname = usePathname()
   const t = useTranslations('nav')
 
-  const navItems = [
+  const primaryItems = [
     {
       title: t('dashboard'),
       href: "/dashboard",
@@ -119,18 +125,6 @@ export function MobileNav() {
       href: "/transactions",
       icon: CreditCard,
     },
-
-    {
-      title: t('accounts'),
-      href: "/accounts",
-      icon: Wallet,
-    },
-    {
-      title: t('categories'),
-      href: "/categories",
-      icon: Tag,
-    },
-
     {
       title: t('insights'),
       href: "/insights",
@@ -141,35 +135,86 @@ export function MobileNav() {
       href: "/portfolio",
       icon: TrendingUp,
     },
-
   ]
 
+  const moreItems = [
+    {
+      title: t('accounts'),
+      href: "/accounts",
+      icon: Wallet,
+    },
+    {
+      title: t('categories'),
+      href: "/categories",
+      icon: Tag,
+    },
+    {
+      title: t('settings'),
+      href: "/settings",
+      icon: Settings,
+    },
+  ]
+
+  const isMoreActive = moreItems.some((item) => pathname === item.href)
+
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
-      <div className="overflow-x-auto scrollbar-hide">
-        <div className="flex items-center gap-2 py-2 px-4 min-w-max">
-          {navItems.map((item) => {
-            const Icon = item.icon
-            const isActive = pathname === item.href
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex flex-col items-center gap-1 px-3 py-2 rounded-md text-xs font-medium transition-colors min-w-[70px] flex-shrink-0",
-                  isActive
-                    ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Icon className="h-5 w-5" />
-                <span className="whitespace-nowrap">{item.title}</span>
-              </Link>
-            )
-          })}
-        </div>
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 shadow-[0_-8px_24px_-20px_hsl(var(--foreground)/0.6)] backdrop-blur supports-[backdrop-filter]:bg-background/60 [padding-bottom:env(safe-area-inset-bottom)] md:hidden">
+      <div className="grid grid-cols-5 items-center gap-1 px-2 py-2">
+        {primaryItems.map((item) => {
+          const Icon = item.icon
+          const isActive = pathname === item.href
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={isActive ? "page" : undefined}
+              className={cn(
+                "flex flex-col items-center justify-center gap-1 rounded-md px-1 py-2 text-[11px] font-medium transition-colors",
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Icon className="h-5 w-5" />
+              <span className="truncate">{item.title}</span>
+            </Link>
+          )
+        })}
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className={cn(
+                "flex flex-col items-center justify-center gap-1 rounded-md px-1 py-2 text-[11px] font-medium transition-colors",
+                isMoreActive
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+              aria-label="More navigation options"
+            >
+              <Menu className="h-5 w-5" />
+              <span>More</span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" side="top" className="mb-2 min-w-[180px]">
+            {moreItems.map((item) => {
+              const Icon = item.icon
+              const isActive = pathname === item.href
+              return (
+                <DropdownMenuItem key={item.href} asChild>
+                  <Link
+                    href={item.href}
+                    className={cn("flex items-center gap-2", isActive && "text-primary")}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{item.title}</span>
+                  </Link>
+                </DropdownMenuItem>
+              )
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </nav>
   )
 }
-

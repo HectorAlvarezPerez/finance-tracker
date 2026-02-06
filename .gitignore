@@ -42,3 +42,7 @@ finance_env/
 .open-next/
 .wrangler/
 wrangler.toml
+
+# playwright
+output
+scripts

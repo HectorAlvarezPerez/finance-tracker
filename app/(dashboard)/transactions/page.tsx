@@ -85,7 +85,7 @@ export default async function TransactionsPage({
             {t('subtitle')}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex w-full flex-wrap gap-2 sm:w-auto">
           <SmartCSVImportDialog
             userId={user.id}
             accounts={accounts || []}
@@ -99,10 +99,12 @@ export default async function TransactionsPage({
         </div>
       </div>
 
-      <TransactionFilters
-        accounts={accounts || []}
-        categories={categories || []}
-      />
+      <div className="sticky top-0 z-30 -mx-4 border-y bg-background/95 px-4 py-3 backdrop-blur md:static md:mx-0 md:border-0 md:bg-transparent md:px-0 md:py-0">
+        <TransactionFilters
+          accounts={accounts || []}
+          categories={categories || []}
+        />
+      </div>
 
       <TransactionsTable
         transactions={transactions || []}
@@ -113,4 +115,3 @@ export default async function TransactionsPage({
     </div>
   )
 }
-

@@ -2,9 +2,10 @@
 
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { TrendingUp, TrendingDown } from "lucide-react"
 import { useCurrency } from "@/lib/hooks/use-currency"
+import { useIsMobile } from "@/lib/hooks/use-mobile"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"]
@@ -18,6 +19,7 @@ interface NetWorthChartProps {
 export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
   const t = useTranslations('insights')
   const { formatCurrency, currency } = useCurrency()
+  const isMobile = useIsMobile()
 
   // Calculate net worth over time
   const calculateNetWorth = () => {
@@ -114,42 +116,46 @@ export function NetWorthChart({ transactions, accounts }: NetWorthChartProps) {
         <CardDescription>{t('last90Days')} - {t('current')}: {formatCurrency(lastValue)}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-            <XAxis
-              dataKey="date"
-              tick={{ fontSize: 12 }}
-              interval="preserveStartEnd"
-            />
-            <YAxis
-              tick={{ fontSize: 12 }}
-              tickFormatter={(value) => {
-                const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
-                return `${symbol}${(value / 1000).toFixed(0)}k`
-              }}
-            />
-            <Tooltip
-              formatter={(value: number) => [formatCurrency(value), t('netWorthLabel')]}
-              labelStyle={{ color: "hsl(var(--foreground))" }}
-              contentStyle={{
-                backgroundColor: "hsl(var(--background))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: "8px",
-              }}
-            />
-            <Line
-              type="monotone"
-              dataKey="netWorth"
-              stroke="hsl(var(--primary))"
-              strokeWidth={2}
-              dot={false}
-              name={t('netWorthLabel')}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="w-full overflow-x-auto pb-2">
+          <div className={isMobile ? "h-[280px] min-w-[520px]" : "h-[300px] w-full"}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: isMobile ? 11 : 12 }}
+                  interval="preserveStartEnd"
+                />
+                <YAxis
+                  width={isMobile ? 48 : 56}
+                  tick={{ fontSize: isMobile ? 11 : 12 }}
+                  tickFormatter={(value) => {
+                    const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
+                    return `${symbol}${(value / 1000).toFixed(0)}k`
+                  }}
+                />
+                <Tooltip
+                  formatter={(value: number) => [formatCurrency(value), t('netWorthLabel')]}
+                  labelStyle={{ color: "hsl(var(--foreground))" }}
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--background))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "8px",
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="netWorth"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={isMobile ? 2.25 : 2}
+                  dot={false}
+                  name={t('netWorthLabel')}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </CardContent>
     </Card>
   )
 }
-

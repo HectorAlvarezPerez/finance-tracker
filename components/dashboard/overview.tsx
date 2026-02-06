@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { TrendingUp, TrendingDown, Wallet, DollarSign, ChevronDown, ChevronUp } from "lucide-react"
-import { SpendingChart } from "./spending-chart"
 import { createBrowserClient } from "@/lib/supabase/client"
 import type { Database } from "@/types/database"
 
@@ -276,7 +275,7 @@ export function DashboardOverview({
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4">
         {/* Accounts List */}
         <Card>
           <CardHeader>
@@ -323,18 +322,7 @@ export function DashboardOverview({
             </div>
           </CardContent>
         </Card>
-
-        {/* Spending Chart - Now smaller */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{tInsights('expensesByCategory')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SpendingChart transactions={filteredTransactions} />
-          </CardContent>
-        </Card>
       </div>
     </>
   )
 }
-

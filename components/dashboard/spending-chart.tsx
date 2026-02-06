@@ -2,6 +2,7 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
 import { useCurrency } from "@/lib/hooks/use-currency"
+import { useIsMobile } from "@/lib/hooks/use-mobile"
 import type { Database } from "@/types/database"
 
 type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
@@ -10,6 +11,7 @@ type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
 
 export function SpendingChart({ transactions }: { transactions: Transaction[] }) {
   const { formatCurrency } = useCurrency()
+  const isMobile = useIsMobile()
   
   // Group by category and calculate net amount (expenses - income)
   const categoryMap = new Map<string, { name: string; value: number; color: string }>()
@@ -44,26 +46,38 @@ export function SpendingChart({ transactions }: { transactions: Transaction[] })
   }
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          labelLine={false}
-          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-          outerRadius={80}
-          fill="#8884d8"
-          dataKey="value"
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.color} />
+    <div className="space-y-3">
+      <ResponsiveContainer width="100%" height={isMobile ? 240 : 300}>
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            labelLine={!isMobile}
+            label={isMobile ? false : ({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+            outerRadius={isMobile ? 72 : 84}
+            fill="#8884d8"
+            dataKey="value"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip formatter={(value: number) => formatCurrency(value)} />
+          {!isMobile && <Legend />}
+        </PieChart>
+      </ResponsiveContainer>
+
+      {isMobile && (
+        <div className="grid grid-cols-2 gap-2">
+          {data.map((entry) => (
+            <div key={entry.name} className="flex items-center gap-2 rounded-md border px-2 py-1.5 text-xs">
+              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
+              <span className="truncate">{entry.name}</span>
+            </div>
           ))}
-        </Pie>
-        <Tooltip formatter={(value: number) => formatCurrency(value)} />
-        <Legend />
-      </PieChart>
-    </ResponsiveContainer>
+        </div>
+      )}
+    </div>
   )
 }
-
