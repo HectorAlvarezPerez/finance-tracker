@@ -36,7 +36,7 @@ export async function seedDemoData(
   userId: string,
   client?: SupabaseClient<Database>
 ) {
-  const supabase = createAdminClient() ?? client ?? createServerClient()
+  const supabase = client ?? createAdminClient() ?? createServerClient()
 
   try {
     const { count: accountCount, error: accountCountError } = await supabase

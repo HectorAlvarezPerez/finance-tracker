@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import { Wallet, Eye, EyeOff, Check, X, Sparkles } from "lucide-react"
-import { loginAsDemoUser } from "@/app/actions/auth"
+import { createDemoSession } from "@/app/actions/auth"
 
 export default function SignupPage() {
   const [email, setEmail] = useState("")
@@ -25,13 +25,14 @@ export default function SignupPage() {
   const supabase = createBrowserClient()
   const t = useTranslations('auth.signup')
   const [isDemoLoading, setIsDemoLoading] = useState(false)
-  const DEMO_TIMEOUT_MS = 20000
+  const DEMO_TIMEOUT_MS = 30000
 
   const handleDemoLogin = async () => {
     setIsDemoLoading(true)
     try {
+      // Step 1: Create demo account and seed data on server
       const result = await Promise.race([
-        loginAsDemoUser(),
+        createDemoSession(),
         new Promise<{ success: false; error: string }>((resolve) =>
           setTimeout(
             () =>
@@ -46,6 +47,16 @@ export default function SignupPage() {
 
       if (!result.success) {
         throw new Error(result.error)
+      }
+
+      // Step 2: Sign in on client-side with returned credentials
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: result.credentials.email,
+        password: result.credentials.password,
+      })
+
+      if (signInError) {
+        throw signInError
       }
 
       toast({
