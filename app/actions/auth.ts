@@ -1,36 +1,66 @@
 "use server"
 
-import { createServerClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
+import { createServerActionClient } from "@/lib/supabase/server"
 import { createDemoAccount, seedDemoData } from "@/lib/services/demo-service"
-import { redirect } from "next/navigation"
 
 export async function loginAsDemoUser() {
+    const supabase = createServerActionClient()
+
     try {
-        // 1. Create a fresh demo account
-        const { user, email, password } = await createDemoAccount()
+        const adminClient = createAdminClient()
 
-        // 2. Seed data for this account
-        await seedDemoData(user.id)
+        if (adminClient) {
+            // 1. Create a fresh demo account
+            const { user, email, password } = await createDemoAccount()
 
-        // 3. Login (Sign In) to establish session
-        // We need to sign in again to ensure the session is set in the cookies
-        const supabase = createServerClient()
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        })
+            // 2. Login (Sign In) to establish session cookies
+            const { error: signInError } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            })
 
-        if (signInError) {
-            throw signInError
+            if (signInError) {
+                throw signInError
+            }
+
+            // 3. Seed account data for dashboard views
+            await seedDemoData(user.id, supabase)
+
+            return { success: true as const }
         }
 
-    } catch (error) {
-        console.error("Demo Login Error:", error)
-        // In server actions, we propagate error or return it. 
-        // Return unique string or object to handle in UI.
-        return { error: "Failed to create demo session. Please try again." }
-    }
+        // Fallback: use Supabase anonymous auth when service role is unavailable.
+        const { data: anonData, error: anonError } = await supabase.auth.signInAnonymously({
+            options: {
+                data: {
+                    full_name: "Demo User",
+                    is_demo: true,
+                },
+            },
+        })
 
-    // 4. Redirect to dashboard
-    redirect("/dashboard")
+        if (anonError || !anonData.user) {
+            throw new Error(
+                "Demo mode is not configured. Add SUPABASE_SERVICE_ROLE_KEY to your deployment env or enable Supabase anonymous sign-ins."
+            )
+        }
+
+        await seedDemoData(anonData.user.id, supabase)
+
+        return { success: true as const }
+    } catch (error: any) {
+        console.error("Demo Login Error:", error)
+
+        try {
+            await supabase.auth.signOut()
+        } catch (signOutError) {
+            console.error("Demo Login Cleanup Error:", signOutError)
+        }
+
+        return {
+            success: false as const,
+            error: error?.message || "Failed to create demo session. Please try again.",
+        }
+    }
 }

@@ -25,17 +25,43 @@ export default function SignupPage() {
   const supabase = createBrowserClient()
   const t = useTranslations('auth.signup')
   const [isDemoLoading, setIsDemoLoading] = useState(false)
+  const DEMO_TIMEOUT_MS = 20000
 
   const handleDemoLogin = async () => {
     setIsDemoLoading(true)
     try {
-      await loginAsDemoUser()
-    } catch (error) {
+      const result = await Promise.race([
+        loginAsDemoUser(),
+        new Promise<{ success: false; error: string }>((resolve) =>
+          setTimeout(
+            () =>
+              resolve({
+                success: false,
+                error: "Demo setup timed out. Please try again.",
+              }),
+            DEMO_TIMEOUT_MS
+          )
+        ),
+      ])
+
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+
+      toast({
+        title: "Demo Ready",
+        description: "You are signed in with a temporary demo account.",
+      })
+
+      router.push("/dashboard")
+      router.refresh()
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create demo session",
+        description: error.message || "Failed to create demo session",
         variant: "destructive",
       })
+    } finally {
       setIsDemoLoading(false)
     }
   }
@@ -257,4 +283,3 @@ export default function SignupPage() {
     </div>
   )
 }
-

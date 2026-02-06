@@ -1,6 +1,5 @@
 "use client"
 
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -11,10 +10,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { Wallet, Eye, EyeOff } from "lucide-react"
+import { Wallet, Eye, EyeOff, Sparkles } from "lucide-react"
 import { ForgotPasswordDialog } from "@/components/auth/forgot-password-dialog"
 import { loginAsDemoUser } from "@/app/actions/auth"
-import { Sparkles } from "lucide-react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -27,30 +25,43 @@ export default function LoginPage() {
   const supabase = createBrowserClient()
   const t = useTranslations('auth.login')
   const [isDemoLoading, setIsDemoLoading] = useState(false)
-
-  // Import dynamically if needed or just use regular import at top, 
-  // but for client component using server action we can import it.
-  // Note: We need to change imports at the top of the file to include loginAsDemoUser.
-  // I will do that in a separate replacement chunk or just add it here if I can view the imports.
-  // I'll assume I need to add the import at the top first.
+  const DEMO_TIMEOUT_MS = 20000
 
   const handleDemoLogin = async () => {
     setIsDemoLoading(true)
     try {
-      // We need to import loginAsDemoUser from "@/app/actions/auth"
-      // Since I can't add import here easily without context, I'll add the import in a separate call 
-      // and just use the function here assuming it will be available.
-      // But wait, I need to define the function usage.
+      const result = await Promise.race([
+        loginAsDemoUser(),
+        new Promise<{ success: false; error: string }>((resolve) =>
+          setTimeout(
+            () =>
+              resolve({
+                success: false,
+                error: "Demo setup timed out. Please try again.",
+              }),
+            DEMO_TIMEOUT_MS
+          )
+        ),
+      ])
 
-      // I'll leave this empty for now and do it properly with multiple chunks.
-      // Let's cancel this tool call and use multi_replace for the whole file update.
-      await loginAsDemoUser()
-    } catch (error) {
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+
+      toast({
+        title: "Demo Ready",
+        description: "You are signed in with a temporary demo account.",
+      })
+
+      router.push("/dashboard")
+      router.refresh()
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to create demo session",
+        description: error.message || "Failed to create demo session",
         variant: "destructive",
       })
+    } finally {
       setIsDemoLoading(false)
     }
   }
@@ -193,4 +204,3 @@ export default function LoginPage() {
     </div>
   )
 }
-
