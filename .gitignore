@@ -41,3 +41,4 @@ finance_env/
 # Cloudflare / OpenNext
 .open-next/
 .wrangler/
+wrangler.toml

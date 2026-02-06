@@ -1,0 +1,12 @@
+name = "finance-tracker"
+main = ".open-next/worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+NEXT_PUBLIC_SUPABASE_URL = "YOUR_SUPABASE_URL"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY"
+NEXT_PUBLIC_APP_URL = "YOUR_APP_URL"
+
+[assets]
+directory = ".open-next/assets"
