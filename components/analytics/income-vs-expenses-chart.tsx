@@ -1,164 +1,146 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
 import { useCurrency } from "@/lib/hooks/use-currency"
 import { useIsMobile } from "@/lib/hooks/use-mobile"
-import type { Database } from "@/types/database"
+import { ChartContainer } from "@/components/insights/chart-container"
+import { compareValues } from "@/lib/insights/helpers"
 
-type Transaction = Database["public"]["Tables"]["transactions"]["Row"]
-
-interface IncomeVsExpensesChartProps {
-  transactions: Transaction[]
+interface MonthlyPoint {
+  monthKey: string
+  monthLabel: string
+  income: number
+  expenses: number
+  net: number
+  savingsRate: number
+  transactions: number
 }
 
-export function IncomeVsExpensesChart({ transactions }: IncomeVsExpensesChartProps) {
-  const t = useTranslations('insights')
+interface IncomeVsExpensesChartProps {
+  points: MonthlyPoint[]
+  totals: {
+    income: number
+    expenses: number
+    net: number
+  }
+  current: MonthlyPoint
+  previous: MonthlyPoint
+  periodLabel: string
+  previousPeriodLabel: string
+  loading: boolean
+  error: string | null
+  onRetry: () => void
+}
+
+export function IncomeVsExpensesChart({
+  points,
+  totals,
+  current,
+  previous,
+  periodLabel,
+  previousPeriodLabel,
+  loading,
+  error,
+  onRetry,
+}: IncomeVsExpensesChartProps) {
+  const t = useTranslations("insights")
   const { formatCurrency, currency } = useCurrency()
   const isMobile = useIsMobile()
 
-  // Group by month
-  const monthlyData = new Map<string, { income: number; expenses: number }>()
+  const chartData = points.map((item) => ({
+    ...item,
+    month: item.monthLabel,
+  }))
 
-  transactions
-    .filter((t) => t.category_id !== null)
-    .forEach((t) => {
-      const month = t.date.substring(0, 7) // YYYY-MM
-      const current = monthlyData.get(month) || { income: 0, expenses: 0 }
-
-      if (t.amount > 0) {
-        current.income += t.amount
-      } else {
-        current.expenses += Math.abs(t.amount)
-      }
-
-      monthlyData.set(month, current)
-    })
-
-  // Convert to array, sort, and get last 6 months
-  const data = Array.from(monthlyData.entries())
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .slice(-6)
-    .map(([month, data]) => {
-      const date = new Date(month + "-01")
-      return {
-        month: date.toLocaleDateString("en-US", { month: "short", year: "2-digit" }),
-        income: parseFloat(data.income.toFixed(2)),
-        expenses: parseFloat(data.expenses.toFixed(2)),
-        net: parseFloat((data.income - data.expenses).toFixed(2)),
-      }
-    })
-
-  // Calculate totals
-  const totals = data.reduce(
-    (acc, curr) => ({
-      income: acc.income + curr.income,
-      expenses: acc.expenses + curr.expenses,
-      net: acc.net + curr.net,
-    }),
-    { income: 0, expenses: 0, net: 0 }
-  )
-
-  const avgNet = data.length > 0 ? totals.net / data.length : 0
-
-  if (data.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('incomeVsExpenses')}</CardTitle>
-          <CardDescription>{t('compareIncome')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-            {t('noTransactions')}
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
+  const netComparison = compareValues(current.net, previous.net)
+  const hasData = chartData.length > 0
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('incomeVsExpenses')}</CardTitle>
-        <CardDescription>
-          {t('last6Months')} - {t('avgNet')}:
-          <span className={avgNet >= 0 ? "text-green-600 ml-1" : "text-red-600 ml-1"}>
-            {formatCurrency(avgNet)}
-          </span>
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="w-full overflow-x-auto pb-2">
-          <div className={isMobile ? "h-[280px] min-w-[520px]" : "h-[350px] w-full"}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis
-                  dataKey="month"
-                  tick={{ fontSize: isMobile ? 11 : 12 }}
-                />
-                <YAxis
-                  width={isMobile ? 48 : 56}
-                  tick={{ fontSize: isMobile ? 11 : 12 }}
-                  tickFormatter={(value) => {
-                    const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
-                    return `${symbol}${(value / 1000).toFixed(0)}k`
-                  }}
-                />
-                <Tooltip
-                  formatter={(value: number, name: string) => [
-                    formatCurrency(value),
-                    name.charAt(0).toUpperCase() + name.slice(1)
-                  ]}
-                  labelStyle={{ color: "hsl(var(--foreground))" }}
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--background))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                  }}
-                />
-                {!isMobile && <Legend />}
-                <Bar
-                  dataKey="income"
-                  fill="#22c55e"
-                  name={t('income')}
-                  radius={[8, 8, 0, 0]}
-                />
-                <Bar
-                  dataKey="expenses"
-                  fill="#ef4444"
-                  name={t('expenses')}
-                  radius={[8, 8, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+    <ChartContainer
+      title={t("incomeVsExpenses")}
+      description={t("compareIncome")}
+      comparisonLabel={`${periodLabel} vs ${previousPeriodLabel}`}
+      loading={loading}
+      error={error}
+      isEmpty={!hasData}
+      emptyMessage={t("noTransactions")}
+      onRetry={onRetry}
+    >
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+        <p className="text-muted-foreground">
+          {t("avgNet")}: <span className="font-semibold text-foreground">{formatCurrency(totals.net / Math.max(chartData.length, 1))}</span>
+        </p>
+        <p className={`rounded-full px-2 py-1 text-xs font-semibold ${netComparison.delta >= 0 ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"}`}>
+          Δ {formatCurrency(netComparison.delta)} ({netComparison.deltaPct === null ? "—" : `${netComparison.deltaPct >= 0 ? "+" : ""}${netComparison.deltaPct.toFixed(1)}%`})
+        </p>
+      </div>
 
-        {/* Summary Stats */}
-        <div className="mt-4 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-3">
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">{t('totalIncome')}</p>
-            <p className="text-lg font-bold text-green-600">
-              {formatCurrency(totals.income)}
-            </p>
-          </div>
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">{t('totalExpenses')}</p>
-            <p className="text-lg font-bold text-red-600">
-              {formatCurrency(totals.expenses)}
-            </p>
-          </div>
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">{t('net')}</p>
-            <p className={`text-lg font-bold ${totals.net >= 0 ? "text-green-600" : "text-red-600"}`}>
-              {formatCurrency(totals.net)}
-            </p>
-          </div>
+      <div className="w-full overflow-x-auto pb-2">
+        <div className={isMobile ? "h-[280px] min-w-[520px]" : "h-[340px] w-full"}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <XAxis dataKey="month" tick={{ fontSize: isMobile ? 11 : 12 }} />
+              <YAxis
+                width={isMobile ? 48 : 56}
+                tick={{ fontSize: isMobile ? 11 : 12 }}
+                tickFormatter={(value) => {
+                  const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency
+                  return `${symbol}${(value / 1000).toFixed(0)}k`
+                }}
+              />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || payload.length === 0) {
+                    return null
+                  }
+
+                  const rowIndex = chartData.findIndex((item) => item.month === label)
+                  const previousRow = rowIndex > 0 ? chartData[rowIndex - 1] : null
+
+                  return (
+                    <div className="space-y-1 rounded-md border bg-background p-2 shadow">
+                      <p className="text-sm font-medium">{label}</p>
+                      {payload.map((entry) => {
+                        const seriesName = String(entry.name)
+                        const dataKey = String(entry.dataKey)
+                        const currentValue = Number(entry.value ?? 0)
+                        const previousValue = previousRow ? Number((previousRow as Record<string, unknown>)[dataKey] ?? 0) : 0
+                        const comparison = compareValues(currentValue, previousValue)
+
+                        return (
+                          <p key={`${seriesName}-${dataKey}`} className="text-xs text-muted-foreground">
+                            {seriesName}: {formatCurrency(currentValue)} | Δ {formatCurrency(comparison.delta)} ({comparison.deltaPct === null ? "—" : `${comparison.deltaPct >= 0 ? "+" : ""}${comparison.deltaPct.toFixed(1)}%`})
+                          </p>
+                        )
+                      })}
+                    </div>
+                  )
+                }}
+              />
+              {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
+              <Bar dataKey="income" fill="hsl(142 71% 45%)" name={t("income")} radius={[8, 8, 0, 0]} />
+              <Bar dataKey="expenses" fill="hsl(0 84% 60%)" name={t("expenses")} radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-3">
+        <div className="text-center">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("totalIncome")}</p>
+          <p className="text-lg font-semibold text-emerald-600">{formatCurrency(totals.income)}</p>
+        </div>
+        <div className="text-center">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("totalExpenses")}</p>
+          <p className="text-lg font-semibold text-red-600">{formatCurrency(totals.expenses)}</p>
+        </div>
+        <div className="text-center">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("net")}</p>
+          <p className={`text-lg font-semibold ${totals.net >= 0 ? "text-emerald-600" : "text-red-600"}`}>{formatCurrency(totals.net)}</p>
+        </div>
+      </div>
+    </ChartContainer>
   )
 }

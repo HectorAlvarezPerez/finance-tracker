@@ -1,127 +1,76 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { AlertCircle, TrendingDown, Lightbulb, CheckCircle } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
-import type { Database } from "@/types/database"
-
-type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
-  categories: { name: string; color: string } | null
-}
+import { compareValues } from "@/lib/insights/helpers"
 
 export function SpendingInsights({
-  currentTransactions,
-  historicalTransactions,
+  currentSpending,
+  previousSpending,
+  topCategory,
+  periodLabel,
+  previousPeriodLabel,
 }: {
-  currentTransactions: Transaction[]
-  historicalTransactions: Transaction[]
+  currentSpending: number
+  previousSpending: number
+  topCategory: { name: string; total: number } | null
+  periodLabel: string
+  previousPeriodLabel: string
 }) {
-  // Calculate current month spending
-  const currentSpending = Math.abs(
-    currentTransactions
-      .filter((t) => t.amount < 0)
-      .reduce((sum, t) => sum + t.amount, 0)
-  )
+  const comparison = compareValues(currentSpending, previousSpending)
 
-  // Calculate historical average
-  const monthlyTotals = new Map<string, number>()
-  historicalTransactions
-    .filter((t) => t.amount < 0)
-    .forEach((t) => {
-      const month = t.date.substring(0, 7)
-      const current = monthlyTotals.get(month) || 0
-      monthlyTotals.set(month, current + Math.abs(t.amount))
-    })
+  const insights = [] as Array<{
+    type: "warning" | "success" | "info"
+    icon: typeof AlertCircle
+    title: string
+    description: string
+  }>
 
-  const historicalAvg =
-    monthlyTotals.size > 0
-      ? Array.from(monthlyTotals.values()).reduce((sum, val) => sum + val, 0) / monthlyTotals.size
-      : 0
-
-  const percentageDiff =
-    historicalAvg > 0 ? ((currentSpending - historicalAvg) / historicalAvg) * 100 : 0
-
-  const isNormal = Math.abs(percentageDiff) <= 20
-
-  // Find top spending categories
-  const categorySpending = new Map<string, { total: number; count: number }>()
-  currentTransactions
-    .filter((t) => t.amount < 0 && t.categories)
-    .forEach((t) => {
-      const name = t.categories!.name
-      const current = categorySpending.get(name) || { total: 0, count: 0 }
-      current.total += Math.abs(t.amount)
-      current.count += 1
-      categorySpending.set(name, current)
-    })
-
-  const topCategories = Array.from(categorySpending.entries())
-    .sort((a, b) => b[1].total - a[1].total)
-    .slice(0, 3)
-
-  const insights = []
-
-  // Spending comparison insight
-  if (percentageDiff > 20) {
+  if (comparison.delta > 0) {
     insights.push({
       type: "warning",
       icon: AlertCircle,
-      title: "Spending Above Average",
-      description: `You're spending ${percentageDiff.toFixed(0)}% more than your average. Consider reviewing your budget.`,
+      title: "Spending Increased",
+      description: `${periodLabel} is ${formatCurrency(comparison.delta)} above ${previousPeriodLabel}${comparison.deltaPct === null ? "" : ` (${comparison.deltaPct.toFixed(1)}%)`}.`,
     })
-  } else if (percentageDiff < -20) {
+  } else if (comparison.delta < 0) {
     insights.push({
       type: "success",
       icon: CheckCircle,
-      title: "Great Job!",
-      description: `You're spending ${Math.abs(percentageDiff).toFixed(0)}% less than your average. Keep it up!`,
+      title: "Spending Reduced",
+      description: `${periodLabel} is ${formatCurrency(Math.abs(comparison.delta))} below ${previousPeriodLabel}${comparison.deltaPct === null ? "" : ` (${Math.abs(comparison.deltaPct).toFixed(1)}%)`}.`,
     })
   } else {
     insights.push({
       type: "info",
       icon: TrendingDown,
-      title: "Normal Spending",
-      description: "Your spending is within your typical range.",
+      title: "Stable Spending",
+      description: `Spending is flat vs ${previousPeriodLabel}.`,
     })
   }
 
-  // Top category insight
-  if (topCategories.length > 0) {
-    const [topCategory, data] = topCategories[0]
-    const avgPerTransaction = data.total / data.count
+  if (topCategory) {
     insights.push({
       type: "info",
       icon: Lightbulb,
-      title: `Top Category: ${topCategory}`,
-      description: `You've spent ${formatCurrency(data.total)} across ${data.count} transactions (avg ${formatCurrency(avgPerTransaction)}).`,
+      title: `Top Category: ${topCategory.name}`,
+      description: `${formatCurrency(topCategory.total)} spent in this category during ${periodLabel}.`,
     })
   }
 
-  // Recommendation
-  if (percentageDiff > 10 && topCategories.length > 0) {
-    const [topCategory] = topCategories[0]
-    insights.push({
-      type: "recommendation",
-      icon: Lightbulb,
-      title: "Recommendation",
-      description: `Consider setting a budget for ${topCategory} to better control your spending.`,
-    })
+  const colorMap: Record<string, string> = {
+    warning: "text-yellow-600",
+    success: "text-green-600",
+    info: "text-blue-600",
   }
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {insights.map((insight, i) => {
+      {insights.map((insight, index) => {
         const Icon = insight.icon
-        const colorMap: Record<string, string> = {
-          warning: "text-yellow-600",
-          success: "text-green-600",
-          info: "text-blue-600",
-          recommendation: "text-purple-600",
-        }
-
         return (
-          <Card key={i}>
+          <Card key={`${insight.title}-${index}`} className="border-border/60 shadow-sm">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Icon className={`h-5 w-5 ${colorMap[insight.type]}`} />
@@ -137,4 +86,3 @@ export function SpendingInsights({
     </div>
   )
 }
-

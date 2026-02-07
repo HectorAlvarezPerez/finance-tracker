@@ -1,7 +1,6 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   ComposedChart,
   Line,
@@ -11,194 +10,158 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend
+  Legend,
 } from "recharts"
 import { useCurrency } from "@/lib/hooks/use-currency"
 import { useIsMobile } from "@/lib/hooks/use-mobile"
-import type { Database } from "@/types/database"
+import { ChartContainer } from "@/components/insights/chart-container"
+import { compareValues } from "@/lib/insights/helpers"
 
-type Transaction = Database["public"]["Tables"]["transactions"]["Row"]
-
-interface MonthlyTrendsChartProps {
-  transactions: Transaction[]
+interface MonthlyPoint {
+  monthKey: string
+  monthLabel: string
+  income: number
+  expenses: number
+  net: number
+  savingsRate: number
+  transactions: number
 }
 
-export function MonthlyTrendsChart({ transactions }: MonthlyTrendsChartProps) {
-  const t = useTranslations('insights')
+interface MonthlyTrendsChartProps {
+  points: MonthlyPoint[]
+  avgSavingsRate: number
+  current: MonthlyPoint
+  previous: MonthlyPoint
+  periodLabel: string
+  previousPeriodLabel: string
+  loading: boolean
+  error: string | null
+  onRetry: () => void
+}
+
+export function MonthlyTrendsChart({
+  points,
+  avgSavingsRate,
+  current,
+  previous,
+  periodLabel,
+  previousPeriodLabel,
+  loading,
+  error,
+  onRetry,
+}: MonthlyTrendsChartProps) {
+  const t = useTranslations("insights")
   const { formatCurrency, currency } = useCurrency()
   const isMobile = useIsMobile()
 
-  // Group by month and calculate metrics
-  const monthlyData = new Map<string, {
-    income: number
-    expenses: number
-    transactions: number
-  }>()
-
-  transactions
-    .filter((t) => t.category_id !== null)
-    .forEach((t) => {
-      const month = t.date.substring(0, 7)
-      const current = monthlyData.get(month) || {
-        income: 0,
-        expenses: 0,
-        transactions: 0
-      }
-
-      if (t.amount > 0) {
-        current.income += t.amount
-      } else {
-        current.expenses += Math.abs(t.amount)
-      }
-      current.transactions += 1
-
-      monthlyData.set(month, current)
-    })
-
-  // Convert to array and calculate derived metrics
-  const data = Array.from(monthlyData.entries())
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .slice(-6) // Last 6 months
-    .map(([month, metrics]) => {
-      const date = new Date(month + "-01")
-      const net = metrics.income - metrics.expenses
-      const savingsRate = metrics.income > 0 ? (net / metrics.income) * 100 : 0
-
-      return {
-        month: date.toLocaleDateString("en-US", { month: "short", year: "2-digit" }),
-        net: parseFloat(net.toFixed(2)),
-        savingsRate: parseFloat(savingsRate.toFixed(1)),
-        transactions: metrics.transactions,
-        income: parseFloat(metrics.income.toFixed(2)),
-        expenses: parseFloat(metrics.expenses.toFixed(2)),
-      }
-    })
-
-  // Calculate average savings rate
-  const avgSavingsRate = data.length > 0
-    ? data.reduce((sum, d) => sum + d.savingsRate, 0) / data.length
-    : 0
-
-  if (data.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('monthlyTrends')}</CardTitle>
-          <CardDescription>{t('netIncomeRate')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center h-[300px] text-muted-foreground">
-            {t('noData')}
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
+  const chartData = points.map((item) => ({ ...item, month: item.monthLabel }))
+  const hasData = chartData.length > 0
+  const netComparison = compareValues(current.net, previous.net)
+  const bestMonth = hasData
+    ? chartData.reduce((max, item) => (item.net > max.net ? item : max), chartData[0]).month
+    : "—"
+  const trendUp = hasData ? chartData[chartData.length - 1].net > chartData[0].net : false
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('monthlyTrends')}</CardTitle>
-        <CardDescription>
-          {t('netIncomeRate')} - {t('avgSavingsRate')}:
-          <span className={avgSavingsRate >= 0 ? "text-green-600 ml-1" : "text-red-600 ml-1"}>
-            {avgSavingsRate.toFixed(1)}%
-          </span>
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="w-full overflow-x-auto pb-2">
-          <div className={isMobile ? "h-[300px] min-w-[560px]" : "h-[350px] w-full"}>
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis
-                  dataKey="month"
-                  tick={{ fontSize: isMobile ? 11 : 12 }}
-                />
-                <YAxis
-                  yAxisId="left"
-                  width={isMobile ? 48 : 56}
-                  tick={{ fontSize: isMobile ? 11 : 12 }}
-                  tickFormatter={(value) => {
-                    const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency
-                    return `${symbol}${(value / 1000).toFixed(0)}k`
-                  }}
-                  label={isMobile ? undefined : { value: t('netIncome'), angle: -90, position: "insideLeft", style: { fontSize: 12 } }}
-                />
-                <YAxis
-                  yAxisId="right"
-                  orientation="right"
-                  width={isMobile ? 40 : 52}
-                  tick={{ fontSize: isMobile ? 11 : 12 }}
-                  tickFormatter={(value) => `${value}%`}
-                  label={isMobile ? undefined : { value: t('savingsRate'), angle: 90, position: "insideRight", style: { fontSize: 12 } }}
-                />
-                <Tooltip
-                  formatter={(value: number, name: string) => {
-                    if (name === t('savingsRate')) {
-                      return [`${value}%`, name]
-                    }
-                    return [formatCurrency(value), name]
-                  }}
-                  labelStyle={{ color: "hsl(var(--foreground))" }}
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--background))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                  }}
-                />
-                {!isMobile && <Legend />}
-                <Bar
-                  yAxisId="left"
-                  dataKey="net"
-                  fill="#3b82f6"
-                  name={t('netIncome')}
-                  radius={[8, 8, 0, 0]}
-                />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="savingsRate"
-                  stroke="#22c55e"
-                  strokeWidth={2}
-                  dot={{ r: isMobile ? 3 : 4 }}
-                  name={t('savingsRate')}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+    <ChartContainer
+      title={t("monthlyTrends")}
+      description={t("netIncomeRate")}
+      comparisonLabel={`${periodLabel} vs ${previousPeriodLabel}`}
+      loading={loading}
+      error={error}
+      isEmpty={!hasData}
+      emptyMessage={t("noData")}
+      onRetry={onRetry}
+    >
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm">
+        <p className="text-muted-foreground">
+          {t("avgSavingsRate")}: <span className={`font-semibold ${avgSavingsRate >= 0 ? "text-emerald-600" : "text-red-600"}`}>{avgSavingsRate.toFixed(1)}%</span>
+        </p>
+        <p className={`rounded-full px-2 py-1 text-xs font-semibold ${netComparison.delta >= 0 ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"}`}>
+          Δ {formatCurrency(netComparison.delta)} ({netComparison.deltaPct === null ? "—" : `${netComparison.deltaPct >= 0 ? "+" : ""}${netComparison.deltaPct.toFixed(1)}%`})
+        </p>
+      </div>
 
-        {/* Summary Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t">
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">{t('avgNetLabel')}</p>
-            <p className="text-lg font-bold">
-              {formatCurrency(data.reduce((sum, d) => sum + d.net, 0) / data.length)}
-            </p>
-          </div>
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">{t('bestMonth')}</p>
-            <p className="text-lg font-bold text-green-600">
-              {data.reduce((max, d) => d.net > max.net ? d : max, data[0]).month}
-            </p>
-          </div>
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">{t('avgTransactions')}</p>
-            <p className="text-lg font-bold">
-              {Math.round(data.reduce((sum, d) => sum + d.transactions, 0) / data.length)}
-            </p>
-          </div>
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">{t('trend')}</p>
-            <p className={`text-lg font-bold ${data[data.length - 1].net > data[0].net ? "text-green-600" : "text-red-600"
-              }`}>
-              {data[data.length - 1].net > data[0].net ? `↑ ${t('up')}` : `↓ ${t('down')}`}
-            </p>
-          </div>
+      <div className="w-full overflow-x-auto pb-2">
+        <div className={isMobile ? "h-[300px] min-w-[560px]" : "h-[350px] w-full"}>
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <XAxis dataKey="month" tick={{ fontSize: isMobile ? 11 : 12 }} />
+              <YAxis
+                yAxisId="left"
+                width={isMobile ? 48 : 56}
+                tick={{ fontSize: isMobile ? 11 : 12 }}
+                tickFormatter={(value) => {
+                  const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency
+                  return `${symbol}${(value / 1000).toFixed(0)}k`
+                }}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                width={isMobile ? 40 : 52}
+                tick={{ fontSize: isMobile ? 11 : 12 }}
+                tickFormatter={(value) => `${value}%`}
+              />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || payload.length === 0) {
+                    return null
+                  }
+
+                  const rowIndex = chartData.findIndex((item) => item.month === label)
+                  const previousRow = rowIndex > 0 ? chartData[rowIndex - 1] : null
+
+                  return (
+                    <div className="space-y-1 rounded-md border bg-background p-2 shadow">
+                      <p className="text-sm font-medium">{label}</p>
+                      {payload.map((entry) => {
+                        const seriesName = String(entry.name)
+                        const dataKey = String(entry.dataKey)
+                        const currentValue = Number(entry.value ?? 0)
+                        const previousValue = previousRow ? Number((previousRow as Record<string, unknown>)[dataKey] ?? 0) : 0
+                        const comparison = compareValues(currentValue, previousValue)
+                        const isPercent = dataKey === "savingsRate"
+
+                        return (
+                          <p key={`${seriesName}-${dataKey}`} className="text-xs text-muted-foreground">
+                            {seriesName}: {isPercent ? `${currentValue.toFixed(1)}%` : formatCurrency(currentValue)} | Δ {isPercent ? `${comparison.delta.toFixed(1)}%` : formatCurrency(comparison.delta)} ({comparison.deltaPct === null ? "—" : `${comparison.deltaPct >= 0 ? "+" : ""}${comparison.deltaPct.toFixed(1)}%`})
+                          </p>
+                        )
+                      })}
+                    </div>
+                  )
+                }}
+              />
+              {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
+              <Bar yAxisId="left" dataKey="net" fill="hsl(var(--primary))" name={t("netIncome")} radius={[8, 8, 0, 0]} />
+              <Line yAxisId="right" type="monotone" dataKey="savingsRate" stroke="hsl(142 71% 45%)" strokeWidth={2} dot={{ r: isMobile ? 3 : 4 }} name={t("savingsRate")} />
+            </ComposedChart>
+          </ResponsiveContainer>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 border-t pt-4 md:grid-cols-4">
+        <div className="text-center">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("avgNetLabel")}</p>
+          <p className="text-base font-semibold">{formatCurrency(chartData.reduce((sum, item) => sum + item.net, 0) / Math.max(chartData.length, 1))}</p>
+        </div>
+        <div className="text-center">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("bestMonth")}</p>
+          <p className="text-base font-semibold text-emerald-600">{bestMonth}</p>
+        </div>
+        <div className="text-center">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("avgTransactions")}</p>
+          <p className="text-base font-semibold">{Math.round(chartData.reduce((sum, item) => sum + item.transactions, 0) / Math.max(chartData.length, 1))}</p>
+        </div>
+        <div className="text-center">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("trend")}</p>
+          <p className={`text-base font-semibold ${trendUp ? "text-emerald-600" : "text-red-600"}`}>
+            {trendUp ? `↑ ${t("up")}` : `↓ ${t("down")}`}
+          </p>
+        </div>
+      </div>
+    </ChartContainer>
   )
 }
