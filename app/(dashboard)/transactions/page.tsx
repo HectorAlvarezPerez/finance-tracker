@@ -26,6 +26,15 @@ export default async function TransactionsPage({
 
   // Await searchParams
   const params = await searchParams
+  const getParam = (value: string | string[] | undefined) => {
+    if (Array.isArray(value)) {
+      return value[0]
+    }
+    return value
+  }
+
+  const selectedYear = getParam(params.year)
+  const selectedMonth = getParam(params.month)
   const selectionScopeParams = new URLSearchParams()
   Object.entries(params).forEach(([key, value]) => {
     if (Array.isArray(value)) {
@@ -65,6 +74,27 @@ export default async function TransactionsPage({
 
   if (params.category) {
     query = query.eq("category_id", params.category as string)
+  }
+
+  if (selectedYear) {
+    const year = Number(selectedYear)
+
+    if (!Number.isNaN(year)) {
+      if (selectedMonth) {
+        const month = Number(selectedMonth)
+        if (!Number.isNaN(month) && month >= 1 && month <= 12) {
+          const fromDate = `${year}-${String(month).padStart(2, "0")}-01`
+          const toDate = `${year}-${String(month).padStart(2, "0")}-${String(
+            new Date(year, month, 0).getDate()
+          ).padStart(2, "0")}`
+          query = query.gte("date", fromDate).lte("date", toDate)
+        } else {
+          query = query.gte("date", `${year}-01-01`).lte("date", `${year}-12-31`)
+        }
+      } else {
+        query = query.gte("date", `${year}-01-01`).lte("date", `${year}-12-31`)
+      }
+    }
   }
 
   if (params.startDate) {
