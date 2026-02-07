@@ -15,7 +15,6 @@ import {
 import { AlertTriangle } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
-import { ToastAction } from "@/components/ui/toast"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import type { Database } from "@/types/database"
 
@@ -45,17 +44,6 @@ export function DeleteTransactionDialog({
     setLoading(true)
 
     try {
-      // Save transaction data before deleting for undo functionality
-      const deletedTransaction = {
-        user_id: transaction.user_id,
-        account_id: transaction.account_id,
-        category_id: transaction.category_id,
-        description: transaction.description,
-        amount: transaction.amount,
-        date: transaction.date,
-        notes: transaction.notes,
-      }
-
       const { error } = await supabase
         .from("transactions")
         .delete()
@@ -63,39 +51,9 @@ export function DeleteTransactionDialog({
 
       if (error) throw error
 
-      // Show success toast with undo option
       toast({
         title: tMsg('success'),
         description: t('message'),
-        action: (
-          <ToastAction
-            altText="Undo delete"
-            onClick={async () => {
-              try {
-                const { error: undoError } = await supabase
-                  .from("transactions")
-                  .insert(deletedTransaction)
-
-                if (undoError) throw undoError
-
-                toast({
-                  title: "Transaction restored",
-                  description: "The transaction has been restored successfully",
-                })
-
-                router.refresh()
-              } catch (undoError: any) {
-                toast({
-                  title: tMsg('error'),
-                  description: "Failed to restore transaction",
-                  variant: "destructive",
-                })
-              }
-            }}
-          >
-            Undo
-          </ToastAction>
-        ),
       })
 
       onOpenChange(false)
@@ -178,4 +136,3 @@ export function DeleteTransactionDialog({
     </Dialog>
   )
 }
-

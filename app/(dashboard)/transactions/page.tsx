@@ -26,6 +26,17 @@ export default async function TransactionsPage({
 
   // Await searchParams
   const params = await searchParams
+  const selectionScopeParams = new URLSearchParams()
+  Object.entries(params).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((item) => selectionScopeParams.append(key, item))
+      return
+    }
+    if (typeof value === "string") {
+      selectionScopeParams.set(key, value)
+    }
+  })
+  const selectionScopeKey = selectionScopeParams.toString()
 
   // Get accounts for filters
   const { data: accounts } = await supabase
@@ -111,6 +122,7 @@ export default async function TransactionsPage({
         accounts={accounts || []}
         categories={categories || []}
         userId={user.id}
+        selectionScopeKey={selectionScopeKey}
       />
     </div>
   )
