@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { Fragment, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import {
@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { formatCurrency, formatDate } from "@/lib/utils"
+import { formatCurrency, formatDate, formatMonth } from "@/lib/utils"
 import { ChevronDown, ChevronUp, Edit, Trash2 } from "lucide-react"
 import { EditTransactionDialog } from "./edit-transaction-dialog"
 import { DeleteTransactionDialog } from "./delete-transaction-dialog"
@@ -37,22 +37,13 @@ function parseDateOnly(value: string) {
   return new Date(`${value}T00:00:00`)
 }
 
-function getDateGroupLabel(dateValue: string) {
+function getMonthKey(dateValue: string) {
   const date = parseDateOnly(dateValue)
-  const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const yesterday = new Date(today)
-  yesterday.setDate(today.getDate() - 1)
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
+}
 
-  if (date.getTime() === today.getTime()) {
-    return "Today"
-  }
-
-  if (date.getTime() === yesterday.getTime()) {
-    return "Yesterday"
-  }
-
-  return formatDate(date, "medium")
+function getMonthLabel(dateValue: string) {
+  return formatMonth(dateValue)
 }
 
 export function TransactionsTable({
@@ -129,18 +120,27 @@ export function TransactionsTable({
       : "indeterminate"
 
   const groupedTransactions = useMemo(() => {
-    const groups = new Map<string, Transaction[]>()
+    const groups = new Map<string, { monthLabel: string; items: Transaction[] }>()
 
     transactions.forEach((transaction) => {
-      const current = groups.get(transaction.date) || []
-      current.push(transaction)
-      groups.set(transaction.date, current)
+      const monthKey = getMonthKey(transaction.date)
+      const currentGroup = groups.get(monthKey)
+
+      if (!currentGroup) {
+        groups.set(monthKey, {
+          monthLabel: getMonthLabel(transaction.date),
+          items: [transaction],
+        })
+        return
+      }
+
+      currentGroup.items.push(transaction)
     })
 
-    return Array.from(groups.entries()).map(([date, items]) => ({
-      date,
-      label: getDateGroupLabel(date),
-      items,
+    return Array.from(groups.entries()).map(([monthKey, group]) => ({
+      monthKey,
+      monthLabel: group.monthLabel,
+      items: group.items,
     }))
   }, [transactions])
 
@@ -284,9 +284,9 @@ export function TransactionsTable({
 
       <div className="space-y-3 md:hidden">
         {groupedTransactions.map((group) => (
-          <div key={group.date} className="space-y-2">
+          <div key={group.monthKey} className="space-y-2">
             <div className="sticky top-[4.25rem] z-20 -mx-1 bg-background/95 px-1 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground backdrop-blur">
-              {group.label}
+              {group.monthLabel}
             </div>
 
             {group.items.map((transaction) => {
@@ -408,73 +408,83 @@ export function TransactionsTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.map((transaction) => {
-              const isFailed = failedRowIds.has(transaction.id)
-
-              return (
-                <TableRow key={transaction.id} className={isFailed ? "bg-destructive/10" : ""}>
-                  <TableCell>
-                    <Checkbox
-                      aria-label={`Seleccionar transacción ${transaction.description}`}
-                      checked={isSelected(transaction.id)}
-                      onCheckedChange={() => handleRowToggle(transaction.id)}
-                    />
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    {formatDate(transaction.date, "short")}
-                  </TableCell>
-                  <TableCell className="max-w-[260px] truncate font-medium">{transaction.description}</TableCell>
-                  <TableCell>
-                    {transaction.categories && (
-                      <Badge
-                        variant="outline"
-                        style={{
-                          borderColor: transaction.categories.color,
-                          color: transaction.categories.color,
-                        }}
-                      >
-                        {transaction.categories.name}
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-sm text-muted-foreground">
-                      {transaction.accounts?.name}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <span
-                      className={`font-semibold ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"}`}
-                    >
-                      {transaction.amount >= 0 ? "+" : ""}
-                      {formatCurrency(transaction.amount)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => setEditingTransaction(transaction)}
-                        aria-label={`Editar transacción ${transaction.description}`}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => setDeletingTransaction(transaction)}
-                        aria-label={`Eliminar transacción ${transaction.description}`}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+            {groupedTransactions.map((group) => (
+              <Fragment key={`month-fragment-${group.monthKey}`}>
+                <TableRow key={`month-${group.monthKey}`} className="bg-muted/40 hover:bg-muted/40">
+                  <TableCell colSpan={7} className="py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {group.monthLabel}
                   </TableCell>
                 </TableRow>
-              )
-            })}
+
+                {group.items.map((transaction) => {
+                  const isFailed = failedRowIds.has(transaction.id)
+
+                  return (
+                    <TableRow key={transaction.id} className={isFailed ? "bg-destructive/10" : ""}>
+                      <TableCell>
+                        <Checkbox
+                          aria-label={`Seleccionar transacción ${transaction.description}`}
+                          checked={isSelected(transaction.id)}
+                          onCheckedChange={() => handleRowToggle(transaction.id)}
+                        />
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {formatDate(transaction.date, "short")}
+                      </TableCell>
+                      <TableCell className="max-w-[260px] truncate font-medium">{transaction.description}</TableCell>
+                      <TableCell>
+                        {transaction.categories && (
+                          <Badge
+                            variant="outline"
+                            style={{
+                              borderColor: transaction.categories.color,
+                              color: transaction.categories.color,
+                            }}
+                          >
+                            {transaction.categories.name}
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-muted-foreground">
+                          {transaction.accounts?.name}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span
+                          className={`font-semibold ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"}`}
+                        >
+                          {transaction.amount >= 0 ? "+" : ""}
+                          {formatCurrency(transaction.amount)}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => setEditingTransaction(transaction)}
+                            aria-label={`Editar transacción ${transaction.description}`}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => setDeletingTransaction(transaction)}
+                            aria-label={`Eliminar transacción ${transaction.description}`}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </Fragment>
+            ))}
           </TableBody>
         </Table>
       </div>
