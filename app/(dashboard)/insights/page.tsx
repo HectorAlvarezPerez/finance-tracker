@@ -7,6 +7,7 @@ import { MonthlyTrendsChart } from "@/components/analytics/monthly-trends-chart"
 import { ExpensesByCategoryChart } from "@/components/analytics/expenses-by-category-chart"
 import { SpendingInsights } from "@/components/insights/spending-insights"
 import { TopCategories } from "@/components/insights/top-categories"
+import { ExpensesByCategoryDonut } from "@/components/insights/expenses-by-category-donut"
 
 export const dynamic = 'force-dynamic'
 
@@ -84,6 +85,8 @@ export default async function InsightsPage() {
           transactions={allTransactions || []} 
           accounts={accounts || []}
         />
+
+        <ExpensesByCategoryDonut userId={user.id} />
 
         <ExpensesByCategoryChart transactions={allTransactions || []} />
 
