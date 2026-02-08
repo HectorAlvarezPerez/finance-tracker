@@ -199,6 +199,78 @@ export async function seedDemoData(
       throw new Error(`Failed to seed transactions: ${txError.message}`)
     }
 
+    const demoBudgets = [
+      {
+        user_id: userId,
+        category_id: getCategoryId("Comida y Supermercado"),
+        period_type: "monthly",
+        year: 2000,
+        month: 1,
+        currency: "EUR",
+        amount: 350,
+        notes: "Presupuesto mensual recurrente de comida",
+      },
+      {
+        user_id: userId,
+        category_id: getCategoryId("Restaurantes y Cafés"),
+        period_type: "monthly",
+        year: 2000,
+        month: 1,
+        currency: "EUR",
+        amount: 120,
+        notes: "Presupuesto mensual recurrente de ocio",
+      },
+      {
+        user_id: userId,
+        category_id: getCategoryId("Transporte"),
+        period_type: "monthly",
+        year: 2000,
+        month: 1,
+        currency: "EUR",
+        amount: 90,
+        notes: "Presupuesto mensual recurrente de transporte",
+      },
+      {
+        user_id: userId,
+        category_id: getCategoryId("Viajes"),
+        period_type: "annual",
+        year: 2000,
+        month: null,
+        currency: "EUR",
+        amount: 1800,
+        notes: "Presupuesto anual recurrente de viajes",
+      },
+      {
+        user_id: userId,
+        category_id: getCategoryId("Salud y Farmacia"),
+        period_type: "annual",
+        year: 2000,
+        month: null,
+        currency: "EUR",
+        amount: 600,
+        notes: "Presupuesto anual recurrente de salud",
+      },
+    ].filter((budget) => budget.category_id)
+
+    const { error: clearBudgetsError } = await supabase
+      .from("budgets")
+      .delete()
+      .eq("user_id", userId)
+
+    if (clearBudgetsError) {
+      throw new Error(`Failed to clear demo budgets: ${clearBudgetsError.message}`)
+    }
+
+    if (demoBudgets.length > 0) {
+      const { error: budgetError } = await supabase
+        .from("budgets")
+        .insert(demoBudgets as any)
+
+      if (budgetError) {
+        throw new Error(`Failed to seed budgets: ${budgetError.message}`)
+      }
+    }
+
     return { success: true }
   } catch (error) {
     console.error("Seed Demo Data Error:", error)
