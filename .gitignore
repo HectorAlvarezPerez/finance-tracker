@@ -46,3 +46,6 @@ wrangler.toml
 # playwright
 output
 scripts
+
+# supabase
+supabase
