@@ -30,7 +30,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import {
-  MONTH_OPTIONS,
   getBudgetKey,
   type BudgetFilters,
   type BudgetPeriodType,
@@ -42,8 +41,6 @@ type CategoryRow = Database["public"]["Tables"]["categories"]["Row"]
 
 type BudgetFormValues = {
   period_type: BudgetPeriodType
-  year: number
-  month: number | null
   category_id: string
   amount: number
 }
@@ -67,12 +64,7 @@ export function BudgetFormDialog({
   onSave: (values: BudgetFormValues, budgetId?: string) => Promise<void>
   onDelete: (budgetId: string) => Promise<void>
 }) {
-  const currentYear = new Date().getFullYear()
-  const years = Array.from({ length: 9 }, (_, index) => currentYear - 5 + index).reverse()
-
   const [periodType, setPeriodType] = useState<BudgetPeriodType>(defaults.periodType)
-  const [year, setYear] = useState(defaults.year)
-  const [month, setMonth] = useState(defaults.month)
   const [categoryId, setCategoryId] = useState("")
   const [amount, setAmount] = useState("")
   const [formError, setFormError] = useState<string | null>(null)
@@ -87,8 +79,6 @@ export function BudgetFormDialog({
 
     if (editingBudget) {
       setPeriodType(editingBudget.period_type)
-      setYear(editingBudget.year)
-      setMonth(editingBudget.month ?? defaults.month)
       setCategoryId(editingBudget.category_id)
       setAmount(String(editingBudget.amount))
       setFormError(null)
@@ -96,23 +86,18 @@ export function BudgetFormDialog({
     }
 
     setPeriodType(defaults.periodType)
-    setYear(defaults.year)
-    setMonth(defaults.month)
     setCategoryId(categories[0]?.id ?? "")
     setAmount("")
     setFormError(null)
-  }, [categories, defaults.month, defaults.periodType, defaults.year, editingBudget, open])
+  }, [categories, defaults.periodType, editingBudget, open])
 
   const duplicateBudget = useMemo(() => {
     if (!categoryId) {
       return null
     }
 
-    const monthValue = periodType === "monthly" ? month : null
     const key = getBudgetKey({
       period_type: periodType,
-      year,
-      month: monthValue,
       category_id: categoryId,
     })
 
@@ -124,15 +109,13 @@ export function BudgetFormDialog({
 
         const budgetKey = getBudgetKey({
           period_type: budget.period_type,
-          year: budget.year,
-          month: budget.month,
           category_id: budget.category_id,
         })
 
         return budgetKey === key
       }) ?? null
     )
-  }, [categoryId, editingBudget, existingBudgets, month, periodType, year])
+  }, [categoryId, editingBudget, existingBudgets, periodType])
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -149,11 +132,6 @@ export function BudgetFormDialog({
       return
     }
 
-    if (periodType === "monthly" && (month < 1 || month > 12)) {
-      setFormError("Selecciona un mes valido.")
-      return
-    }
-
     if (duplicateBudget && editingBudget) {
       setFormError("Ya existe un presupuesto con esa combinacion. Edita el existente.")
       return
@@ -166,8 +144,6 @@ export function BudgetFormDialog({
       await onSave(
         {
           period_type: periodType,
-          year,
-          month: periodType === "monthly" ? month : null,
           category_id: categoryId,
           amount: parsedAmount,
         },
@@ -209,7 +185,7 @@ export function BudgetFormDialog({
             <DialogHeader>
               <DialogTitle>{editingBudget ? "Editar presupuesto" : "Nuevo presupuesto"}</DialogTitle>
               <DialogDescription>
-                Define limites de gasto por categoria para periodos mensuales o anuales.
+                Estos presupuestos son recurrentes: los mensuales se aplican cada mes y los anuales cada ano.
               </DialogDescription>
             </DialogHeader>
 
@@ -229,40 +205,6 @@ export function BudgetFormDialog({
                   </SelectContent>
                 </Select>
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="budget-year">Ano</Label>
-                <Select value={String(year)} onValueChange={(value) => setYear(Number(value))}>
-                  <SelectTrigger id="budget-year" className="h-11">
-                    <SelectValue placeholder="Ano" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {years.map((yearOption) => (
-                      <SelectItem key={yearOption} value={String(yearOption)}>
-                        {yearOption}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {periodType === "monthly" && (
-                <div className="space-y-2">
-                  <Label htmlFor="budget-month">Mes</Label>
-                  <Select value={String(month)} onValueChange={(value) => setMonth(Number(value))}>
-                    <SelectTrigger id="budget-month" className="h-11">
-                      <SelectValue placeholder="Mes" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {MONTH_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={String(option.value)}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
 
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="budget-category">Categoria</Label>

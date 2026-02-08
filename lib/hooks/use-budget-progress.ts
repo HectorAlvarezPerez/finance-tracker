@@ -74,14 +74,7 @@ async function fetchBudgetProgress(
     )
     .eq("user_id", userId)
     .eq("period_type", filters.periodType)
-    .eq("year", filters.year)
     .order("updated_at", { ascending: false })
-
-  if (filters.periodType === "monthly") {
-    budgetsQuery = budgetsQuery.eq("month", filters.month)
-  } else {
-    budgetsQuery = budgetsQuery.is("month", null)
-  }
 
   const transactionsPromise = supabase
     .from("transactions")
@@ -111,13 +104,21 @@ async function fetchBudgetProgress(
     throw transactionsError
   }
 
-  const normalizedBudgets = (budgets ?? []).map(normalizeBudgetRow)
+  const normalizedBudgetsRaw = (budgets ?? []).map(normalizeBudgetRow)
+  const normalizedBudgets = Array.from(
+    normalizedBudgetsRaw.reduce((map, budget) => {
+      if (!map.has(budget.category_id)) {
+        map.set(budget.category_id, budget)
+      }
+      return map
+    }, new Map<string, BudgetWithCategory>()).values()
+  )
   // Budget spend excludes transfers/investments by only counting expense categories.
   const normalizedTransactions = (transactions ?? [])
     .map(normalizeExpenseTransaction)
     .filter((transaction) => transaction.categories?.type === "expense")
 
-  const progress = calculateBudgetProgress(normalizedBudgets, normalizedTransactions)
+  const progress = calculateBudgetProgress(normalizedBudgets, normalizedTransactions, filters)
   const aggregated = summarizeProgress(progress)
 
   return {

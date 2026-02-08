@@ -17,6 +17,8 @@ import { useBudgetProgress } from "@/lib/hooks/use-budget-progress"
 import {
   formatPeriodLabel,
   getBudgetKey,
+  RECURRING_BUDGET_BASE_MONTH,
+  RECURRING_BUDGET_BASE_YEAR,
   getStatusClassName,
   getStatusLabel,
   type BudgetFilters,
@@ -133,8 +135,6 @@ export function BudgetsDashboard({ userId }: { userId: string }) {
   const handleSaveBudget = async (
     values: {
       period_type: BudgetPeriodType
-      year: number
-      month: number | null
       category_id: string
       amount: number
     },
@@ -142,8 +142,8 @@ export function BudgetsDashboard({ userId }: { userId: string }) {
   ) => {
     const payload = {
       period_type: values.period_type,
-      year: values.year,
-      month: values.period_type === "monthly" ? values.month : null,
+      year: RECURRING_BUDGET_BASE_YEAR,
+      month: values.period_type === "monthly" ? RECURRING_BUDGET_BASE_MONTH : null,
       category_id: values.category_id,
       amount: values.amount,
       currency: "EUR",
@@ -157,14 +157,10 @@ export function BudgetsDashboard({ userId }: { userId: string }) {
       return (
         getBudgetKey({
           period_type: budget.period_type,
-          year: budget.year,
-          month: budget.month,
           category_id: budget.category_id,
         }) ===
         getBudgetKey({
           period_type: payload.period_type,
-          year: payload.year,
-          month: payload.month,
           category_id: payload.category_id,
         })
       )

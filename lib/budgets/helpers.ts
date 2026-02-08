@@ -9,6 +9,9 @@ export type BudgetFilters = {
   month: number
 }
 
+export const RECURRING_BUDGET_BASE_YEAR = 2000
+export const RECURRING_BUDGET_BASE_MONTH = 1
+
 type BudgetRow = Database["public"]["Tables"]["budgets"]["Row"]
 type CategoryRow = Pick<
   Database["public"]["Tables"]["categories"]["Row"],
@@ -193,7 +196,8 @@ function statusRank(status: BudgetStatus) {
 
 export function calculateBudgetProgress(
   budgets: BudgetWithCategory[],
-  expenseTransactions: BudgetExpenseTransaction[]
+  expenseTransactions: BudgetExpenseTransaction[],
+  filters: BudgetFilters
 ): BudgetProgressItem[] {
   const spentByCategory = new Map<string, number>()
 
@@ -218,9 +222,9 @@ export function calculateBudgetProgress(
       .sort((a, b) => (a.date < b.date ? 1 : -1))
 
     const breakdown =
-      budget.period_type === "monthly" && budget.month
-        ? buildMonthlyBreakdown(budgetTransactions, budget.year, budget.month)
-        : buildAnnualBreakdown(budgetTransactions, budget.year)
+      budget.period_type === "monthly"
+        ? buildMonthlyBreakdown(budgetTransactions, filters.year, filters.month)
+        : buildAnnualBreakdown(budgetTransactions, filters.year)
 
     return {
       budget,
@@ -267,10 +271,7 @@ export function normalizeCategoryRelation(value: unknown): CategoryRow | null {
 
 export function getBudgetKey(input: {
   period_type: BudgetPeriodType
-  year: number
-  month: number | null
   category_id: string
 }) {
-  const monthPart = input.period_type === "monthly" ? String(input.month ?? 0) : "annual"
-  return `${input.period_type}:${input.year}:${monthPart}:${input.category_id}`
+  return `${input.period_type}:${input.category_id}`
 }
