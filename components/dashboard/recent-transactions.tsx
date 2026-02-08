@@ -7,7 +7,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
 export async function RecentTransactions({ userId }: { userId: string }) {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const t = await getTranslations('dashboard')
 
   const { data: transactions } = await supabase

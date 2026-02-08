@@ -13,7 +13,7 @@ export default async function TransactionsPage({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const t = await getTranslations('transactions')
 
   const {
@@ -111,7 +111,7 @@ export default async function TransactionsPage({
 
   const { data: rawTransactions } = await query.limit(100)
 
-  const transactions = rawTransactions?.map(t => ({
+  const transactions = rawTransactions?.map((t: any) => ({
     ...t,
     categories: Array.isArray(t.categories) ? t.categories[0] : t.categories,
     accounts: Array.isArray(t.accounts) ? t.accounts[0] : t.accounts

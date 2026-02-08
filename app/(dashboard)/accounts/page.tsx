@@ -7,7 +7,7 @@ import { AddAccountDialog } from "@/components/accounts/add-account-dialog"
 export const dynamic = 'force-dynamic'
 
 export default async function AccountsPage() {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const t = await getTranslations('accounts')
   
   const {

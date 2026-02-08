@@ -36,7 +36,8 @@ export async function seedDemoData(
   userId: string,
   client?: SupabaseClient<Database>
 ) {
-  const supabase = client ?? createAdminClient() ?? createServerClient()
+  const adminClient = createAdminClient()
+  const supabase = client ?? adminClient ?? (await createServerClient())
 
   try {
     const { count: accountCount, error: accountCountError } = await supabase
@@ -68,7 +69,7 @@ export async function seedDemoData(
     }
 
     const getCategoryId = (name: string) =>
-      categories.find((category) => category.name === name)?.id
+      categories.find((category: any) => category.name === name)?.id
 
     const { data: accounts, error: accError } = await supabase
       .from("accounts")
@@ -92,7 +93,7 @@ export async function seedDemoData(
       throw new Error(`Failed to seed accounts: ${accError?.message ?? "insert failed"}`)
     }
 
-    const bankAccountId = accounts.find((account) => account.name === "Cuenta Principal")?.id
+    const bankAccountId = accounts.find((account: any) => account.name === "Cuenta Principal")?.id
     if (!bankAccountId) {
       throw new Error("Failed to create demo bank account")
     }

@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     }
 
     // Get existing categories for the user
-    const supabase = createServerClient()
+    const supabase = await createServerClient()
     const { data: existingCategories } = await supabase
       .from('categories')
       .select('id, name, type')
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     // We use 1-based index (string) for the AI prompt
     const categoryMap = new Map<string, typeof existingCategories[0]>()
 
-    const categoryListForPrompt = existingCategories.map((c, index) => {
+    const categoryListForPrompt = existingCategories.map((c: any, index: number) => {
       const tempId = (index + 1).toString()
       categoryMap.set(tempId, c)
       return `${tempId}: ${c.name} (${c.type})`

@@ -9,7 +9,7 @@ import Link from "next/link"
 export const dynamic = 'force-dynamic'
 
 export default async function SettingsPage() {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const t = await getTranslations('settings')
 
   // Get current user (not session - for security)

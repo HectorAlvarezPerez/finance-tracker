@@ -8,7 +8,7 @@ import { AddHoldingDialog } from "@/components/portfolio/add-holding-dialog"
 export const dynamic = 'force-dynamic'
 
 export default async function PortfolioPage() {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const t = await getTranslations('portfolio')
 
   const {

@@ -5,7 +5,7 @@ import { InsightsDashboard } from "@/components/insights/insights-dashboard"
 export const dynamic = 'force-dynamic'
 
 export default async function InsightsPage() {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
 
   const {
     data: { user },

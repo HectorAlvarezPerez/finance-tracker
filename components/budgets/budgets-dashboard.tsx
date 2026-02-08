@@ -370,10 +370,17 @@ export function BudgetsDashboard({ userId }: { userId: string }) {
           {data && data.progress.length > 0 && (
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {data.progress.map((item) => (
-                <button
+                <div
                   key={item.budget.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => handleSelectBudget(item.budget.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault()
+                      handleSelectBudget(item.budget.id)
+                    }
+                  }}
                   className={`rounded-xl border bg-card p-4 text-left transition hover:border-primary/60 hover:shadow-sm ${
                     selectedBudgetId === item.budget.id ? "border-primary/60 shadow-sm" : "border-border"
                   }`}
@@ -424,7 +431,7 @@ export function BudgetsDashboard({ userId }: { userId: string }) {
                       Editar
                     </Button>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}

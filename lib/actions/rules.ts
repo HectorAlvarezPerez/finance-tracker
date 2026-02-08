@@ -10,7 +10,7 @@ type InsertTransactionRule = Database["public"]["Tables"]["transaction_rules"]["
 type UpdateTransactionRule = Database["public"]["Tables"]["transaction_rules"]["Update"]
 
 export async function getRules() {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -37,7 +37,7 @@ export async function getRules() {
 }
 
 export async function createRule(data: Omit<InsertTransactionRule, "user_id">) {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -59,7 +59,7 @@ export async function createRule(data: Omit<InsertTransactionRule, "user_id">) {
 }
 
 export async function updateRule(id: string, data: UpdateTransactionRule) {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -82,7 +82,7 @@ export async function updateRule(id: string, data: UpdateTransactionRule) {
 }
 
 export async function deleteRule(id: string) {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -105,7 +105,7 @@ export async function deleteRule(id: string) {
 }
 
 export async function toggleRule(id: string, enabled: boolean) {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()

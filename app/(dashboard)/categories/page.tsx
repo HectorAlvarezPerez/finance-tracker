@@ -8,7 +8,7 @@ import { ImportDefaultCategoriesButton } from "@/components/categories/import-de
 export const dynamic = 'force-dynamic'
 
 export default async function CategoriesPage() {
-  const supabase = createServerClient()
+  const supabase = await createServerClient()
   const t = await getTranslations('categories')
 
   const {
