@@ -20,6 +20,13 @@ function clampMonth(value: number) {
   return Math.min(12, Math.max(1, value))
 }
 
+function parseNumberParam(value: string | null) {
+  if (!value) {
+    return NaN
+  }
+  return Number(value)
+}
+
 export function InsightsDashboard({ userId }: { userId: string }) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -29,18 +36,18 @@ export function InsightsDashboard({ userId }: { userId: string }) {
   const defaultMonth = now.getMonth() + 1
 
   const selectedYear = useMemo(() => {
-    const parsed = Number(searchParams.get("year"))
+    const parsed = parseNumberParam(searchParams.get("year"))
     return Number.isNaN(parsed) ? defaultYear : parsed
   }, [defaultYear, searchParams])
 
   const selectedMonth = useMemo(() => {
-    const parsed = clampMonth(Number(searchParams.get("month")))
+    const parsed = clampMonth(parseNumberParam(searchParams.get("month")))
     return parsed ?? defaultMonth
   }, [defaultMonth, searchParams])
 
   useEffect(() => {
-    const yearParam = Number(searchParams.get("year"))
-    const monthParam = clampMonth(Number(searchParams.get("month")))
+    const yearParam = parseNumberParam(searchParams.get("year"))
+    const monthParam = clampMonth(parseNumberParam(searchParams.get("month")))
     const hasValidYear = !Number.isNaN(yearParam)
     const hasValidMonth = monthParam !== null
 
