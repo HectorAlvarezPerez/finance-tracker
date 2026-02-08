@@ -10,7 +10,7 @@ import { ExpensesByCategoryDonut } from "@/components/insights/expenses-by-categ
 import { SpendingInsights } from "@/components/insights/spending-insights"
 import { InsightsFiltersBar } from "@/components/insights/insights-filters-bar"
 import { useInsightsData } from "@/lib/hooks/use-insights-data"
-import { getMonthLabel, getPreviousMonth } from "@/lib/insights/helpers"
+import { getMonthLabel } from "@/lib/insights/helpers"
 
 function clampMonth(value: number) {
   if (Number.isNaN(value)) {
@@ -76,10 +76,7 @@ export function InsightsDashboard({ userId }: { userId: string }) {
     month: selectedMonth,
   })
 
-  const previousFilterMonth = getPreviousMonth(selectedYear, selectedMonth)
   const periodLabel = data?.period.label ?? getMonthLabel(selectedYear, selectedMonth)
-  const previousPeriodLabel =
-    data?.period.previousLabel ?? getMonthLabel(previousFilterMonth.year, previousFilterMonth.month)
 
   const topCategory =
     data?.categoryDistribution.items.find((item) => item.name !== "Other") ?? null
@@ -98,7 +95,6 @@ export function InsightsDashboard({ userId }: { userId: string }) {
         onMonthChange={(month) => setFiltersInUrl(selectedYear, month)}
         onReset={handleReset}
         periodLabel={periodLabel}
-        previousPeriodLabel={previousPeriodLabel}
       />
 
       <div className="space-y-4 sm:space-y-5">
@@ -108,7 +104,6 @@ export function InsightsDashboard({ userId }: { userId: string }) {
               items={data?.categoryDistribution.items ?? []}
               total={data?.categoryDistribution.total ?? 0}
               periodLabel={periodLabel}
-              previousPeriodLabel={previousPeriodLabel}
               loading={loading}
               error={error}
               onRetry={retry}
@@ -121,7 +116,6 @@ export function InsightsDashboard({ userId }: { userId: string }) {
               categoryOrder={data?.categoryMonthly.categoryOrder ?? []}
               categoryColors={data?.categoryMonthly.categoryColors ?? {}}
               periodLabel={periodLabel}
-              previousPeriodLabel={previousPeriodLabel}
               loading={loading}
               error={error}
               onRetry={retry}
@@ -133,10 +127,7 @@ export function InsightsDashboard({ userId }: { userId: string }) {
           <IncomeVsExpensesChart
             points={data?.monthlyMetrics.points ?? []}
             totals={data?.monthlyMetrics.totals ?? { income: 0, expenses: 0, net: 0 }}
-            current={data?.monthlyMetrics.current ?? { monthKey: "", monthLabel: "", income: 0, expenses: 0, net: 0, savingsRate: 0, transactions: 0 }}
-            previous={data?.monthlyMetrics.previous ?? { monthKey: "", monthLabel: "", income: 0, expenses: 0, net: 0, savingsRate: 0, transactions: 0 }}
             periodLabel={periodLabel}
-            previousPeriodLabel={previousPeriodLabel}
             loading={loading}
             error={error}
             onRetry={retry}
@@ -145,10 +136,7 @@ export function InsightsDashboard({ userId }: { userId: string }) {
           <MonthlyTrendsChart
             points={data?.monthlyMetrics.points ?? []}
             avgSavingsRate={data?.monthlyMetrics.avgSavingsRate ?? 0}
-            current={data?.monthlyMetrics.current ?? { monthKey: "", monthLabel: "", income: 0, expenses: 0, net: 0, savingsRate: 0, transactions: 0 }}
-            previous={data?.monthlyMetrics.previous ?? { monthKey: "", monthLabel: "", income: 0, expenses: 0, net: 0, savingsRate: 0, transactions: 0 }}
             periodLabel={periodLabel}
-            previousPeriodLabel={previousPeriodLabel}
             loading={loading}
             error={error}
             onRetry={retry}
@@ -160,10 +148,8 @@ export function InsightsDashboard({ userId }: { userId: string }) {
 
           <SpendingInsights
             currentSpending={data?.categoryDistribution.total ?? 0}
-            previousSpending={data?.categoryDistribution.previousTotal ?? 0}
             topCategory={topCategory ? { name: topCategory.name, total: topCategory.total } : null}
             periodLabel={periodLabel}
-            previousPeriodLabel={previousPeriodLabel}
           />
         </div>
 
@@ -171,11 +157,7 @@ export function InsightsDashboard({ userId }: { userId: string }) {
           <NetWorthChart
             points={data?.netWorth.points ?? []}
             currentValue={data?.netWorth.currentValue ?? 0}
-            previousValue={data?.netWorth.previousValue ?? 0}
-            delta={data?.netWorth.delta ?? 0}
-            deltaPct={data?.netWorth.deltaPct ?? null}
             periodLabel={periodLabel}
-            previousPeriodLabel={previousPeriodLabel}
             loading={loading}
             error={error}
             onRetry={retry}

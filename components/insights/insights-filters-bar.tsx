@@ -31,7 +31,6 @@ export function InsightsFiltersBar({
   onMonthChange,
   onReset,
   periodLabel,
-  previousPeriodLabel,
 }: {
   year: number
   month: number
@@ -39,7 +38,6 @@ export function InsightsFiltersBar({
   onMonthChange: (month: number) => void
   onReset: () => void
   periodLabel: string
-  previousPeriodLabel: string
 }) {
   const currentYear = new Date().getFullYear()
   const years = Array.from({ length: 10 }, (_, index) => currentYear - index)
@@ -88,8 +86,7 @@ export function InsightsFiltersBar({
         </div>
 
         <p className="max-w-full text-sm leading-relaxed text-muted-foreground">
-          Periodo: <span className="font-medium text-foreground">{periodLabel}</span> (comparado con{" "}
-          <span className="font-medium text-foreground">{previousPeriodLabel}</span>)
+          Periodo: <span className="font-medium text-foreground">{periodLabel}</span>
         </p>
       </div>
     </div>

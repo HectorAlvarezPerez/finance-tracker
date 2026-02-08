@@ -15,7 +15,6 @@ import {
 import { useCurrency } from "@/lib/hooks/use-currency"
 import { useIsMobile } from "@/lib/hooks/use-mobile"
 import { ChartContainer } from "@/components/insights/chart-container"
-import { compareValues } from "@/lib/insights/helpers"
 
 interface MonthlyPoint {
   monthKey: string
@@ -30,10 +29,7 @@ interface MonthlyPoint {
 interface MonthlyTrendsChartProps {
   points: MonthlyPoint[]
   avgSavingsRate: number
-  current: MonthlyPoint
-  previous: MonthlyPoint
   periodLabel: string
-  previousPeriodLabel: string
   loading: boolean
   error: string | null
   onRetry: () => void
@@ -42,10 +38,7 @@ interface MonthlyTrendsChartProps {
 export function MonthlyTrendsChart({
   points,
   avgSavingsRate,
-  current,
-  previous,
   periodLabel,
-  previousPeriodLabel,
   loading,
   error,
   onRetry,
@@ -56,7 +49,6 @@ export function MonthlyTrendsChart({
 
   const chartData = points.map((item) => ({ ...item, month: item.monthLabel }))
   const hasData = chartData.length > 0
-  const netComparison = compareValues(current.net, previous.net)
   const bestMonth = hasData
     ? chartData.reduce((max, item) => (item.net > max.net ? item : max), chartData[0]).month
     : "—"
@@ -66,7 +58,7 @@ export function MonthlyTrendsChart({
     <ChartContainer
       title={t("monthlyTrends")}
       description={t("netIncomeRate")}
-      comparisonLabel={`${periodLabel} vs ${previousPeriodLabel}`}
+      comparisonLabel={periodLabel}
       loading={loading}
       error={error}
       isEmpty={!hasData}
@@ -76,9 +68,6 @@ export function MonthlyTrendsChart({
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm">
         <p className="text-muted-foreground">
           {t("avgSavingsRate")}: <span className={`font-semibold ${avgSavingsRate >= 0 ? "text-emerald-600" : "text-red-600"}`}>{avgSavingsRate.toFixed(1)}%</span>
-        </p>
-        <p className={`rounded-full px-2 py-1 text-xs font-semibold ${netComparison.delta >= 0 ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600"}`}>
-          Δ {formatCurrency(netComparison.delta)} ({netComparison.deltaPct === null ? "—" : `${netComparison.deltaPct >= 0 ? "+" : ""}${netComparison.deltaPct.toFixed(1)}%`})
         </p>
       </div>
 
@@ -110,9 +99,6 @@ export function MonthlyTrendsChart({
                   return null
                 }
 
-                const rowIndex = chartData.findIndex((item) => item.month === label)
-                const previousRow = rowIndex > 0 ? chartData[rowIndex - 1] : null
-
                 return (
                   <div className="max-w-[240px] space-y-1 rounded-md border bg-background p-2 shadow">
                     <p className="text-sm font-medium">{label}</p>
@@ -120,13 +106,11 @@ export function MonthlyTrendsChart({
                       const seriesName = String(entry.name)
                       const dataKey = String(entry.dataKey)
                       const currentValue = Number(entry.value ?? 0)
-                      const previousValue = previousRow ? Number((previousRow as Record<string, unknown>)[dataKey] ?? 0) : 0
-                      const comparison = compareValues(currentValue, previousValue)
                       const isPercent = dataKey === "savingsRate"
 
                       return (
                         <p key={`${seriesName}-${dataKey}`} className="text-xs text-muted-foreground">
-                          {seriesName}: {isPercent ? `${currentValue.toFixed(1)}%` : formatCurrency(currentValue)} | Δ {isPercent ? `${comparison.delta.toFixed(1)}%` : formatCurrency(comparison.delta)} ({comparison.deltaPct === null ? "—" : `${comparison.deltaPct >= 0 ? "+" : ""}${comparison.deltaPct.toFixed(1)}%`})
+                          {seriesName}: {isPercent ? `${currentValue.toFixed(1)}%` : formatCurrency(currentValue)}
                         </p>
                       )
                     })}

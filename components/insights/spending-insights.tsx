@@ -1,52 +1,39 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, TrendingDown, Lightbulb, CheckCircle } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
+import { TrendingDown, Lightbulb, CheckCircle } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
-import { compareValues } from "@/lib/insights/helpers"
 
 export function SpendingInsights({
   currentSpending,
-  previousSpending,
   topCategory,
   periodLabel,
-  previousPeriodLabel,
 }: {
   currentSpending: number
-  previousSpending: number
   topCategory: { name: string; total: number } | null
   periodLabel: string
-  previousPeriodLabel: string
 }) {
-  const comparison = compareValues(currentSpending, previousSpending)
-
   const insights = [] as Array<{
     type: "warning" | "success" | "info"
-    icon: typeof AlertCircle
+    icon: LucideIcon
     title: string
     description: string
   }>
 
-  if (comparison.delta > 0) {
-    insights.push({
-      type: "warning",
-      icon: AlertCircle,
-      title: "Spending Increased",
-      description: `${periodLabel} is ${formatCurrency(comparison.delta)} above ${previousPeriodLabel}${comparison.deltaPct === null ? "" : ` (${comparison.deltaPct.toFixed(1)}%)`}.`,
-    })
-  } else if (comparison.delta < 0) {
-    insights.push({
-      type: "success",
-      icon: CheckCircle,
-      title: "Spending Reduced",
-      description: `${periodLabel} is ${formatCurrency(Math.abs(comparison.delta))} below ${previousPeriodLabel}${comparison.deltaPct === null ? "" : ` (${Math.abs(comparison.deltaPct).toFixed(1)}%)`}.`,
-    })
-  } else {
+  if (currentSpending > 0) {
     insights.push({
       type: "info",
       icon: TrendingDown,
-      title: "Stable Spending",
-      description: `Spending is flat vs ${previousPeriodLabel}.`,
+      title: "Total Spending",
+      description: `${formatCurrency(currentSpending)} spent during ${periodLabel}.`,
+    })
+  } else {
+    insights.push({
+      type: "success",
+      icon: CheckCircle,
+      title: "No Spending",
+      description: `No expenses recorded during ${periodLabel}.`,
     })
   }
 

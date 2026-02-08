@@ -5,14 +5,12 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { useCurrency } from "@/lib/hooks/use-currency"
 import { useIsMobile } from "@/lib/hooks/use-mobile"
 import { ChartContainer } from "@/components/insights/chart-container"
-import { compareValues } from "@/lib/insights/helpers"
 
 interface ExpensesByCategoryChartProps {
   points: Array<Record<string, string | number>>
   categoryOrder: string[]
   categoryColors: Record<string, string>
   periodLabel: string
-  previousPeriodLabel: string
   loading: boolean
   error: string | null
   onRetry: () => void
@@ -23,7 +21,6 @@ export function ExpensesByCategoryChart({
   categoryOrder,
   categoryColors,
   periodLabel,
-  previousPeriodLabel,
   loading,
   error,
   onRetry,
@@ -43,7 +40,7 @@ export function ExpensesByCategoryChart({
     <ChartContainer
       title="Expenses by Category"
       description="Monthly breakdown of spending categories (TOP 8 + Other)"
-      comparisonLabel={`${periodLabel} vs ${previousPeriodLabel}`}
+      comparisonLabel={periodLabel}
       loading={loading}
       error={error}
       isEmpty={!hasData}
@@ -70,21 +67,15 @@ export function ExpensesByCategoryChart({
                   return null
                 }
 
-                const rowIndex = points.findIndex((item) => item.month === label)
-                const previousRow = rowIndex > 0 ? points[rowIndex - 1] : null
-
                 return (
                   <div className="max-w-[240px] space-y-1 rounded-md border bg-background p-2 shadow">
                     <p className="text-sm font-medium">{label}</p>
                     {payload.map((entry) => {
-                      const dataKey = String(entry.dataKey)
                       const value = Number(entry.value ?? 0)
-                      const previousValue = previousRow ? Number(previousRow[dataKey] ?? 0) : 0
-                      const comparison = compareValues(value, previousValue)
 
                       return (
-                        <p key={`${dataKey}-${entry.name}`} className="text-xs text-muted-foreground">
-                          {entry.name}: {formatCurrency(value)} | Δ {formatCurrency(comparison.delta)} ({comparison.deltaPct === null ? "—" : `${comparison.deltaPct >= 0 ? "+" : ""}${comparison.deltaPct.toFixed(1)}%`})
+                        <p key={`${entry.name}-${String(entry.dataKey)}`} className="text-xs text-muted-foreground">
+                          {entry.name}: {formatCurrency(value)}
                         </p>
                       )
                     })}

@@ -10,9 +10,6 @@ interface CategoryDistributionItem {
   color: string
   total: number
   percentage: number
-  previousTotal: number
-  delta: number
-  deltaPct: number | null
 }
 
 function DonutTooltip({
@@ -34,9 +31,6 @@ function DonutTooltip({
       <p className="text-xs text-muted-foreground">
         {formatCurrency(item.total, "EUR", "es-ES")} ({item.percentage.toFixed(1)}%)
       </p>
-      <p className="text-xs text-muted-foreground">
-        Δ {formatCurrency(item.delta, "EUR", "es-ES")} ({item.deltaPct === null ? "—" : `${item.deltaPct >= 0 ? "+" : ""}${item.deltaPct.toFixed(1)}%`})
-      </p>
     </div>
   )
 }
@@ -45,7 +39,6 @@ export function ExpensesByCategoryDonut({
   items,
   total,
   periodLabel,
-  previousPeriodLabel,
   loading,
   error,
   onRetry,
@@ -53,7 +46,6 @@ export function ExpensesByCategoryDonut({
   items: CategoryDistributionItem[]
   total: number
   periodLabel: string
-  previousPeriodLabel: string
   loading: boolean
   error: string | null
   onRetry: () => void
@@ -64,7 +56,7 @@ export function ExpensesByCategoryDonut({
     <ChartContainer
       title="Expenses by Category (Donut)"
       description="Distribution of expenses for the selected period"
-      comparisonLabel={`${periodLabel} vs ${previousPeriodLabel}`}
+      comparisonLabel={periodLabel}
       loading={loading}
       error={error}
       isEmpty={!hasData}
@@ -94,7 +86,7 @@ export function ExpensesByCategoryDonut({
                   <p className="truncate text-sm font-medium">{item.name}</p>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {item.percentage.toFixed(1)}% | Δ {item.deltaPct === null ? "—" : `${item.deltaPct >= 0 ? "+" : ""}${item.deltaPct.toFixed(1)}%`}
+                  {item.percentage.toFixed(1)}%
                 </p>
               </div>
               <p className="text-sm font-semibold">{formatCurrency(item.total, "EUR", "es-ES")}</p>
