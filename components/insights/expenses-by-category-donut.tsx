@@ -54,7 +54,7 @@ export function ExpensesByCategoryDonut({
 
   return (
     <ChartContainer
-      title="Expenses by Category (Donut)"
+      title="Expenses by Category"
       description="Distribution of expenses for the selected period"
       comparisonLabel={periodLabel}
       loading={loading}
@@ -63,11 +63,20 @@ export function ExpensesByCategoryDonut({
       emptyMessage="No hay gastos en este periodo"
       onRetry={onRetry}
     >
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_240px]">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_220px]">
         <div className="h-[240px] sm:h-[280px] md:h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie data={items} dataKey="total" nameKey="name" innerRadius={70} outerRadius={112} paddingAngle={2}>
+              <Pie
+                data={items}
+                dataKey="total"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius="58%"
+                outerRadius="84%"
+                paddingAngle={2}
+              >
                 {items.map((entry) => (
                   <Cell key={entry.key} fill={entry.color} />
                 ))}
