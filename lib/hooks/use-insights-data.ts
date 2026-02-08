@@ -137,6 +137,8 @@ function buildInsightsPayload(
 
   const sixMonths = getMonthSequence(year, month, 6).map((entry) => entry.key)
   const sixMonthsSet = new Set(sixMonths)
+  const categoryMonths = getMonthSequence(year, month, 12).map((entry) => entry.key)
+  const categoryMonthsSet = new Set(categoryMonths)
 
   const currentTransactions = allTransactions.filter((item) => toMonthKeyFromDate(item.date) === monthKey)
   const previousTransactions = allTransactions.filter(
@@ -144,6 +146,9 @@ function buildInsightsPayload(
   )
   const rollingTransactions = allTransactions.filter((item) =>
     sixMonthsSet.has(toMonthKeyFromDate(item.date))
+  )
+  const rollingCategoryTransactions = allTransactions.filter((item) =>
+    categoryMonthsSet.has(toMonthKeyFromDate(item.date))
   )
 
   const monthlyMap = new Map<string, MonthlyMetricPoint>()
@@ -250,11 +255,11 @@ function buildInsightsPayload(
   const netWorthComparison = compareValues(currentNetWorth, previousNetWorth)
 
   const expenseMonthlyByCategory = new Map<string, Map<string, { name: string; color: string; total: number }>>()
-  sixMonths.forEach((key) => {
+  categoryMonths.forEach((key) => {
     expenseMonthlyByCategory.set(key, new Map())
   })
 
-  rollingTransactions.forEach((transaction) => {
+  rollingCategoryTransactions.forEach((transaction) => {
     if (transaction.amount >= 0) {
       return
     }
@@ -305,7 +310,7 @@ function buildInsightsPayload(
     categoryColors[item.name] = item.color
   })
 
-  const categoryMonthlyPoints = sixMonths.map((monthRef) => {
+  const categoryMonthlyPoints = categoryMonths.map((monthRef) => {
     const monthMap = expenseMonthlyByCategory.get(monthRef) ?? new Map()
     const row: Record<string, number | string> = {
       monthKey: monthRef,
@@ -417,8 +422,8 @@ async function fetchInsightsPayload(
   month: number
 ): Promise<InsightsPayload> {
   const supabase = createBrowserClient()
-  const sixMonthStart = getMonthSequence(year, month, 6)[0]
-  const fetchStartDate = getMonthDateRange(sixMonthStart.year, sixMonthStart.month).startDate
+  const twelveMonthStart = getMonthSequence(year, month, 12)[0]
+  const fetchStartDate = getMonthDateRange(twelveMonthStart.year, twelveMonthStart.month).startDate
   const fetchEndDate = getMonthDateRange(year, month).endDate
 
   const { data, error } = await supabase

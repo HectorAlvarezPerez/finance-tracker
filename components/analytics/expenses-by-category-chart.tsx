@@ -1,10 +1,11 @@
 "use client"
 
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
 import { useCurrency } from "@/lib/hooks/use-currency"
 import { useIsMobile } from "@/lib/hooks/use-mobile"
 import { ChartContainer } from "@/components/insights/chart-container"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface ExpensesByCategoryChartProps {
   points: Array<Record<string, string | number>>
@@ -27,19 +28,47 @@ export function ExpensesByCategoryChart({
 }: ExpensesByCategoryChartProps) {
   const { formatCurrency, currency } = useCurrency()
   const isMobile = useIsMobile()
+  const [monthsBack, setMonthsBack] = useState(4)
+
+  const monthWindowOptions = useMemo(() => {
+    const baseOptions = [3, 4, 6, 9, 12]
+    const filtered = baseOptions.filter((value) => value <= points.length)
+    if (filtered.length > 0) {
+      return filtered
+    }
+    return points.length > 0 ? [points.length] : [1]
+  }, [points.length])
+
+  useEffect(() => {
+    if (monthsBack > points.length && points.length > 0) {
+      setMonthsBack(points.length)
+      return
+    }
+
+    if (!monthWindowOptions.includes(monthsBack)) {
+      setMonthsBack(monthWindowOptions[0])
+    }
+  }, [monthWindowOptions, monthsBack, points.length])
+
+  const visiblePoints = useMemo(() => {
+    if (points.length === 0) {
+      return []
+    }
+    return points.slice(-monthsBack)
+  }, [monthsBack, points])
 
   const hasData = useMemo(
     () =>
-      points.some((item) =>
+      visiblePoints.some((item) =>
         categoryOrder.some((category) => Number(item[category] ?? 0) > 0)
       ),
-    [categoryOrder, points]
+    [categoryOrder, visiblePoints]
   )
 
   return (
     <ChartContainer
       title="Expenses by Category"
-      description="Monthly breakdown of spending categories (TOP 8 + Other)"
+      description="Monthly breakdown of spending categories (last 4 months, TOP 8 + Other)"
       comparisonLabel={periodLabel}
       loading={loading}
       error={error}
@@ -47,9 +76,30 @@ export function ExpensesByCategoryChart({
       emptyMessage="No expense data available for this period"
       onRetry={onRetry}
     >
+      <div className="mb-3 flex items-center justify-end">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Months back</span>
+          <Select
+            value={String(monthsBack)}
+            onValueChange={(value) => setMonthsBack(Number(value))}
+          >
+            <SelectTrigger className="h-9 w-[110px]">
+              <SelectValue placeholder="Months" />
+            </SelectTrigger>
+            <SelectContent>
+              {monthWindowOptions.map((option) => (
+                <SelectItem key={option} value={String(option)}>
+                  Last {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       <div className="h-[250px] w-full sm:h-[300px] md:h-[360px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={points}>
+          <BarChart data={visiblePoints}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
             <XAxis dataKey="month" tick={{ fontSize: isMobile ? 10 : 12 }} minTickGap={isMobile ? 24 : 12} />
             <YAxis
@@ -99,7 +149,7 @@ export function ExpensesByCategoryChart({
 
       <div className="max-h-[180px] space-y-2 overflow-auto border-t pt-3">
         {categoryOrder.map((category) => {
-          const total = points.reduce((sum, item) => sum + Number(item[category] ?? 0), 0)
+          const total = visiblePoints.reduce((sum, item) => sum + Number(item[category] ?? 0), 0)
           return (
             <div key={category} className="flex items-center justify-between gap-3 text-sm">
               <span className="flex min-w-0 items-center gap-2">
