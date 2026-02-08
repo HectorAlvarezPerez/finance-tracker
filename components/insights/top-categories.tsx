@@ -27,8 +27,8 @@ export function TopCategories({ items }: { items: TopCategoryItem[] }) {
           topItems.map((category) => (
             <div key={category.key} className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">{category.name}</span>
-                <span className="text-muted-foreground">
+                <span className="min-w-0 flex-1 truncate pr-3 font-medium">{category.name}</span>
+                <span className="shrink-0 text-muted-foreground">
                   {formatCurrency(category.total)} ({category.percentage.toFixed(1)}%)
                 </span>
               </div>

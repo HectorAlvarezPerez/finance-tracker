@@ -66,15 +66,15 @@ export function SpendingInsights({
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {insights.map((insight, index) => {
         const Icon = insight.icon
         return (
           <Card key={`${insight.title}-${index}`} className="border-border/60 shadow-sm">
-            <CardHeader>
+            <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Icon className={`h-5 w-5 ${colorMap[insight.type]}`} />
-                <CardTitle className="text-base">{insight.title}</CardTitle>
+                <CardTitle className="text-sm sm:text-base">{insight.title}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>

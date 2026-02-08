@@ -47,11 +47,11 @@ export function InsightsFiltersBar({
   return (
     <div className="rounded-xl border border-border/70 bg-card/70 p-4 shadow-sm">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Year</p>
             <Select value={String(year)} onValueChange={(value) => onYearChange(Number(value))}>
-              <SelectTrigger className="w-full sm:w-[130px]">
+              <SelectTrigger className="h-11 w-full min-w-0 sm:w-[140px]">
                 <SelectValue placeholder="Year" />
               </SelectTrigger>
               <SelectContent>
@@ -67,7 +67,7 @@ export function InsightsFiltersBar({
           <div className="space-y-1">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Month</p>
             <Select value={String(month)} onValueChange={(value) => onMonthChange(Number(value))}>
-              <SelectTrigger className="w-full sm:w-[170px]">
+              <SelectTrigger className="h-11 w-full min-w-0 sm:w-[180px]">
                 <SelectValue placeholder="Month" />
               </SelectTrigger>
               <SelectContent>
@@ -81,13 +81,13 @@ export function InsightsFiltersBar({
           </div>
 
           <div className="flex items-end">
-            <Button variant="outline" onClick={onReset} className="w-full sm:w-auto">
+            <Button variant="outline" onClick={onReset} className="h-11 w-full sm:w-auto">
               Reset
             </Button>
           </div>
         </div>
 
-        <p className="text-sm text-muted-foreground">
+        <p className="max-w-full text-sm leading-relaxed text-muted-foreground">
           Periodo: <span className="font-medium text-foreground">{periodLabel}</span> (comparado con{" "}
           <span className="font-medium text-foreground">{previousPeriodLabel}</span>)
         </p>

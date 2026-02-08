@@ -69,57 +69,60 @@ export function NetWorthChart({
         </div>
       </div>
 
-      <div className="w-full overflow-x-auto pb-2">
-        <div className={isMobile ? "h-[280px] min-w-[520px]" : "h-[320px] w-full"}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={points}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis dataKey="date" tick={{ fontSize: isMobile ? 11 : 12 }} interval="preserveStartEnd" />
-              <YAxis
-                width={isMobile ? 48 : 56}
-                tick={{ fontSize: isMobile ? 11 : 12 }}
-                tickFormatter={(value) => {
-                  const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency
-                  return `${symbol}${(value / 1000).toFixed(0)}k`
-                }}
-              />
-              <Tooltip
-                formatter={(value: number) => [formatCurrency(value), t("netWorthLabel")]}
-                labelStyle={{ color: "hsl(var(--foreground))" }}
-                contentStyle={{
-                  backgroundColor: "hsl(var(--background))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "10px",
-                }}
-                content={({ active, payload, label }) => {
-                  if (!active || !payload || payload.length === 0) {
-                    return null
-                  }
+      <div className="h-[240px] w-full sm:h-[280px] md:h-[320px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={points}>
+            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: isMobile ? 10 : 12 }}
+              interval="preserveStartEnd"
+              minTickGap={isMobile ? 24 : 14}
+            />
+            <YAxis
+              width={isMobile ? 40 : 56}
+              tick={{ fontSize: isMobile ? 10 : 12 }}
+              tickFormatter={(value) => {
+                const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency
+                return `${symbol}${(value / 1000).toFixed(0)}k`
+              }}
+            />
+            <Tooltip
+              trigger={isMobile ? "click" : "hover"}
+              labelStyle={{ color: "hsl(var(--foreground))" }}
+              contentStyle={{
+                backgroundColor: "hsl(var(--background))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "10px",
+              }}
+              content={({ active, payload, label }) => {
+                if (!active || !payload || payload.length === 0) {
+                  return null
+                }
 
-                  const value = Number(payload[0].value ?? 0)
+                const value = Number(payload[0].value ?? 0)
 
-                  return (
-                    <div className="rounded-md border bg-background p-2 shadow">
-                      <p className="text-sm font-medium">{label}</p>
-                      <p className="text-sm text-muted-foreground">{formatCurrency(value)}</p>
-                      <p className="text-xs text-muted-foreground">
-                        vs {previousPeriodLabel}: {formatCurrency(previousValue)}
-                      </p>
-                    </div>
-                  )
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="netWorth"
-                stroke="hsl(var(--primary))"
-                strokeWidth={isMobile ? 2.5 : 2.2}
-                dot={false}
-                name={t("netWorthLabel")}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+                return (
+                  <div className="max-w-[220px] rounded-md border bg-background p-2 shadow">
+                    <p className="text-sm font-medium">{label}</p>
+                    <p className="text-sm text-muted-foreground">{formatCurrency(value)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      vs {previousPeriodLabel}: {formatCurrency(previousValue)}
+                    </p>
+                  </div>
+                )
+              }}
+            />
+            <Line
+              type="monotone"
+              dataKey="netWorth"
+              stroke="hsl(var(--primary))"
+              strokeWidth={isMobile ? 2.3 : 2.2}
+              dot={false}
+              name={t("netWorthLabel")}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </ChartContainer>
   )

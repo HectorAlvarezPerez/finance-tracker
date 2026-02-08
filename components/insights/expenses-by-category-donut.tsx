@@ -29,7 +29,7 @@ function DonutTooltip({
   const item = payload[0].payload
 
   return (
-    <div className="space-y-1 rounded-md border bg-background p-2 shadow">
+    <div className="max-w-[220px] space-y-1 rounded-md border bg-background p-2 shadow">
       <p className="text-sm font-medium">{item.name}</p>
       <p className="text-xs text-muted-foreground">
         {formatCurrency(item.total, "EUR", "es-ES")} ({item.percentage.toFixed(1)}%)
@@ -71,8 +71,8 @@ export function ExpensesByCategoryDonut({
       emptyMessage="No hay gastos en este periodo"
       onRetry={onRetry}
     >
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
-        <div className="h-[320px]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_240px]">
+        <div className="h-[240px] sm:h-[280px] md:h-[320px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie data={items} dataKey="total" nameKey="name" innerRadius={70} outerRadius={112} paddingAngle={2}>
@@ -80,12 +80,12 @@ export function ExpensesByCategoryDonut({
                   <Cell key={entry.key} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip content={<DonutTooltip />} />
+              <Tooltip trigger="click" content={<DonutTooltip />} />
             </PieChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="max-h-[320px] space-y-2 overflow-auto pr-1">
+        <div className="max-h-[260px] space-y-2 overflow-auto pr-1 sm:max-h-[320px]">
           {items.map((item) => (
             <div key={item.key} className="flex items-center justify-between gap-3 rounded-md border p-2">
               <div className="min-w-0">

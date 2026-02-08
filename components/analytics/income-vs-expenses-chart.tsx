@@ -76,55 +76,54 @@ export function IncomeVsExpensesChart({
         </p>
       </div>
 
-      <div className="w-full overflow-x-auto pb-2">
-        <div className={isMobile ? "h-[280px] min-w-[520px]" : "h-[340px] w-full"}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis dataKey="month" tick={{ fontSize: isMobile ? 11 : 12 }} />
-              <YAxis
-                width={isMobile ? 48 : 56}
-                tick={{ fontSize: isMobile ? 11 : 12 }}
-                tickFormatter={(value) => {
-                  const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency
-                  return `${symbol}${(value / 1000).toFixed(0)}k`
-                }}
-              />
-              <Tooltip
-                content={({ active, payload, label }) => {
-                  if (!active || !payload || payload.length === 0) {
-                    return null
-                  }
+      <div className="h-[240px] w-full sm:h-[280px] md:h-[340px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <XAxis dataKey="month" tick={{ fontSize: isMobile ? 10 : 12 }} minTickGap={isMobile ? 24 : 12} />
+            <YAxis
+              width={isMobile ? 40 : 56}
+              tick={{ fontSize: isMobile ? 10 : 12 }}
+              tickFormatter={(value) => {
+                const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency
+                return `${symbol}${(value / 1000).toFixed(0)}k`
+              }}
+            />
+            <Tooltip
+              trigger={isMobile ? "click" : "hover"}
+              content={({ active, payload, label }) => {
+                if (!active || !payload || payload.length === 0) {
+                  return null
+                }
 
-                  const rowIndex = chartData.findIndex((item) => item.month === label)
-                  const previousRow = rowIndex > 0 ? chartData[rowIndex - 1] : null
+                const rowIndex = chartData.findIndex((item) => item.month === label)
+                const previousRow = rowIndex > 0 ? chartData[rowIndex - 1] : null
 
-                  return (
-                    <div className="space-y-1 rounded-md border bg-background p-2 shadow">
-                      <p className="text-sm font-medium">{label}</p>
-                      {payload.map((entry) => {
-                        const seriesName = String(entry.name)
-                        const dataKey = String(entry.dataKey)
-                        const currentValue = Number(entry.value ?? 0)
-                        const previousValue = previousRow ? Number((previousRow as Record<string, unknown>)[dataKey] ?? 0) : 0
-                        const comparison = compareValues(currentValue, previousValue)
+                return (
+                  <div className="max-w-[240px] space-y-1 rounded-md border bg-background p-2 shadow">
+                    <p className="text-sm font-medium">{label}</p>
+                    {payload.map((entry) => {
+                      const seriesName = String(entry.name)
+                      const dataKey = String(entry.dataKey)
+                      const currentValue = Number(entry.value ?? 0)
+                      const previousValue = previousRow ? Number((previousRow as Record<string, unknown>)[dataKey] ?? 0) : 0
+                      const comparison = compareValues(currentValue, previousValue)
 
-                        return (
-                          <p key={`${seriesName}-${dataKey}`} className="text-xs text-muted-foreground">
-                            {seriesName}: {formatCurrency(currentValue)} | Δ {formatCurrency(comparison.delta)} ({comparison.deltaPct === null ? "—" : `${comparison.deltaPct >= 0 ? "+" : ""}${comparison.deltaPct.toFixed(1)}%`})
-                          </p>
-                        )
-                      })}
-                    </div>
-                  )
-                }}
-              />
-              {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
-              <Bar dataKey="income" fill="hsl(142 71% 45%)" name={t("income")} radius={[8, 8, 0, 0]} />
-              <Bar dataKey="expenses" fill="hsl(0 84% 60%)" name={t("expenses")} radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+                      return (
+                        <p key={`${seriesName}-${dataKey}`} className="text-xs text-muted-foreground">
+                          {seriesName}: {formatCurrency(currentValue)} | Δ {formatCurrency(comparison.delta)} ({comparison.deltaPct === null ? "—" : `${comparison.deltaPct >= 0 ? "+" : ""}${comparison.deltaPct.toFixed(1)}%`})
+                        </p>
+                      )
+                    })}
+                  </div>
+                )
+              }}
+            />
+            {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
+            <Bar dataKey="income" fill="hsl(142 71% 45%)" name={t("income")} radius={[8, 8, 0, 0]} />
+            <Bar dataKey="expenses" fill="hsl(0 84% 60%)" name={t("expenses")} radius={[8, 8, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-3">
