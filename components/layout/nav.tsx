@@ -13,6 +13,7 @@ import {
   Settings,
   LineChart,
   Tag,
+  PiggyBank,
 
 } from "lucide-react"
 import { ThemeToggle } from "../theme/theme-toggle"
@@ -55,6 +56,11 @@ export function Nav() {
       title: t('insights'),
       href: "/insights",
       icon: LineChart,
+    },
+    {
+      title: t('budgets'),
+      href: "/budgets",
+      icon: PiggyBank,
     },
     {
       title: t('portfolio'),
@@ -147,6 +153,11 @@ export function MobileNav() {
       title: t('categories'),
       href: "/categories",
       icon: Tag,
+    },
+    {
+      title: t('budgets'),
+      href: "/budgets",
+      icon: PiggyBank,
     },
     {
       title: t('settings'),

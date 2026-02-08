@@ -94,18 +94,23 @@ CREATE TABLE IF NOT EXISTS recurring_transactions (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Budgets for monthly spending limits
+-- Budgets for category spending limits (monthly and annual)
 CREATE TABLE IF NOT EXISTS budgets (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  category_id UUID REFERENCES categories(id) ON DELETE CASCADE,
-  month DATE NOT NULL,
-  currency TEXT NOT NULL DEFAULT 'USD',
-  amount_total DECIMAL(15, 2) NOT NULL,
+  category_id UUID NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
+  period_type TEXT NOT NULL CHECK (period_type IN ('monthly', 'annual')),
+  year INTEGER NOT NULL CHECK (year >= 2000 AND year <= 9999),
+  month INTEGER CHECK (month >= 1 AND month <= 12),
+  currency TEXT NOT NULL DEFAULT 'EUR',
+  amount DECIMAL(15, 2) NOT NULL CHECK (amount > 0),
   notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(user_id, category_id, month)
+  CHECK (
+    (period_type = 'monthly' AND month IS NOT NULL)
+    OR (period_type = 'annual' AND month IS NULL)
+  )
 );
 
 -- Holdings for investment portfolio
@@ -173,8 +178,10 @@ CREATE INDEX idx_recurring_transactions_next_run ON recurring_transactions(next_
 CREATE INDEX idx_recurring_transactions_enabled ON recurring_transactions(enabled);
 
 CREATE INDEX idx_budgets_user_id ON budgets(user_id);
-CREATE INDEX idx_budgets_month ON budgets(month DESC);
+CREATE INDEX idx_budgets_period ON budgets(period_type, year, month);
 CREATE INDEX idx_budgets_category_id ON budgets(category_id);
+CREATE UNIQUE INDEX idx_budgets_unique_period_category
+  ON budgets(user_id, period_type, year, COALESCE(month, 0), category_id);
 
 CREATE INDEX idx_holdings_user_id ON holdings(user_id);
 CREATE INDEX idx_holdings_asset_symbol ON holdings(asset_symbol);
@@ -369,4 +376,3 @@ CREATE TRIGGER update_holdings_updated_at BEFORE UPDATE ON holdings
 -- INITIAL DATA (Default Categories)
 -- Note: These will be inserted per-user via the seed script or on first login
 -- ============================================================================
-
