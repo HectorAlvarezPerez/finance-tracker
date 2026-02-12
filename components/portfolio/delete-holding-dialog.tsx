@@ -14,6 +14,7 @@ import {
 import { AlertTriangle } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { useTranslations } from "next-intl"
 import type { Database } from "@/types/database"
 
 type Holding = Database["public"]["Tables"]["holdings"]["Row"]
@@ -27,10 +28,12 @@ export function DeleteHoldingDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const t = useTranslations('portfolio')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
+  const holdingLabel = holding.asset_symbol || holding.asset_name
 
   const handleDelete = async () => {
     setLoading(true)
@@ -44,16 +47,16 @@ export function DeleteHoldingDialog({
       if (error) throw error
 
       toast({
-        title: "Success",
-        description: `Deleted ${holding.asset_symbol} from your portfolio`,
+        title: t('success'),
+        description: t('deleteHoldingSuccess', { symbol: holdingLabel }),
       })
 
       onOpenChange(false)
       router.refresh()
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to delete holding",
+        title: t('error'),
+        description: error.message || t('failedDeleteHolding'),
         variant: "destructive",
       })
     } finally {
@@ -67,20 +70,20 @@ export function DeleteHoldingDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            Delete Holding
+            {t('deleteHoldingTitle')}
           </DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete &quot;{holding.asset_symbol}&quot; from your portfolio?
+            {t('deleteHoldingDescription', { symbol: holdingLabel })}
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <p className="text-sm text-muted-foreground">
-            This action cannot be undone. This will permanently delete:
+            {t('deleteHoldingWarning')}
           </p>
           <ul className="list-disc list-inside mt-2 text-sm text-muted-foreground">
-            <li>{holding.quantity.toFixed(8).replace(/\.?0+$/, '')} units of {holding.asset_symbol}</li>
-            <li>All associated price history for this holding</li>
-            <li>All associated trades (if any)</li>
+            <li>{t('deleteUnitsLine', { quantity: holding.quantity.toFixed(8).replace(/\.?0+$/, ''), symbol: holdingLabel })}</li>
+            <li>{t('deletePriceHistoryLine')}</li>
+            <li>{t('deleteTradesLine')}</li>
           </ul>
         </div>
         <DialogFooter>
@@ -90,7 +93,7 @@ export function DeleteHoldingDialog({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             type="button"
@@ -98,11 +101,10 @@ export function DeleteHoldingDialog({
             onClick={handleDelete}
             disabled={loading}
           >
-            {loading ? "Deleting..." : "Delete Holding"}
+            {loading ? t('deleting') : t('deleteHolding')}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   )
 }
-

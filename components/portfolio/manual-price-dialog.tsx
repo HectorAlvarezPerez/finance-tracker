@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { useTranslations } from "next-intl"
+import { formatCurrency } from "@/lib/utils"
 import type { Database } from "@/types/database"
 
 type Holding = Database["public"]["Tables"]["holdings"]["Row"]
@@ -28,6 +30,7 @@ export function ManualPriceDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const t = useTranslations('portfolio')
   const [loading, setLoading] = useState(false)
   const [price, setPrice] = useState("")
   const router = useRouter()
@@ -44,7 +47,7 @@ export function ManualPriceDialog({
       } = await supabase.auth.getUser()
 
       if (!user) {
-        throw new Error("Not authenticated")
+        throw new Error(t('notAuthenticated'))
       }
 
       // Use holding ID as a unique identifier for manual prices
@@ -62,8 +65,8 @@ export function ManualPriceDialog({
       if (error) throw error
 
       toast({
-        title: "Price Updated",
-        description: `Manual price set to €${parseFloat(price).toFixed(2)}`,
+        title: t('priceUpdated'),
+        description: t('manualPriceSetTo', { price: formatCurrency(parseFloat(price), holding.currency) }),
       })
 
       setPrice("")
@@ -71,8 +74,8 @@ export function ManualPriceDialog({
       router.refresh()
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to set price",
+        title: t('error'),
+        description: error.message || t('failedSetPrice'),
         variant: "destructive",
       })
     } finally {
@@ -85,14 +88,14 @@ export function ManualPriceDialog({
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Set Current Price</DialogTitle>
+            <DialogTitle>{t('setCurrentPriceTitle')}</DialogTitle>
             <DialogDescription>
-              Manually set the current price for {holding.asset_name}
+              {t('setCurrentPriceDescription', { name: holding.asset_name })}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="price">Current Price (per share)</Label>
+              <Label htmlFor="price">{t('currentPricePerShare')}</Label>
               <Input
                 id="price"
                 type="number"
@@ -104,16 +107,16 @@ export function ManualPriceDialog({
                 autoFocus
               />
               <p className="text-xs text-muted-foreground">
-                Enter the current market price per share/unit
+                {t('currentPriceHelp')}
               </p>
             </div>
             <div className="rounded-lg bg-muted p-3">
               <p className="text-sm">
-                <span className="font-semibold">Shares:</span> {holding.quantity.toFixed(8).replace(/\.?0+$/, '')}
+                <span className="font-semibold">{t('shares')}:</span> {holding.quantity.toFixed(8).replace(/\.?0+$/, '')}
               </p>
               {price && (
                 <p className="text-sm mt-1">
-                  <span className="font-semibold">Total Value:</span> €{(holding.quantity * parseFloat(price)).toFixed(2)}
+                  <span className="font-semibold">{t('totalValue')}:</span> {formatCurrency(holding.quantity * parseFloat(price), holding.currency)}
                 </p>
               )}
             </div>
@@ -125,10 +128,10 @@ export function ManualPriceDialog({
               onClick={() => onOpenChange(false)}
               disabled={loading}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Setting..." : "Set Price"}
+              {loading ? t('setting') : t('setPrice')}
             </Button>
           </DialogFooter>
         </form>
@@ -136,4 +139,3 @@ export function ManualPriceDialog({
     </Dialog>
   )
 }
-
