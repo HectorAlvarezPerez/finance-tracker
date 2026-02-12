@@ -137,6 +137,8 @@
     "roi": "ROI",
     "returnOnInvestment": "Return on investment",
     "quantity": "Quantity",
+    "weeklyQuantity": "Weekly Quantity",
+    "monthlyQuantity": "Monthly Quantity",
     "avgBuyPrice": "Avg Buy Price",
     "currentValue": "Current Value",
     "currentPrice": "Current Price",

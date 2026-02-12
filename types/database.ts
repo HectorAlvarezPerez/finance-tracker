@@ -191,6 +191,8 @@ export interface Database {
           asset_symbol: string | null
           asset_type: "index_fund" | "bond_fund" | "crypto" | "stock" | "gold" | "etf"
           quantity: number
+          weekly_quantity: number
+          monthly_quantity: number
           average_buy_price: number
           currency: string
           created_at: string
@@ -203,6 +205,8 @@ export interface Database {
           asset_symbol?: string | null
           asset_type: "index_fund" | "bond_fund" | "crypto" | "stock" | "gold" | "etf"
           quantity: number
+          weekly_quantity?: number
+          monthly_quantity?: number
           average_buy_price: number
           currency?: string
           created_at?: string
@@ -215,6 +219,8 @@ export interface Database {
           asset_symbol?: string | null
           asset_type?: "index_fund" | "bond_fund" | "crypto" | "stock" | "gold" | "etf"
           quantity?: number
+          weekly_quantity?: number
+          monthly_quantity?: number
           average_buy_price?: number
           currency?: string
           created_at?: string

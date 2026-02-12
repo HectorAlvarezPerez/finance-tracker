@@ -121,6 +121,8 @@ CREATE TABLE IF NOT EXISTS holdings (
   asset_symbol TEXT,
   asset_type TEXT NOT NULL CHECK (asset_type IN ('index_fund', 'bond_fund', 'crypto', 'stock', 'gold', 'etf')),
   quantity DECIMAL(20, 8) NOT NULL,
+  weekly_quantity DECIMAL(20, 8) NOT NULL DEFAULT 0 CHECK (weekly_quantity >= 0),
+  monthly_quantity DECIMAL(20, 8) NOT NULL DEFAULT 0 CHECK (monthly_quantity >= 0),
   average_buy_price DECIMAL(15, 4) NOT NULL,
   currency TEXT NOT NULL DEFAULT 'EUR',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

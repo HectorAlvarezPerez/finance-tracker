@@ -24,18 +24,27 @@ import {
 import { Plus } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { useTranslations } from "next-intl"
 
 export function AddHoldingDialog({ userId }: { userId: string }) {
+  const t = useTranslations('portfolio')
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState("")
   const [symbol, setSymbol] = useState("")
   const [assetType, setAssetType] = useState<string>("etf")
   const [quantity, setQuantity] = useState("")
+  const [weeklyQuantity, setWeeklyQuantity] = useState("0")
+  const [monthlyQuantity, setMonthlyQuantity] = useState("0")
   const [avgBuyPrice, setAvgBuyPrice] = useState("")
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
+
+  const parseRecurringQuantity = (value: string) => {
+    const parsed = Number.parseFloat(value)
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -48,6 +57,8 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
         asset_symbol: symbol ? symbol.toUpperCase() : null,
         asset_type: assetType,
         quantity: parseFloat(quantity),
+        weekly_quantity: parseRecurringQuantity(weeklyQuantity),
+        monthly_quantity: parseRecurringQuantity(monthlyQuantity),
         average_buy_price: parseFloat(avgBuyPrice),
         currency: "EUR",
       })
@@ -55,20 +66,22 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
       if (error) throw error
 
       toast({
-        title: "Success",
-        description: "Holding added successfully",
+        title: t('success'),
+        description: t('addHoldingSuccess'),
       })
 
       setOpen(false)
       setName("")
       setSymbol("")
       setQuantity("")
+      setWeeklyQuantity("0")
+      setMonthlyQuantity("0")
       setAvgBuyPrice("")
       router.refresh()
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to add holding",
+        title: t('error'),
+        description: error.message || t('failedAddHolding'),
         variant: "destructive",
       })
     } finally {
@@ -81,20 +94,20 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
-          Add Holding
+          {t('addHolding')}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add Investment Holding</DialogTitle>
+            <DialogTitle>{t('addHoldingTitle')}</DialogTitle>
             <DialogDescription>
-              Add a new asset to your portfolio
+              {t('addHoldingDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Asset Name</Label>
+              <Label htmlFor="name">{t('assetName')}</Label>
               <Input
                 id="name"
                 placeholder="e.g., iShares MSCI World ETF"
@@ -104,7 +117,7 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="symbol">Symbol (Optional)</Label>
+              <Label htmlFor="symbol">{t('symbolOptional')}</Label>
               <Input
                 id="symbol"
                 placeholder="e.g., IWDA, SPY, BTC"
@@ -112,11 +125,11 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
                 onChange={(e) => setSymbol(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                For reference only
+                {t('symbolReferenceOnly')}
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="assetType">Asset Type</Label>
+              <Label htmlFor="assetType">{t('assetType')}</Label>
               <Select value={assetType} onValueChange={setAssetType}>
                 <SelectTrigger>
                   <SelectValue />
@@ -132,7 +145,7 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="quantity">Number of Shares</Label>
+              <Label htmlFor="quantity">{t('numberOfShares')}</Label>
               <Input
                 id="quantity"
                 type="number"
@@ -144,7 +157,7 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="avgBuyPrice">Average Buy Price (per share)</Label>
+              <Label htmlFor="avgBuyPrice">{t('avgBuyPricePerShare')}</Label>
               <Input
                 id="avgBuyPrice"
                 type="number"
@@ -155,16 +168,42 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Price you paid per share on average
+                {t('avgBuyPriceHelp')}
               </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="weeklyQuantity">{t('weeklyQuantity')}</Label>
+                <Input
+                  id="weeklyQuantity"
+                  type="number"
+                  min="0"
+                  step="0.00000001"
+                  placeholder="e.g., 1"
+                  value={weeklyQuantity}
+                  onChange={(e) => setWeeklyQuantity(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="monthlyQuantity">{t('monthlyQuantity')}</Label>
+                <Input
+                  id="monthlyQuantity"
+                  type="number"
+                  min="0"
+                  step="0.00000001"
+                  placeholder="e.g., 4"
+                  value={monthlyQuantity}
+                  onChange={(e) => setMonthlyQuantity(e.target.value)}
+                />
+              </div>
             </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Adding..." : "Add Holding"}
+              {loading ? t('adding') : t('addHolding')}
             </Button>
           </DialogFooter>
         </form>
@@ -172,4 +211,3 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
     </Dialog>
   )
 }
-

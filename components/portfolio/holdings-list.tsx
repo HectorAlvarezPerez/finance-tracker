@@ -12,7 +12,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { formatCurrency, calculateROI, calculateProfitLoss } from "@/lib/utils"
-import { TrendingUp, TrendingDown, MoreHorizontal, Edit, Trash2, PenSquare } from "lucide-react"
+import {
+  TrendingUp,
+  TrendingDown,
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  PenSquare,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react"
 import type { Database } from "@/types/database"
 import { DeleteHoldingDialog } from "./delete-holding-dialog"
 import { EditHoldingDialog } from "./edit-holding-dialog"
@@ -23,7 +32,7 @@ type Holding = Database["public"]["Tables"]["holdings"]["Row"]
 export function HoldingsList({
   holdings,
   prices,
-  userId,
+  userId: _userId,
 }: {
   holdings: Holding[]
   prices: Map<string, number>
@@ -33,13 +42,29 @@ export function HoldingsList({
   const [editingHolding, setEditingHolding] = useState<Holding | null>(null)
   const [deletingHolding, setDeletingHolding] = useState<Holding | null>(null)
   const [manualPriceHolding, setManualPriceHolding] = useState<Holding | null>(null)
+  const [expandedHoldings, setExpandedHoldings] = useState<Set<string>>(new Set())
+
+  const toggleHoldingDetails = (holdingId: string) => {
+    setExpandedHoldings((prev) => {
+      const next = new Set(prev)
+      if (next.has(holdingId)) {
+        next.delete(holdingId)
+      } else {
+        next.add(holdingId)
+      }
+      return next
+    })
+  }
+
+  const formatQuantity = (value: number) => value.toFixed(8).replace(/\.?0+$/, '')
+
   if (holdings.length === 0) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <TrendingUp className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">{t('noHoldings')}</h3>
-          <p className="text-sm text-muted-foreground text-center mb-4">
+          <TrendingUp className="mb-4 h-12 w-12 text-muted-foreground" />
+          <h3 className="mb-2 text-lg font-semibold">{t('noHoldings')}</h3>
+          <p className="mb-4 text-center text-sm text-muted-foreground">
             {t('addFirstHolding')}
           </p>
         </CardContent>
@@ -49,23 +74,23 @@ export function HoldingsList({
 
   return (
     <>
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {holdings.map((holding) => {
-          // Get manual price using holding ID
           const currentPrice = prices.get(`manual_${holding.id}`) || 0
           const currentValue = holding.quantity * currentPrice
           const costBasisTotal = holding.quantity * holding.average_buy_price
           const profitLoss = calculateProfitLoss(currentValue, costBasisTotal)
           const roi = calculateROI(currentValue, costBasisTotal)
           const hasPrice = currentPrice > 0
+          const isExpanded = expandedHoldings.has(holding.id)
 
           return (
             <Card key={holding.id}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <CardTitle className="text-2xl">{holding.asset_name}</CardTitle>
+              <CardHeader className="pb-3">
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div className="min-w-0 flex-1 space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <CardTitle className="text-lg sm:text-xl">{holding.asset_name}</CardTitle>
                       {holding.asset_symbol && (
                         <Badge variant="secondary">{holding.asset_symbol}</Badge>
                       )}
@@ -73,77 +98,114 @@ export function HoldingsList({
                         {holding.asset_type.replace("_", " ")}
                       </Badge>
                     </div>
+
                     {hasPrice ? (
-                      <div className="text-sm text-muted-foreground">
-                        Current Price: <span className="font-semibold text-foreground">{formatCurrency(currentPrice)}</span>
+                      <div className="text-xs text-muted-foreground sm:text-sm">
+                        {t('currentPrice')}: <span className="font-semibold text-foreground">{formatCurrency(currentPrice, holding.currency)}</span>
+                        <span className="ml-2">{t('priceStatusSet')}</span>
                       </div>
                     ) : (
-                      <div className="text-sm text-yellow-600 dark:text-yellow-500">
-                        ⚠️ No price set - click &quot;Set Price&quot;
+                      <div className="text-xs text-amber-700 dark:text-amber-500 sm:text-sm">
+                        {t('priceStatusMissing')}
                       </div>
                     )}
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <div className="text-2xl font-bold">{formatCurrency(currentValue)}</div>
+
+                  <div className="flex min-w-0 flex-col gap-2 md:items-end">
+                    <div className="text-left md:text-right">
+                      <div className="text-xl font-bold sm:text-2xl">{formatCurrency(currentValue, holding.currency)}</div>
                       {hasPrice && (
-                        <div className={`text-sm font-semibold flex items-center gap-1 justify-end ${profitLoss >= 0 ? "text-green-600" : "text-red-600"}`}>
+                        <div className={`mt-1 flex items-center gap-1 text-sm font-semibold ${profitLoss >= 0 ? "text-green-600" : "text-red-600"}`}>
                           {profitLoss >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                          {profitLoss >= 0 ? "+" : ""}{formatCurrency(profitLoss)} ({roi >= 0 ? "+" : ""}{roi.toFixed(2)}%)
+                          <span>{profitLoss >= 0 ? "+" : ""}{formatCurrency(profitLoss, holding.currency)}</span>
+                          <span>({roi >= 0 ? "+" : ""}{roi.toFixed(2)}%)</span>
                         </div>
                       )}
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setManualPriceHolding(holding)}
-                    >
-                      <PenSquare className="h-4 w-4 mr-2" />
-                      Set Price
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setEditingHolding(holding)}>
-                          <Edit className="h-4 w-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => setDeletingHolding(holding)}
-                          className="text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+
+                    <div className="flex flex-wrap items-center gap-2 md:justify-end">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setManualPriceHolding(holding)}
+                      >
+                        <PenSquare className="mr-2 h-4 w-4" />
+                        {t('setPrice')}
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleHoldingDetails(holding.id)}
+                        aria-expanded={isExpanded}
+                      >
+                        {isExpanded ? t('hideDetails') : t('showDetails')}
+                        {isExpanded ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />}
+                      </Button>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => setEditingHolding(holding)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            {t('edit')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => setDeletingHolding(holding)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            {t('delete')}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">{t('quantity')}</p>
-                    <p className="text-lg font-semibold">{holding.quantity.toFixed(8).replace(/\.?0+$/, '')}</p>
+
+              {isExpanded && (
+                <CardContent className="pt-0">
+                  <div className="rounded-md border bg-muted/20 p-3 sm:p-4">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-7">
+                      <div>
+                        <p className="text-xs text-muted-foreground sm:text-sm">{t('quantity')}</p>
+                        <p className="text-sm font-semibold sm:text-base">{formatQuantity(holding.quantity)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground sm:text-sm">{t('avgBuyPrice')}</p>
+                        <p className="text-sm font-semibold sm:text-base">{formatCurrency(holding.average_buy_price, holding.currency)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground sm:text-sm">{t('totalInvested')}</p>
+                        <p className="text-sm font-semibold sm:text-base">{formatCurrency(costBasisTotal, holding.currency)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground sm:text-sm">{t('currentValue')}</p>
+                        <p className="text-sm font-semibold sm:text-base">{formatCurrency(currentValue, holding.currency)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground sm:text-sm">{t('roi')}</p>
+                        <p className={`text-sm font-semibold sm:text-base ${hasPrice ? (roi >= 0 ? "text-green-600" : "text-red-600") : "text-muted-foreground"}`}>
+                          {hasPrice ? `${roi >= 0 ? "+" : ""}${roi.toFixed(2)}%` : "-"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground sm:text-sm">{t('weeklyQuantity')}</p>
+                        <p className="text-sm font-semibold sm:text-base">{formatQuantity(holding.weekly_quantity || 0)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground sm:text-sm">{t('monthlyQuantity')}</p>
+                        <p className="text-sm font-semibold sm:text-base">{formatQuantity(holding.monthly_quantity || 0)}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">{t('avgBuyPrice')}</p>
-                    <p className="text-lg font-semibold">{formatCurrency(holding.average_buy_price)}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">{t('totalInvested')}</p>
-                    <p className="text-lg font-semibold">{formatCurrency(costBasisTotal)}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">{t('currentValue')}</p>
-                    <p className="text-lg font-semibold">{formatCurrency(currentValue)}</p>
-                  </div>
-                </div>
-              </CardContent>
+                </CardContent>
+              )}
             </Card>
           )
         })}
@@ -175,4 +237,3 @@ export function HoldingsList({
     </>
   )
 }
-

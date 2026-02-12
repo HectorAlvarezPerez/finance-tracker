@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
+import { useTranslations } from "next-intl"
 import type { Database } from "@/types/database"
 
 type Holding = Database["public"]["Tables"]["holdings"]["Row"]
@@ -35,21 +36,31 @@ export function EditHoldingDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const t = useTranslations('portfolio')
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState(holding.asset_name)
   const [symbol, setSymbol] = useState(holding.asset_symbol || "")
   const [assetType, setAssetType] = useState<string>(holding.asset_type)
   const [quantity, setQuantity] = useState(holding.quantity.toString())
+  const [weeklyQuantity, setWeeklyQuantity] = useState(holding.weekly_quantity.toString())
+  const [monthlyQuantity, setMonthlyQuantity] = useState(holding.monthly_quantity.toString())
   const [avgBuyPrice, setAvgBuyPrice] = useState(holding.average_buy_price.toString())
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
+
+  const parseRecurringQuantity = (value: string) => {
+    const parsed = Number.parseFloat(value)
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
+  }
 
   useEffect(() => {
     setName(holding.asset_name)
     setSymbol(holding.asset_symbol || "")
     setAssetType(holding.asset_type)
     setQuantity(holding.quantity.toString())
+    setWeeklyQuantity(holding.weekly_quantity.toString())
+    setMonthlyQuantity(holding.monthly_quantity.toString())
     setAvgBuyPrice(holding.average_buy_price.toString())
   }, [holding])
 
@@ -65,6 +76,8 @@ export function EditHoldingDialog({
           asset_symbol: symbol ? symbol.toUpperCase() : null,
           asset_type: assetType as Holding["asset_type"],
           quantity: parseFloat(quantity),
+          weekly_quantity: parseRecurringQuantity(weeklyQuantity),
+          monthly_quantity: parseRecurringQuantity(monthlyQuantity),
           average_buy_price: parseFloat(avgBuyPrice),
         })
         .eq("id", holding.id)
@@ -72,16 +85,16 @@ export function EditHoldingDialog({
       if (error) throw error
 
       toast({
-        title: "Success",
-        description: "Holding updated successfully",
+        title: t('success'),
+        description: t('updateHoldingSuccess'),
       })
 
       onOpenChange(false)
       router.refresh()
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Failed to update holding",
+        title: t('error'),
+        description: error.message || t('failedUpdateHolding'),
         variant: "destructive",
       })
     } finally {
@@ -94,14 +107,14 @@ export function EditHoldingDialog({
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Edit Holding</DialogTitle>
+            <DialogTitle>{t('updateHoldingTitle')}</DialogTitle>
             <DialogDescription>
-              Update the details of your investment holding
+              {t('updateHoldingDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-name">Asset Name</Label>
+              <Label htmlFor="edit-name">{t('assetName')}</Label>
               <Input
                 id="edit-name"
                 placeholder="e.g., iShares MSCI World ETF"
@@ -111,7 +124,7 @@ export function EditHoldingDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-symbol">Symbol (Optional)</Label>
+              <Label htmlFor="edit-symbol">{t('symbolOptional')}</Label>
               <Input
                 id="edit-symbol"
                 placeholder="e.g., IWDA, SPY, BTC"
@@ -119,11 +132,11 @@ export function EditHoldingDialog({
                 onChange={(e) => setSymbol(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                For reference only
+                {t('symbolReferenceOnly')}
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-type">Asset Type</Label>
+              <Label htmlFor="edit-type">{t('assetType')}</Label>
               <Select value={assetType} onValueChange={(value) => setAssetType(value)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -139,7 +152,7 @@ export function EditHoldingDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-quantity">Number of Shares</Label>
+              <Label htmlFor="edit-quantity">{t('numberOfShares')}</Label>
               <Input
                 id="edit-quantity"
                 type="number"
@@ -151,7 +164,7 @@ export function EditHoldingDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-avgBuyPrice">Average Buy Price (per share)</Label>
+              <Label htmlFor="edit-avgBuyPrice">{t('avgBuyPricePerShare')}</Label>
               <Input
                 id="edit-avgBuyPrice"
                 type="number"
@@ -162,8 +175,34 @@ export function EditHoldingDialog({
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Price you paid per share on average
+                {t('avgBuyPriceHelp')}
               </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="edit-weeklyQuantity">{t('weeklyQuantity')}</Label>
+                <Input
+                  id="edit-weeklyQuantity"
+                  type="number"
+                  min="0"
+                  step="0.00000001"
+                  placeholder="e.g., 1"
+                  value={weeklyQuantity}
+                  onChange={(e) => setWeeklyQuantity(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-monthlyQuantity">{t('monthlyQuantity')}</Label>
+                <Input
+                  id="edit-monthlyQuantity"
+                  type="number"
+                  min="0"
+                  step="0.00000001"
+                  placeholder="e.g., 4"
+                  value={monthlyQuantity}
+                  onChange={(e) => setMonthlyQuantity(e.target.value)}
+                />
+              </div>
             </div>
           </div>
           <DialogFooter>
@@ -173,10 +212,10 @@ export function EditHoldingDialog({
               onClick={() => onOpenChange(false)}
               disabled={loading}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Updating..." : "Update Holding"}
+              {loading ? t('updating') : t('updateHolding')}
             </Button>
           </DialogFooter>
         </form>
@@ -184,4 +223,3 @@ export function EditHoldingDialog({
     </Dialog>
   )
 }
-
