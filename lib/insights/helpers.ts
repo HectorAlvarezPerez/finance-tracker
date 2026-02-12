@@ -1,4 +1,6 @@
 import type { Database } from "@/types/database"
+import { chartTokens } from "@/lib/theme/chartTokens"
+import { getCategoryColor } from "@/lib/utils/colorMap"
 
 type CategoryRow = Database["public"]["Tables"]["categories"]["Row"]
 type TransactionRow = Database["public"]["Tables"]["transactions"]["Row"]
@@ -22,7 +24,8 @@ export type CategoryAggregate = {
 }
 
 export const INSIGHTS_TOP_CATEGORY_LIMIT = 8
-const OTHER_CATEGORY_COLOR = "#94a3b8"
+export const INSIGHTS_DONUT_TOP_CATEGORY_LIMIT = 5
+const OTHER_CATEGORY_COLOR = chartTokens.categorical.other
 
 export function toMonthKey(year: number, month: number): string {
   return `${year}-${String(month).padStart(2, "0")}`
@@ -132,10 +135,15 @@ export function aggregateExpenseCategories(
 
     const category = normalizeCategory(transaction.categories)
     const key = transaction.category_id ?? "uncategorized"
+    const categoryName = category?.name ?? "Uncategorized"
     const current = map.get(key) ?? {
       key,
-      name: category?.name ?? "Uncategorized",
-      color: category?.color ?? "#64748b",
+      name: categoryName,
+      color: getCategoryColor({
+        categoryId: key,
+        categoryName,
+        fallbackColor: category?.color,
+      }),
       total: 0,
     }
 
@@ -150,7 +158,7 @@ export function applyTopCategoriesWithOther(
   categories: CategoryAggregate[],
   topLimit = INSIGHTS_TOP_CATEGORY_LIMIT
 ): CategoryAggregate[] {
-  if (categories.length <= topLimit + 1) {
+  if (categories.length <= topLimit) {
     return categories
   }
 

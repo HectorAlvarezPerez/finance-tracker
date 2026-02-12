@@ -1,10 +1,21 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import {
+  AreaChart,
+  Area,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts"
 import { useCurrency } from "@/lib/hooks/use-currency"
 import { useIsMobile } from "@/lib/hooks/use-mobile"
 import { ChartContainer } from "@/components/insights/chart-container"
+import { formatCurrencyTick, TooltipCard } from "@/components/analytics/chart-helpers"
+import { chartTokens } from "@/lib/theme/chartTokens"
 
 interface NetWorthPoint {
   date: string
@@ -53,30 +64,35 @@ export function NetWorthChart({
 
       <div className="h-[240px] w-full sm:h-[280px] md:h-[320px]">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={points}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+          <AreaChart data={points}>
+            <defs>
+              <linearGradient id="net-worth-area-gradient" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="0%"
+                  stopColor={chartTokens.lines.netWorth}
+                  stopOpacity={chartTokens.lines.netWorthAreaOpacity}
+                />
+                <stop offset="100%" stopColor={chartTokens.lines.netWorth} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke={chartTokens.neutrals.grid} />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: isMobile ? 10 : 12 }}
+              tick={{ fontSize: isMobile ? 10 : 12, fill: chartTokens.neutrals.axis }}
               interval="preserveStartEnd"
               minTickGap={isMobile ? 24 : 14}
+              axisLine={{ stroke: chartTokens.neutrals.border }}
+              tickLine={{ stroke: chartTokens.neutrals.border }}
             />
             <YAxis
               width={isMobile ? 40 : 56}
-              tick={{ fontSize: isMobile ? 10 : 12 }}
-              tickFormatter={(value) => {
-                const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency
-                return `${symbol}${(value / 1000).toFixed(0)}k`
-              }}
+              tick={{ fontSize: isMobile ? 10 : 12, fill: chartTokens.neutrals.axis }}
+              axisLine={{ stroke: chartTokens.neutrals.border }}
+              tickLine={{ stroke: chartTokens.neutrals.border }}
+              tickFormatter={(value: number) => formatCurrencyTick(Number(value), currency)}
             />
             <Tooltip
               trigger={isMobile ? "click" : "hover"}
-              labelStyle={{ color: "hsl(var(--foreground))" }}
-              contentStyle={{
-                backgroundColor: "hsl(var(--background))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: "10px",
-              }}
               content={({ active, payload, label }) => {
                 if (!active || !payload || payload.length === 0) {
                   return null
@@ -85,22 +101,34 @@ export function NetWorthChart({
                 const value = Number(payload[0].value ?? 0)
 
                 return (
-                  <div className="max-w-[220px] rounded-md border bg-background p-2 shadow">
-                    <p className="text-sm font-medium">{label}</p>
-                    <p className="text-sm text-muted-foreground">{formatCurrency(value)}</p>
-                  </div>
+                  <TooltipCard
+                    title={String(label)}
+                    rows={[{ id: "net-worth", label: t("netWorthLabel"), value: formatCurrency(value) }]}
+                  />
                 )
               }}
+            />
+            <Area
+              type="monotone"
+              dataKey="netWorth"
+              stroke="none"
+              fill="url(#net-worth-area-gradient)"
             />
             <Line
               type="monotone"
               dataKey="netWorth"
-              stroke="hsl(var(--primary))"
-              strokeWidth={isMobile ? 2.3 : 2.2}
+              stroke={chartTokens.lines.netWorth}
+              strokeWidth={isMobile ? 2.8 : 3}
               dot={false}
+              activeDot={{
+                r: isMobile ? 4 : 5,
+                fill: chartTokens.lines.netWorth,
+                stroke: chartTokens.neutrals.surface,
+                strokeWidth: 1.5,
+              }}
               name={t("netWorthLabel")}
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </ChartContainer>

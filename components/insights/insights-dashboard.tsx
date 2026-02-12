@@ -11,6 +11,7 @@ import { SpendingInsights } from "@/components/insights/spending-insights"
 import { InsightsFiltersBar } from "@/components/insights/insights-filters-bar"
 import { useInsightsData } from "@/lib/hooks/use-insights-data"
 import { getMonthLabel } from "@/lib/insights/helpers"
+import type { ChartVariant } from "@/lib/theme/chartTokens"
 
 function clampMonth(value: number) {
   if (Number.isNaN(value)) {
@@ -43,6 +44,10 @@ export function InsightsDashboard({ userId }: { userId: string }) {
     const parsed = clampMonth(parseNumberParam(searchParams.get("month")))
     return parsed ?? defaultMonth
   }, [defaultMonth, searchParams])
+
+  const chartVariant = useMemo<ChartVariant>(() => {
+    return searchParams.get("chartVariant") === "lines" ? "lines" : "stacked"
+  }, [searchParams])
 
   useEffect(() => {
     const yearParam = parseNumberParam(searchParams.get("year"))
@@ -115,6 +120,7 @@ export function InsightsDashboard({ userId }: { userId: string }) {
               points={data?.categoryMonthly.points ?? []}
               categoryOrder={data?.categoryMonthly.categoryOrder ?? []}
               categoryColors={data?.categoryMonthly.categoryColors ?? {}}
+              chartVariant={chartVariant}
               periodLabel={periodLabel}
               loading={loading}
               error={error}

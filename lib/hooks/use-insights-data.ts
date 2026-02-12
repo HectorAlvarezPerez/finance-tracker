@@ -8,6 +8,7 @@ import {
   applyTopCategoriesWithOther,
   compareValues,
   getMonthDateRange,
+  INSIGHTS_DONUT_TOP_CATEGORY_LIMIT,
   getMonthLabel,
   getMonthSequence,
   getPreviousMonth,
@@ -17,6 +18,7 @@ import {
   toMonthKeyFromDate,
   type InsightsTransaction,
 } from "@/lib/insights/helpers"
+import { getCategoryColor } from "@/lib/utils/colorMap"
 
 type CategoryRow = Database["public"]["Tables"]["categories"]["Row"]
 
@@ -277,7 +279,11 @@ function buildInsightsPayload(
     const key = transaction.category_id ?? "uncategorized"
     const current = monthRef.get(key) ?? {
       name: category.name,
-      color: category.color,
+      color: getCategoryColor({
+        categoryId: key,
+        categoryName: category.name,
+        fallbackColor: category.color,
+      }),
       total: 0,
     }
     current.total += Math.abs(transaction.amount)
@@ -337,7 +343,10 @@ function buildInsightsPayload(
 
   const currentCategoryTotals = aggregateExpenseCategories(currentTransactions)
   const previousCategoryTotals = aggregateExpenseCategories(previousTransactions)
-  const groupedCurrentCategories = applyTopCategoriesWithOther(currentCategoryTotals)
+  const groupedCurrentCategories = applyTopCategoriesWithOther(
+    currentCategoryTotals,
+    INSIGHTS_DONUT_TOP_CATEGORY_LIMIT
+  )
   const previousCategoryMap = new Map(previousCategoryTotals.map((item) => [item.key, item.total]))
   const groupedKeys = new Set(groupedCurrentCategories.filter((item) => item.key !== "other").map((item) => item.key))
 

@@ -1,10 +1,12 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { useCurrency } from "@/lib/hooks/use-currency"
 import { useIsMobile } from "@/lib/hooks/use-mobile"
 import { ChartContainer } from "@/components/insights/chart-container"
+import { formatCurrencyTick, TooltipCard } from "@/components/analytics/chart-helpers"
+import { chartTokens } from "@/lib/theme/chartTokens"
 
 interface MonthlyPoint {
   monthKey: string
@@ -47,6 +49,12 @@ export function IncomeVsExpensesChart({
   }))
 
   const hasData = chartData.length > 0
+  const incomeFill = chartTokens.accessibility.usePatternFills
+    ? "url(#income-bars-pattern)"
+    : chartTokens.semantic.success
+  const expensesFill = chartTokens.accessibility.usePatternFills
+    ? "url(#expense-bars-pattern)"
+    : chartTokens.semantic.danger
 
   return (
     <ChartContainer
@@ -67,16 +75,31 @@ export function IncomeVsExpensesChart({
 
       <div className="h-[240px] w-full sm:h-[280px] md:h-[340px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-            <XAxis dataKey="month" tick={{ fontSize: isMobile ? 10 : 12 }} minTickGap={isMobile ? 24 : 12} />
+          <BarChart data={chartData} barCategoryGap={isMobile ? "20%" : "30%"} barGap={8}>
+            <defs>
+              <pattern id="income-bars-pattern" patternUnits="userSpaceOnUse" width="8" height="8">
+                <rect width="8" height="8" fill={chartTokens.semantic.success} />
+                <path d="M0 8L8 0" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
+              </pattern>
+              <pattern id="expense-bars-pattern" patternUnits="userSpaceOnUse" width="8" height="8">
+                <rect width="8" height="8" fill={chartTokens.semantic.danger} />
+                <path d="M1 0L1 8" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
+              </pattern>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke={chartTokens.neutrals.grid} />
+            <XAxis
+              dataKey="month"
+              tick={{ fontSize: isMobile ? 10 : 12, fill: chartTokens.neutrals.axis }}
+              minTickGap={isMobile ? 24 : 12}
+              axisLine={{ stroke: chartTokens.neutrals.border }}
+              tickLine={{ stroke: chartTokens.neutrals.border }}
+            />
             <YAxis
               width={isMobile ? 40 : 56}
-              tick={{ fontSize: isMobile ? 10 : 12 }}
-              tickFormatter={(value) => {
-                const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency
-                return `${symbol}${(value / 1000).toFixed(0)}k`
-              }}
+              tick={{ fontSize: isMobile ? 10 : 12, fill: chartTokens.neutrals.axis }}
+              axisLine={{ stroke: chartTokens.neutrals.border }}
+              tickLine={{ stroke: chartTokens.neutrals.border }}
+              tickFormatter={(value: number) => formatCurrencyTick(Number(value), currency)}
             />
             <Tooltip
               trigger={isMobile ? "click" : "hover"}
@@ -85,42 +108,55 @@ export function IncomeVsExpensesChart({
                   return null
                 }
 
-                return (
-                  <div className="max-w-[240px] space-y-1 rounded-md border bg-background p-2 shadow">
-                    <p className="text-sm font-medium">{label}</p>
-                    {payload.map((entry) => {
-                      const seriesName = String(entry.name)
-                      const currentValue = Number(entry.value ?? 0)
+                const items = payload
+                  .map((entry) => ({
+                    key: String(entry.dataKey),
+                    label: String(entry.name ?? entry.dataKey),
+                    value: Number(entry.value ?? 0),
+                    color: String(entry.fill ?? entry.color ?? chartTokens.neutrals.axis),
+                  }))
+                  .sort((a, b) => b.value - a.value)
 
-                      return (
-                        <p key={seriesName} className="text-xs text-muted-foreground">
-                          {seriesName}: {formatCurrency(currentValue)}
-                        </p>
-                      )
-                    })}
-                  </div>
+                return (
+                  <TooltipCard
+                    title={String(label)}
+                    rows={items.map((item) => ({
+                      id: item.key,
+                      label: item.label,
+                      value: formatCurrency(item.value),
+                      color: item.color,
+                    }))}
+                  />
                 )
               }}
             />
-            {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
-            <Bar dataKey="income" fill="hsl(142 71% 45%)" name={t("income")} radius={[8, 8, 0, 0]} />
-            <Bar dataKey="expenses" fill="hsl(0 84% 60%)" name={t("expenses")} radius={[8, 8, 0, 0]} />
+            <Bar dataKey="income" fill={incomeFill} name={t("income")} radius={[10, 10, 0, 0]} maxBarSize={28} />
+            <Bar dataKey="expenses" fill={expensesFill} name={t("expenses")} radius={[10, 10, 0, 0]} maxBarSize={28} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-3">
         <div className="text-center">
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("totalIncome")}</p>
-          <p className="text-lg font-semibold text-emerald-600">{formatCurrency(totals.income)}</p>
+          <p className="text-xs text-muted-foreground">{t("totalIncome")}</p>
+          <p className="text-xl font-semibold" style={{ color: chartTokens.semantic.success }}>
+            {formatCurrency(totals.income)}
+          </p>
         </div>
         <div className="text-center">
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("totalExpenses")}</p>
-          <p className="text-lg font-semibold text-red-600">{formatCurrency(totals.expenses)}</p>
+          <p className="text-xs text-muted-foreground">{t("totalExpenses")}</p>
+          <p className="text-xl font-semibold" style={{ color: chartTokens.semantic.danger }}>
+            {formatCurrency(totals.expenses)}
+          </p>
         </div>
         <div className="text-center">
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("net")}</p>
-          <p className={`text-lg font-semibold ${totals.net >= 0 ? "text-emerald-600" : "text-red-600"}`}>{formatCurrency(totals.net)}</p>
+          <p className="text-xs text-muted-foreground">{t("net")}</p>
+          <p
+            className="text-xl font-semibold"
+            style={{ color: totals.net >= 0 ? chartTokens.semantic.success : chartTokens.semantic.danger }}
+          >
+            {formatCurrency(totals.net)}
+          </p>
         </div>
       </div>
     </ChartContainer>
