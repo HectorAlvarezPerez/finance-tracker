@@ -4,8 +4,11 @@ import { getTranslations } from 'next-intl/server'
 import { PortfolioOverview } from "@/components/portfolio/portfolio-overview"
 import { HoldingsList } from "@/components/portfolio/holdings-list"
 import { AddHoldingDialog } from "@/components/portfolio/add-holding-dialog"
+import type { Database } from "@/types/database"
 
 export const dynamic = 'force-dynamic'
+
+type Holding = Database["public"]["Tables"]["holdings"]["Row"]
 
 export default async function PortfolioPage() {
   const supabase = await createServerClient()
@@ -19,27 +22,42 @@ export default async function PortfolioPage() {
     redirect("/login")
   }
 
+  // Apply due weekly/monthly recurring quantities before loading holdings.
+  const { error: recurringApplyError } = await supabase.rpc("apply_portfolio_recurring_quantities", {
+    target_user_id: user.id,
+  })
+
+  if (
+    recurringApplyError &&
+    recurringApplyError.code !== "PGRST202" &&
+    recurringApplyError.code !== "42883"
+  ) {
+    console.error("Failed to apply recurring holding quantities:", recurringApplyError)
+  }
+
   const { data: holdings } = await supabase
     .from("holdings")
     .select("*")
     .eq("user_id", user.id)
     .order("asset_symbol")
 
-  // Get latest manual prices for each holding
+  // Get latest manual prices with a single query and map the newest entry per holding.
   const pricesMap = new Map<string, number>()
   if (holdings && holdings.length > 0) {
-    for (const holding of holdings) {
-      const manualSymbol = `manual_${holding.id}`
-      const { data: priceData } = await supabase
-        .from("prices")
-        .select("*")
-        .eq("asset_symbol", manualSymbol)
-        .eq("user_id", user.id)
-        .order("as_of", { ascending: false })
-        .limit(1)
+    const manualSymbols = holdings.map((holding: Holding) => `manual_${holding.id}`)
 
-      if (priceData && priceData.length > 0) {
-        pricesMap.set(manualSymbol, parseFloat(priceData[0].price.toString()))
+    const { data: priceRows } = await supabase
+      .from("prices")
+      .select("asset_symbol, price, as_of")
+      .eq("user_id", user.id)
+      .in("asset_symbol", manualSymbols)
+      .order("as_of", { ascending: false })
+
+    if (priceRows) {
+      for (const row of priceRows) {
+        if (!pricesMap.has(row.asset_symbol)) {
+          pricesMap.set(row.asset_symbol, parseFloat(row.price.toString()))
+        }
       }
     }
   }
@@ -64,4 +82,3 @@ export default async function PortfolioPage() {
     </div>
   )
 }
-

@@ -193,6 +193,7 @@ export interface Database {
           quantity: number
           weekly_quantity: number
           monthly_quantity: number
+          recurring_last_applied_at: string
           average_buy_price: number
           currency: string
           created_at: string
@@ -207,6 +208,7 @@ export interface Database {
           quantity: number
           weekly_quantity?: number
           monthly_quantity?: number
+          recurring_last_applied_at?: string
           average_buy_price: number
           currency?: string
           created_at?: string
@@ -221,6 +223,7 @@ export interface Database {
           quantity?: number
           weekly_quantity?: number
           monthly_quantity?: number
+          recurring_last_applied_at?: string
           average_buy_price?: number
           currency?: string
           created_at?: string
