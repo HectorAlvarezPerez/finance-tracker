@@ -354,6 +354,7 @@
       "processing": "Procesando...",
       "reading": "Leyendo archivo...",
       "preparing": "Preparando transacciones...",
+      "categorizing": "Auto-categorizando transacciones...",
       "saving": "Guardando transacciones...",
       "complete": "¡Completado!",
       "success": "Importación completada",

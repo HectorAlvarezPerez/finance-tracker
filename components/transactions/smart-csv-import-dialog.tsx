@@ -22,8 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Upload, Sparkles } from "lucide-react"
+import { Upload } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/components/ui/use-toast"
 import Papa from "papaparse"
@@ -48,13 +47,11 @@ export function SmartCSVImportDialog({
   const [file, setFile] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [selectedAccountId, setSelectedAccountId] = useState<string>("")
-  const [useAICategorization, setUseAICategorization] = useState(true)
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
   const t = useTranslations('dialogs.importCSV')
   const tForms = useTranslations('forms')
-  const tMessages = useTranslations('messages')
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -108,12 +105,17 @@ export function SmartCSVImportDialog({
       h.includes('name') || h.includes('merchant')
     )]
 
+    const merchantCol = headers[lowerHeaders.findIndex(h =>
+      h.includes('merchant') || h.includes('comercio') || h.includes('establecimiento') ||
+      h.includes('payee') || h.includes('beneficiary')
+    )]
+
     const amountCol = headers[lowerHeaders.findIndex(h =>
       h.includes('amount') || h.includes('value') || h.includes('import') ||
       h.includes('cantidad') || h.includes('monto')
     )]
 
-    return { dateCol, descCol, amountCol }
+    return { dateCol, descCol, amountCol, merchantCol }
   }
 
   // Parse date flexibly (handles different formats)
@@ -225,9 +227,9 @@ export function SmartCSVImportDialog({
 
       // Detect columns automatically
       const headers = Object.keys(rows[0] as any)
-      const { dateCol, descCol, amountCol } = detectColumns(headers)
+      const { dateCol, descCol, amountCol, merchantCol } = detectColumns(headers)
 
-      if (!dateCol || !descCol || !amountCol) {
+      if (!dateCol || !amountCol || (!descCol && !merchantCol)) {
         throw new Error(t('errorDesc'))
       }
 
@@ -235,30 +237,33 @@ export function SmartCSVImportDialog({
       setProgress(40)
       setStatusMessage(t('preparing'))
 
-      let transactions = rows.map((row: any) => ({
+      const preparedTransactions = rows.map((row: any) => ({
         user_id: userId,
         account_id: selectedAccountId,
         date: parseDate(row[dateCol]),
-        description: row[descCol],
+        description: row[descCol] || row[merchantCol || ""] || "",
+        merchant: merchantCol ? row[merchantCol] : null,
         amount: parseAmount(row[amountCol]),
         category_id: null, // No category assigned yet
         notes: null,
       }))
 
-      // AI Categorization if enabled
-      if (useAICategorization && categories.length > 0) {
+      let transactions = preparedTransactions.map(({ merchant: _merchant, ...transaction }) => transaction)
+
+      if (categories.length > 0) {
         setProgress(50)
-        setStatusMessage('Categorizando con IA...')
+        setStatusMessage(t('categorizing'))
 
         try {
-          const response = await fetch('/api/ai-categorize', {
+          const response = await fetch('/api/auto-categorize', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              transactions: transactions.map(t => ({
+              transactions: preparedTransactions.map(t => ({
                 description: t.description,
+                merchant: t.merchant,
                 amount: t.amount,
               })),
               userId,
@@ -266,7 +271,7 @@ export function SmartCSVImportDialog({
           })
 
           if (!response.ok) {
-            throw new Error('Error al categorizar con IA')
+            throw new Error('Error al auto-categorizar transacciones')
           }
 
           const { categorizations } = await response.json()
@@ -283,11 +288,10 @@ export function SmartCSVImportDialog({
           const categorizedCount = transactions.filter(t => t.category_id !== null).length
           console.log(`✅ ${categorizedCount} de ${transactions.length} transacciones categorizadas`)
         } catch (error) {
-          console.error('Error en categorización con IA:', error)
-          // Continue without categorization if AI fails
+          console.error('Error en auto-categorizacion:', error)
           toast({
             title: 'Aviso',
-            description: 'No se pudo categorizar con IA. Las transacciones se importarán sin categoría.',
+            description: 'No se pudo auto-categorizar. Las transacciones se importaran sin categoria.',
             variant: 'default',
           })
         }
@@ -307,8 +311,8 @@ export function SmartCSVImportDialog({
       setStatusMessage(t('complete'))
 
       const categorizedCount = transactions.filter(t => t.category_id !== null).length
-      const successMessage = useAICategorization && categorizedCount > 0
-        ? `${transactions.length} transacciones importadas (${categorizedCount} categorizadas con IA)`
+      const successMessage = categorizedCount > 0
+        ? `${transactions.length} transacciones importadas (${categorizedCount} auto-categorizadas)`
         : `${transactions.length} ${t('successDesc')}`
 
       toast({
@@ -323,7 +327,6 @@ export function SmartCSVImportDialog({
       setTimeout(() => {
         setFile(null)
         setSelectedAccountId("")
-        setUseAICategorization(true)
         setProgress(0)
         setStatusMessage("")
       }, 500)
@@ -431,30 +434,12 @@ export function SmartCSVImportDialog({
             </p>
           </div>
 
-          {/* AI Categorization Toggle */}
-          <div className="flex items-start space-x-3 rounded-lg border p-4 bg-primary/5">
-            <Checkbox
-              id="use-ai"
-              checked={useAICategorization}
-              onCheckedChange={(checked) => setUseAICategorization(checked as boolean)}
-              disabled={loading || categories.length === 0}
-            />
-            <div className="flex-1 space-y-1">
-              <label
-                htmlFor="use-ai"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2 cursor-pointer"
-              >
-                <Sparkles className="h-4 w-4 text-primary" />
-                Categorizar automáticamente con IA
-              </label>
-              <p className="text-xs text-muted-foreground">
-                {categories.length === 0
-                  ? "Necesitas crear al menos una categoría primero"
-                  : "Asignará automáticamente las transacciones a tus categorías existentes usando inteligencia artificial"
-                }
-              </p>
-            </div>
-          </div>
+          <p className="text-xs text-muted-foreground">
+            {categories.length === 0
+              ? "No hay categorias para auto-categorizar. Se importaran sin categoria."
+              : "Se intentara auto-categorizar de forma local usando tus categorias existentes."
+            }
+          </p>
 
           {loading && (
             <div className="space-y-2">
