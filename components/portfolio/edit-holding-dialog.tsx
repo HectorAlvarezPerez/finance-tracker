@@ -36,7 +36,7 @@ export function EditHoldingDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const t = useTranslations('portfolio')
+  const t = useTranslations("portfolio")
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState(holding.asset_name)
   const [symbol, setSymbol] = useState(holding.asset_symbol || "")
@@ -85,16 +85,16 @@ export function EditHoldingDialog({
       if (error) throw error
 
       toast({
-        title: t('success'),
-        description: t('updateHoldingSuccess'),
+        title: t("success"),
+        description: t("updateHoldingSuccess"),
       })
 
       onOpenChange(false)
       router.refresh()
     } catch (error: any) {
       toast({
-        title: t('error'),
-        description: error.message || t('failedUpdateHolding'),
+        title: t("error"),
+        description: error.message || t("failedUpdateHolding"),
         variant: "destructive",
       })
     } finally {
@@ -107,14 +107,12 @@ export function EditHoldingDialog({
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{t('updateHoldingTitle')}</DialogTitle>
-            <DialogDescription>
-              {t('updateHoldingDescription')}
-            </DialogDescription>
+            <DialogTitle>{t("updateHoldingTitle")}</DialogTitle>
+            <DialogDescription>{t("updateHoldingDescription")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-name">{t('assetName')}</Label>
+              <Label htmlFor="edit-name">{t("assetName")}</Label>
               <Input
                 id="edit-name"
                 placeholder="e.g., iShares MSCI World ETF"
@@ -124,19 +122,17 @@ export function EditHoldingDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-symbol">{t('symbolOptional')}</Label>
+              <Label htmlFor="edit-symbol">{t("symbolOptional")}</Label>
               <Input
                 id="edit-symbol"
                 placeholder="e.g., IWDA, SPY, BTC"
                 value={symbol}
                 onChange={(e) => setSymbol(e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">
-                {t('symbolReferenceOnly')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t("symbolReferenceOnly")}</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-type">{t('assetType')}</Label>
+              <Label htmlFor="edit-type">{t("assetType")}</Label>
               <Select value={assetType} onValueChange={(value) => setAssetType(value)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -152,7 +148,7 @@ export function EditHoldingDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-quantity">{t('numberOfShares')}</Label>
+              <Label htmlFor="edit-quantity">{t("numberOfShares")}</Label>
               <Input
                 id="edit-quantity"
                 type="number"
@@ -164,7 +160,7 @@ export function EditHoldingDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-avgBuyPrice">{t('avgBuyPricePerShare')}</Label>
+              <Label htmlFor="edit-avgBuyPrice">{t("avgBuyPricePerShare")}</Label>
               <Input
                 id="edit-avgBuyPrice"
                 type="number"
@@ -174,13 +170,11 @@ export function EditHoldingDialog({
                 onChange={(e) => setAvgBuyPrice(e.target.value)}
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                {t('avgBuyPriceHelp')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t("avgBuyPriceHelp")}</p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="edit-weeklyQuantity">{t('weeklyQuantity')}</Label>
+                <Label htmlFor="edit-weeklyQuantity">{t("weeklyQuantity")}</Label>
                 <Input
                   id="edit-weeklyQuantity"
                   type="number"
@@ -192,7 +186,7 @@ export function EditHoldingDialog({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-monthlyQuantity">{t('monthlyQuantity')}</Label>
+                <Label htmlFor="edit-monthlyQuantity">{t("monthlyQuantity")}</Label>
                 <Input
                   id="edit-monthlyQuantity"
                   type="number"
@@ -212,10 +206,10 @@ export function EditHoldingDialog({
               onClick={() => onOpenChange(false)}
               disabled={loading}
             >
-              {t('cancel')}
+              {t("cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? t('updating') : t('updateHolding')}
+              {loading ? t("updating") : t("updateHolding")}
             </Button>
           </DialogFooter>
         </form>

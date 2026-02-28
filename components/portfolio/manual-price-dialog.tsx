@@ -30,7 +30,7 @@ export function ManualPriceDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const t = useTranslations('portfolio')
+  const t = useTranslations("portfolio")
   const [loading, setLoading] = useState(false)
   const [price, setPrice] = useState("")
   const router = useRouter()
@@ -47,7 +47,7 @@ export function ManualPriceDialog({
       } = await supabase.auth.getUser()
 
       if (!user) {
-        throw new Error(t('notAuthenticated'))
+        throw new Error(t("notAuthenticated"))
       }
 
       // Use holding ID as a unique identifier for manual prices
@@ -65,8 +65,10 @@ export function ManualPriceDialog({
       if (error) throw error
 
       toast({
-        title: t('priceUpdated'),
-        description: t('manualPriceSetTo', { price: formatCurrency(parseFloat(price), holding.currency) }),
+        title: t("priceUpdated"),
+        description: t("manualPriceSetTo", {
+          price: formatCurrency(parseFloat(price), holding.currency),
+        }),
       })
 
       setPrice("")
@@ -74,8 +76,8 @@ export function ManualPriceDialog({
       router.refresh()
     } catch (error: any) {
       toast({
-        title: t('error'),
-        description: error.message || t('failedSetPrice'),
+        title: t("error"),
+        description: error.message || t("failedSetPrice"),
         variant: "destructive",
       })
     } finally {
@@ -88,14 +90,14 @@ export function ManualPriceDialog({
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{t('setCurrentPriceTitle')}</DialogTitle>
+            <DialogTitle>{t("setCurrentPriceTitle")}</DialogTitle>
             <DialogDescription>
-              {t('setCurrentPriceDescription', { name: holding.asset_name })}
+              {t("setCurrentPriceDescription", { name: holding.asset_name })}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="price">{t('currentPricePerShare')}</Label>
+              <Label htmlFor="price">{t("currentPricePerShare")}</Label>
               <Input
                 id="price"
                 type="number"
@@ -106,17 +108,17 @@ export function ManualPriceDialog({
                 required
                 autoFocus
               />
-              <p className="text-xs text-muted-foreground">
-                {t('currentPriceHelp')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t("currentPriceHelp")}</p>
             </div>
             <div className="rounded-lg bg-muted p-3">
               <p className="text-sm">
-                <span className="font-semibold">{t('shares')}:</span> {holding.quantity.toFixed(8).replace(/\.?0+$/, '')}
+                <span className="font-semibold">{t("shares")}:</span>{" "}
+                {holding.quantity.toFixed(8).replace(/\.?0+$/, "")}
               </p>
               {price && (
                 <p className="text-sm mt-1">
-                  <span className="font-semibold">{t('totalValue')}:</span> {formatCurrency(holding.quantity * parseFloat(price), holding.currency)}
+                  <span className="font-semibold">{t("totalValue")}:</span>{" "}
+                  {formatCurrency(holding.quantity * parseFloat(price), holding.currency)}
                 </p>
               )}
             </div>
@@ -128,10 +130,10 @@ export function ManualPriceDialog({
               onClick={() => onOpenChange(false)}
               disabled={loading}
             >
-              {t('cancel')}
+              {t("cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? t('setting') : t('setPrice')}
+              {loading ? t("setting") : t("setPrice")}
             </Button>
           </DialogFooter>
         </form>

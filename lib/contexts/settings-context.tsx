@@ -14,10 +14,10 @@ interface SettingsContextType {
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
 
-export function SettingsProvider({ 
-  children, 
-  userId 
-}: { 
+export function SettingsProvider({
+  children,
+  userId,
+}: {
   children: ReactNode
   userId: string | null
 }) {
@@ -39,7 +39,8 @@ export function SettingsProvider({
         .eq("user_id", userId)
         .single()
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+      if (error && error.code !== "PGRST116") {
+        // PGRST116 = no rows returned
         console.error("Error loading settings:", error)
       }
 
@@ -56,11 +57,13 @@ export function SettingsProvider({
   }, [loadSettings])
 
   return (
-    <SettingsContext.Provider value={{ 
-      settings, 
-      loading, 
-      refreshSettings: loadSettings 
-    }}>
+    <SettingsContext.Provider
+      value={{
+        settings,
+        loading,
+        refreshSettings: loadSettings,
+      }}
+    >
       {children}
     </SettingsContext.Provider>
   )
@@ -70,4 +73,3 @@ export function useSettings() {
   const context = useContext(SettingsContext)
   return context
 }
-

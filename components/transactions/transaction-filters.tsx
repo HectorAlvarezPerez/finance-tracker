@@ -48,15 +48,18 @@ export function TransactionFilters({
     { value: "12", label: "December" },
   ]
 
-  const handleFilterChange = useCallback((key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    if (value && value !== "all") {
-      params.set(key, value)
-    } else {
-      params.delete(key)
-    }
-    router.push(`/transactions?${params.toString()}`)
-  }, [router, searchParams])
+  const handleFilterChange = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      if (value && value !== "all") {
+        params.set(key, value)
+      } else {
+        params.delete(key)
+      }
+      router.push(`/transactions?${params.toString()}`)
+    },
+    [router, searchParams]
+  )
 
   const handleClearFilters = () => {
     router.push("/transactions")
@@ -153,10 +156,7 @@ export function TransactionFilters({
         </SelectContent>
       </Select>
 
-      <Select
-        value={selectedYear}
-        onValueChange={handleYearChange}
-      >
+      <Select value={selectedYear} onValueChange={handleYearChange}>
         <SelectTrigger className="w-full sm:min-w-[130px]">
           <SelectValue placeholder="Year" />
         </SelectTrigger>

@@ -35,10 +35,7 @@ export function ExpensesByCategoryDonut({
   const isMobile = useIsMobile()
   const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined)
 
-  const sortedItems = useMemo(
-    () => [...items].sort((a, b) => b.total - a.total),
-    [items]
-  )
+  const sortedItems = useMemo(() => [...items].sort((a, b) => b.total - a.total), [items])
 
   const hasData = sortedItems.length > 0 && total > 0
 
@@ -108,22 +105,28 @@ export function ExpensesByCategoryDonut({
           </ResponsiveContainer>
 
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-[11px] uppercase tracking-wide text-muted-foreground">Total spent</span>
+            <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              Total spent
+            </span>
             <span className="text-lg font-semibold sm:text-xl">{formatCurrency(total)}</span>
           </div>
         </div>
 
         <div className="max-h-[260px] space-y-2 overflow-auto pr-1 sm:max-h-[320px]">
           {sortedItems.map((item) => (
-            <div key={item.key} className="flex items-center justify-between gap-3 rounded-md border p-2">
+            <div
+              key={item.key}
+              className="flex items-center justify-between gap-3 rounded-md border p-2"
+            >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
+                  <span
+                    className="h-2.5 w-2.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
                   <p className="truncate text-sm font-medium">{item.name}</p>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {item.percentage.toFixed(1)}%
-                </p>
+                <p className="text-xs text-muted-foreground">{item.percentage.toFixed(1)}%</p>
               </div>
               <p className="text-sm font-semibold">{formatCurrency(item.total)}</p>
             </div>

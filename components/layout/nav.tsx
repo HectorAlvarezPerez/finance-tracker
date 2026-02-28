@@ -14,7 +14,6 @@ import {
   LineChart,
   Tag,
   PiggyBank,
-
 } from "lucide-react"
 import { ThemeToggle } from "../theme/theme-toggle"
 import { LogoutButton } from "./logout-button"
@@ -27,47 +26,46 @@ import {
 
 export function Nav() {
   const pathname = usePathname()
-  const t = useTranslations('nav')
+  const t = useTranslations("nav")
 
   const navItems = [
     {
-      title: t('dashboard'),
+      title: t("dashboard"),
       href: "/dashboard",
       icon: LayoutDashboard,
     },
     {
-      title: t('transactions'),
+      title: t("transactions"),
       href: "/transactions",
       icon: CreditCard,
     },
 
     {
-      title: t('accounts'),
+      title: t("accounts"),
       href: "/accounts",
       icon: Wallet,
     },
     {
-      title: t('categories'),
+      title: t("categories"),
       href: "/categories",
       icon: Tag,
     },
 
     {
-      title: t('insights'),
+      title: t("insights"),
       href: "/insights",
       icon: LineChart,
     },
     {
-      title: t('budgets'),
+      title: t("budgets"),
       href: "/budgets",
       icon: PiggyBank,
     },
     {
-      title: t('portfolio'),
+      title: t("portfolio"),
       href: "/portfolio",
       icon: TrendingUp,
     },
-
   ]
 
   return (
@@ -107,7 +105,7 @@ export function Nav() {
         <Link
           href="/settings"
           className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-9 w-9"
-          title={t('settings')}
+          title={t("settings")}
         >
           <Settings className="h-5 w-5" />
         </Link>
@@ -118,26 +116,26 @@ export function Nav() {
 
 export function MobileNav() {
   const pathname = usePathname()
-  const t = useTranslations('nav')
+  const t = useTranslations("nav")
 
   const primaryItems = [
     {
-      title: t('dashboard'),
+      title: t("dashboard"),
       href: "/dashboard",
       icon: LayoutDashboard,
     },
     {
-      title: t('transactions'),
+      title: t("transactions"),
       href: "/transactions",
       icon: CreditCard,
     },
     {
-      title: t('insights'),
+      title: t("insights"),
       href: "/insights",
       icon: LineChart,
     },
     {
-      title: t('portfolio'),
+      title: t("portfolio"),
       href: "/portfolio",
       icon: TrendingUp,
     },
@@ -145,22 +143,22 @@ export function MobileNav() {
 
   const moreItems = [
     {
-      title: t('accounts'),
+      title: t("accounts"),
       href: "/accounts",
       icon: Wallet,
     },
     {
-      title: t('categories'),
+      title: t("categories"),
       href: "/categories",
       icon: Tag,
     },
     {
-      title: t('budgets'),
+      title: t("budgets"),
       href: "/budgets",
       icon: PiggyBank,
     },
     {
-      title: t('settings'),
+      title: t("settings"),
       href: "/settings",
       icon: Settings,
     },

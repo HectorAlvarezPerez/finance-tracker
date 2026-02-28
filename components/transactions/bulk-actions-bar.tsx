@@ -21,20 +21,10 @@ export function BulkActionsBar({
         </p>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={onDelete}
-            disabled={deleting}
-          >
+          <Button variant="destructive" size="sm" onClick={onDelete} disabled={deleting}>
             {deleting ? "Eliminando..." : "Borrar"}
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onClearSelection}
-            disabled={deleting}
-          >
+          <Button variant="outline" size="sm" onClick={onClearSelection} disabled={deleting}>
             Limpiar selección
           </Button>
         </div>

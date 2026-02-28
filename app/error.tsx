@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { AlertCircle, Home, RefreshCw } from 'lucide-react'
+import { useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertCircle, Home, RefreshCw } from "lucide-react"
 
 export default function Error({
   error,
@@ -14,8 +14,8 @@ export default function Error({
 }) {
   useEffect(() => {
     // Log error to console for developers (only in development)
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Error caught by error boundary:', error)
+    if (process.env.NODE_ENV === "development") {
+      console.error("Error caught by error boundary:", error)
     }
   }, [error])
 
@@ -32,25 +32,19 @@ export default function Error({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {process.env.NODE_ENV === 'development' && (
+          {process.env.NODE_ENV === "development" && (
             <div className="p-3 bg-muted rounded-md">
-              <p className="text-xs font-mono text-muted-foreground break-all">
-                {error.message}
-              </p>
+              <p className="text-xs font-mono text-muted-foreground break-all">{error.message}</p>
             </div>
           )}
-          
+
           <div className="flex flex-col sm:flex-row gap-2">
-            <Button
-              onClick={reset}
-              className="flex-1"
-              variant="default"
-            >
+            <Button onClick={reset} className="flex-1" variant="default">
               <RefreshCw className="mr-2 h-4 w-4" />
               Intentar de nuevo
             </Button>
             <Button
-              onClick={() => window.location.href = '/dashboard'}
+              onClick={() => (window.location.href = "/dashboard")}
               className="flex-1"
               variant="outline"
             >
@@ -67,4 +61,3 @@ export default function Error({
     </div>
   )
 }
-

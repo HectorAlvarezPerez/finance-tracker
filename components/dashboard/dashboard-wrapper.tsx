@@ -17,15 +17,15 @@ import type { Database } from "@/types/database"
 type Account = Database["public"]["Tables"]["accounts"]["Row"]
 
 export function DashboardWrapper({ userId }: { userId: string }) {
-  const t = useTranslations('dashboard')
-  const tForms = useTranslations('forms')
+  const t = useTranslations("dashboard")
+  const tForms = useTranslations("forms")
   const supabase = createBrowserClient()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [selectedAccountId, setSelectedAccountId] = useState<string>("all")
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     // Default to current month (YYYY-MM)
     const now = new Date()
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
   })
 
   useEffect(() => {
@@ -46,14 +46,14 @@ export function DashboardWrapper({ userId }: { userId: string }) {
   const generateMonthOptions = () => {
     const months = []
     const now = new Date()
-    
+
     for (let i = 0; i < 12; i++) {
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
-      const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-      const label = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+      const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
+      const label = date.toLocaleDateString("en-US", { month: "long", year: "numeric" })
       months.push({ value, label })
     }
-    
+
     return months
   }
 
@@ -65,13 +65,11 @@ export function DashboardWrapper({ userId }: { userId: string }) {
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">{t('title')}</h1>
-            <p className="text-muted-foreground">
-              {t('subtitle')}
-            </p>
+            <h1 className="text-3xl font-bold">{t("title")}</h1>
+            <p className="text-muted-foreground">{t("subtitle")}</p>
           </div>
         </div>
-        
+
         {/* Filter Controls */}
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Month Filter */}
@@ -79,7 +77,7 @@ export function DashboardWrapper({ userId }: { userId: string }) {
             <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <Select value={selectedMonth} onValueChange={setSelectedMonth}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={t('selectMonth')} />
+                <SelectValue placeholder={t("selectMonth")} />
               </SelectTrigger>
               <SelectContent>
                 {monthOptions.map((month) => (
@@ -96,10 +94,10 @@ export function DashboardWrapper({ userId }: { userId: string }) {
             <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={tForms('selectAccount')} />
+                <SelectValue placeholder={tForms("selectAccount")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t('allAccounts')}</SelectItem>
+                <SelectItem value="all">{t("allAccounts")}</SelectItem>
                 {accounts.map((account) => (
                   <SelectItem key={account.id} value={account.id}>
                     {account.name}
@@ -111,12 +109,11 @@ export function DashboardWrapper({ userId }: { userId: string }) {
         </div>
       </div>
 
-      <DashboardOverview 
-        userId={userId} 
+      <DashboardOverview
+        userId={userId}
         selectedAccountId={selectedAccountId}
         selectedMonth={selectedMonth}
       />
     </>
   )
 }
-

@@ -5,7 +5,7 @@ import { formatCurrency as formatCurrencyUtil } from "@/lib/utils"
 
 export function useCurrency() {
   const settingsContext = useSettings()
-  
+
   const currency = settingsContext?.settings?.default_currency || "EUR"
   const locale = settingsContext?.settings?.locale || "en-US"
 
@@ -19,4 +19,3 @@ export function useCurrency() {
     formatCurrency,
   }
 }
-

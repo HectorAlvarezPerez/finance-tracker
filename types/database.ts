@@ -182,7 +182,6 @@ export interface Database {
         }
       }
 
-
       holdings: {
         Row: {
           id: string
@@ -336,11 +335,8 @@ export interface Database {
         }
       }
     }
-    Views: {
-    }
-    Functions: {
-    }
-    Enums: {
-    }
+    Views: {}
+    Functions: {}
+    Enums: {}
   }
 }

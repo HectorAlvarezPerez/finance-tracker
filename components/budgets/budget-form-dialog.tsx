@@ -183,9 +183,12 @@ export function BudgetFormDialog({
         <DialogContent className="max-w-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
             <DialogHeader>
-              <DialogTitle>{editingBudget ? "Editar presupuesto" : "Nuevo presupuesto"}</DialogTitle>
+              <DialogTitle>
+                {editingBudget ? "Editar presupuesto" : "Nuevo presupuesto"}
+              </DialogTitle>
               <DialogDescription>
-                Estos presupuestos son recurrentes: los mensuales se aplican cada mes y los anuales cada ano.
+                Estos presupuestos son recurrentes: los mensuales se aplican cada mes y los anuales
+                cada ano.
               </DialogDescription>
             </DialogHeader>
 
@@ -240,7 +243,8 @@ export function BudgetFormDialog({
 
             {duplicateBudget && !editingBudget && (
               <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
-                Ya existe un presupuesto con la misma combinacion. Al guardar se actualizara el existente.
+                Ya existe un presupuesto con la misma combinacion. Al guardar se actualizara el
+                existente.
               </p>
             )}
 

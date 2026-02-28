@@ -1,18 +1,18 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { getTranslations } from 'next-intl/server'
+import { getTranslations } from "next-intl/server"
 import { PortfolioOverview } from "@/components/portfolio/portfolio-overview"
 import { HoldingsList } from "@/components/portfolio/holdings-list"
 import { AddHoldingDialog } from "@/components/portfolio/add-holding-dialog"
 import type { Database } from "@/types/database"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 type Holding = Database["public"]["Tables"]["holdings"]["Row"]
 
 export default async function PortfolioPage() {
   const supabase = await createServerClient()
-  const t = await getTranslations('portfolio')
+  const t = await getTranslations("portfolio")
 
   const {
     data: { user },
@@ -23,9 +23,12 @@ export default async function PortfolioPage() {
   }
 
   // Apply due weekly/monthly recurring quantities before loading holdings.
-  const { error: recurringApplyError } = await supabase.rpc("apply_portfolio_recurring_quantities", {
-    target_user_id: user.id,
-  })
+  const { error: recurringApplyError } = await supabase.rpc(
+    "apply_portfolio_recurring_quantities",
+    {
+      target_user_id: user.id,
+    }
+  )
 
   if (
     recurringApplyError &&
@@ -66,10 +69,8 @@ export default async function PortfolioPage() {
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">{t('title')}</h1>
-          <p className="text-muted-foreground">
-            {t('subtitle')}
-          </p>
+          <h1 className="text-3xl font-bold">{t("title")}</h1>
+          <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
         <div className="flex gap-2">
           <AddHoldingDialog userId={user.id} />

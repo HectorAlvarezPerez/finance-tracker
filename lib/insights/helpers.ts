@@ -99,7 +99,7 @@ export function normalizeCategory(category: JoinedCategory): CategoryRow | null 
     return null
   }
 
-  return Array.isArray(category) ? category[0] ?? null : category
+  return Array.isArray(category) ? (category[0] ?? null) : category
 }
 
 export function toMonthKeyFromDate(dateString: string) {

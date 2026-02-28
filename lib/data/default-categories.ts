@@ -59,4 +59,3 @@ export function getDefaultCategories(locale: string = "en") {
   const lang = locale.startsWith("es") ? "es" : "en"
   return defaultCategories[lang]
 }
-

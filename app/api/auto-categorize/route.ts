@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server"
-import { buildCategoryIndex, categorizeTransaction } from "@/lib/services/auto-categorization/autoCategorization"
+import {
+  buildCategoryIndex,
+  categorizeTransaction,
+} from "@/lib/services/auto-categorization/autoCategorization"
 import { createServerClient } from "@/lib/supabase/server"
 
 export const runtime = "nodejs"

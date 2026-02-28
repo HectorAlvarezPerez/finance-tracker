@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { AlertCircle, Home, RefreshCw } from 'lucide-react'
+import { useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertCircle, Home, RefreshCw } from "lucide-react"
 
 export default function DashboardError({
   error,
@@ -14,8 +14,8 @@ export default function DashboardError({
 }) {
   useEffect(() => {
     // Log error to console for developers (only in development)
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Dashboard error:', error)
+    if (process.env.NODE_ENV === "development") {
+      console.error("Dashboard error:", error)
     }
   }, [error])
 
@@ -32,7 +32,7 @@ export default function DashboardError({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {process.env.NODE_ENV === 'development' && error.message && (
+          {process.env.NODE_ENV === "development" && error.message && (
             <details className="p-3 bg-muted rounded-md">
               <summary className="text-sm font-medium cursor-pointer mb-2">
                 Detalles técnicos (solo visible en desarrollo)
@@ -43,18 +43,14 @@ export default function DashboardError({
               </pre>
             </details>
           )}
-          
+
           <div className="flex flex-col gap-3">
-            <Button
-              onClick={reset}
-              className="w-full"
-              size="lg"
-            >
+            <Button onClick={reset} className="w-full" size="lg">
               <RefreshCw className="mr-2 h-5 w-5" />
               Volver a intentar
             </Button>
             <Button
-              onClick={() => window.location.href = '/dashboard'}
+              onClick={() => (window.location.href = "/dashboard")}
               variant="outline"
               className="w-full"
               size="lg"
@@ -79,4 +75,3 @@ export default function DashboardError({
     </div>
   )
 }
-

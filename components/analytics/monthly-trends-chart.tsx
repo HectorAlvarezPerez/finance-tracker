@@ -67,7 +67,12 @@ export function MonthlyTrendsChart({
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm">
         <p className="text-muted-foreground">
-          {t("avgSavingsRate")}: <span className={`font-semibold ${avgSavingsRate >= 0 ? "text-emerald-600" : "text-red-600"}`}>{avgSavingsRate.toFixed(1)}%</span>
+          {t("avgSavingsRate")}:{" "}
+          <span
+            className={`font-semibold ${avgSavingsRate >= 0 ? "text-emerald-600" : "text-red-600"}`}
+          >
+            {avgSavingsRate.toFixed(1)}%
+          </span>
         </p>
       </div>
 
@@ -75,13 +80,24 @@ export function MonthlyTrendsChart({
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-            <XAxis dataKey="month" tick={{ fontSize: isMobile ? 10 : 12 }} minTickGap={isMobile ? 24 : 12} />
+            <XAxis
+              dataKey="month"
+              tick={{ fontSize: isMobile ? 10 : 12 }}
+              minTickGap={isMobile ? 24 : 12}
+            />
             <YAxis
               yAxisId="left"
               width={isMobile ? 40 : 56}
               tick={{ fontSize: isMobile ? 10 : 12 }}
               tickFormatter={(value) => {
-                const symbol = currency === "USD" ? "$" : currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency
+                const symbol =
+                  currency === "USD"
+                    ? "$"
+                    : currency === "EUR"
+                      ? "€"
+                      : currency === "GBP"
+                        ? "£"
+                        : currency
                 return `${symbol}${(value / 1000).toFixed(0)}k`
               }}
             />
@@ -109,8 +125,12 @@ export function MonthlyTrendsChart({
                       const isPercent = dataKey === "savingsRate"
 
                       return (
-                        <p key={`${seriesName}-${dataKey}`} className="text-xs text-muted-foreground">
-                          {seriesName}: {isPercent ? `${currentValue.toFixed(1)}%` : formatCurrency(currentValue)}
+                        <p
+                          key={`${seriesName}-${dataKey}`}
+                          className="text-xs text-muted-foreground"
+                        >
+                          {seriesName}:{" "}
+                          {isPercent ? `${currentValue.toFixed(1)}%` : formatCurrency(currentValue)}
                         </p>
                       )
                     })}
@@ -119,24 +139,51 @@ export function MonthlyTrendsChart({
               }}
             />
             {!isMobile && <Legend wrapperStyle={{ fontSize: 12 }} />}
-            <Bar yAxisId="left" dataKey="net" fill="hsl(var(--primary))" name={t("netIncome")} radius={[8, 8, 0, 0]} />
-            <Line yAxisId="right" type="monotone" dataKey="savingsRate" stroke="hsl(142 71% 45%)" strokeWidth={2} dot={{ r: isMobile ? 3 : 4 }} name={t("savingsRate")} />
+            <Bar
+              yAxisId="left"
+              dataKey="net"
+              fill="hsl(var(--primary))"
+              name={t("netIncome")}
+              radius={[8, 8, 0, 0]}
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="savingsRate"
+              stroke="hsl(142 71% 45%)"
+              strokeWidth={2}
+              dot={{ r: isMobile ? 3 : 4 }}
+              name={t("savingsRate")}
+            />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
 
       <div className="grid grid-cols-2 gap-4 border-t pt-4 md:grid-cols-4">
         <div className="text-center">
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("avgNetLabel")}</p>
-          <p className="text-base font-semibold">{formatCurrency(chartData.reduce((sum, item) => sum + item.net, 0) / Math.max(chartData.length, 1))}</p>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">
+            {t("avgNetLabel")}
+          </p>
+          <p className="text-base font-semibold">
+            {formatCurrency(
+              chartData.reduce((sum, item) => sum + item.net, 0) / Math.max(chartData.length, 1)
+            )}
+          </p>
         </div>
         <div className="text-center">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("bestMonth")}</p>
           <p className="text-base font-semibold text-emerald-600">{bestMonth}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("avgTransactions")}</p>
-          <p className="text-base font-semibold">{Math.round(chartData.reduce((sum, item) => sum + item.transactions, 0) / Math.max(chartData.length, 1))}</p>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">
+            {t("avgTransactions")}
+          </p>
+          <p className="text-base font-semibold">
+            {Math.round(
+              chartData.reduce((sum, item) => sum + item.transactions, 0) /
+                Math.max(chartData.length, 1)
+            )}
+          </p>
         </div>
         <div className="text-center">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">{t("trend")}</p>

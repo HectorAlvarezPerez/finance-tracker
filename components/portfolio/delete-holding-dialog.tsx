@@ -28,7 +28,7 @@ export function DeleteHoldingDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const t = useTranslations('portfolio')
+  const t = useTranslations("portfolio")
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
@@ -39,24 +39,21 @@ export function DeleteHoldingDialog({
     setLoading(true)
 
     try {
-      const { error } = await supabase
-        .from("holdings")
-        .delete()
-        .eq("id", holding.id)
+      const { error } = await supabase.from("holdings").delete().eq("id", holding.id)
 
       if (error) throw error
 
       toast({
-        title: t('success'),
-        description: t('deleteHoldingSuccess', { symbol: holdingLabel }),
+        title: t("success"),
+        description: t("deleteHoldingSuccess", { symbol: holdingLabel }),
       })
 
       onOpenChange(false)
       router.refresh()
     } catch (error: any) {
       toast({
-        title: t('error'),
-        description: error.message || t('failedDeleteHolding'),
+        title: t("error"),
+        description: error.message || t("failedDeleteHolding"),
         variant: "destructive",
       })
     } finally {
@@ -70,20 +67,23 @@ export function DeleteHoldingDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            {t('deleteHoldingTitle')}
+            {t("deleteHoldingTitle")}
           </DialogTitle>
           <DialogDescription>
-            {t('deleteHoldingDescription', { symbol: holdingLabel })}
+            {t("deleteHoldingDescription", { symbol: holdingLabel })}
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-          <p className="text-sm text-muted-foreground">
-            {t('deleteHoldingWarning')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t("deleteHoldingWarning")}</p>
           <ul className="list-disc list-inside mt-2 text-sm text-muted-foreground">
-            <li>{t('deleteUnitsLine', { quantity: holding.quantity.toFixed(8).replace(/\.?0+$/, ''), symbol: holdingLabel })}</li>
-            <li>{t('deletePriceHistoryLine')}</li>
-            <li>{t('deleteTradesLine')}</li>
+            <li>
+              {t("deleteUnitsLine", {
+                quantity: holding.quantity.toFixed(8).replace(/\.?0+$/, ""),
+                symbol: holdingLabel,
+              })}
+            </li>
+            <li>{t("deletePriceHistoryLine")}</li>
+            <li>{t("deleteTradesLine")}</li>
           </ul>
         </div>
         <DialogFooter>
@@ -93,15 +93,10 @@ export function DeleteHoldingDialog({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            {t('cancel')}
+            {t("cancel")}
           </Button>
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={loading}
-          >
-            {loading ? t('deleting') : t('deleteHolding')}
+          <Button type="button" variant="destructive" onClick={handleDelete} disabled={loading}>
+            {loading ? t("deleting") : t("deleteHolding")}
           </Button>
         </DialogFooter>
       </DialogContent>

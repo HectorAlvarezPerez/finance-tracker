@@ -41,7 +41,9 @@ export function BudgetDetailPanel({
     <div className="space-y-4">
       <div className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-lg font-semibold">{item.budget.categories?.name ?? "Sin categoria"}</h3>
+          <h3 className="text-lg font-semibold">
+            {item.budget.categories?.name ?? "Sin categoria"}
+          </h3>
           <Badge className={getStatusClassName(item.status)}>{getStatusLabel(item.status)}</Badge>
         </div>
 
@@ -52,7 +54,9 @@ export function BudgetDetailPanel({
         <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
           <div>
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Presupuesto</p>
-            <p className="font-semibold">{formatCurrency(Number(item.budget.amount), "EUR", "es-ES")}</p>
+            <p className="font-semibold">
+              {formatCurrency(Number(item.budget.amount), "EUR", "es-ES")}
+            </p>
           </div>
           <div>
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Gastado</p>
@@ -62,7 +66,9 @@ export function BudgetDetailPanel({
           </div>
           <div>
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Disponible</p>
-            <p className={`font-semibold ${item.remaining < 0 ? "text-red-600" : "text-emerald-600"}`}>
+            <p
+              className={`font-semibold ${item.remaining < 0 ? "text-red-600" : "text-emerald-600"}`}
+            >
               {formatCurrency(item.remaining, "EUR", "es-ES")}
             </p>
           </div>
@@ -101,7 +107,9 @@ export function BudgetDetailPanel({
       <div className="space-y-3 rounded-lg border p-3">
         <h4 className="text-sm font-semibold">Top transacciones</h4>
         {topTransactions.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No hay gastos de esta categoria en el periodo.</p>
+          <p className="text-sm text-muted-foreground">
+            No hay gastos de esta categoria en el periodo.
+          </p>
         ) : (
           <div className="space-y-2">
             {topTransactions.map((transaction) => (
@@ -111,7 +119,9 @@ export function BudgetDetailPanel({
               >
                 <div className="min-w-0">
                   <p className="line-clamp-1 text-sm font-medium">{transaction.description}</p>
-                  <p className="text-xs text-muted-foreground">{formatDate(transaction.date, "short")}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatDate(transaction.date, "short")}
+                  </p>
                 </div>
                 <p className="shrink-0 text-sm font-semibold text-red-600">
                   {formatCurrency(Math.abs(transaction.amount), "EUR", "es-ES")}

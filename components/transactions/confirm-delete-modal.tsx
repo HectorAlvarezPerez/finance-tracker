@@ -33,8 +33,8 @@ export function ConfirmDeleteModal({
             Confirmar borrado
           </DialogTitle>
           <DialogDescription>
-            Se van a borrar {count} transacci{count === 1 ? "ón" : "ones"}.
-            Esta acción no se puede deshacer.
+            Se van a borrar {count} transacci{count === 1 ? "ón" : "ones"}. Esta acción no se puede
+            deshacer.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -46,12 +46,7 @@ export function ConfirmDeleteModal({
           >
             Cancelar
           </Button>
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={onConfirm}
-            disabled={loading}
-          >
+          <Button type="button" variant="destructive" onClick={onConfirm} disabled={loading}>
             {loading ? "Eliminando..." : "Confirmar"}
           </Button>
         </DialogFooter>

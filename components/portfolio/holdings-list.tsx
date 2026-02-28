@@ -38,7 +38,7 @@ export function HoldingsList({
   prices: Map<string, number>
   userId: string
 }) {
-  const t = useTranslations('portfolio')
+  const t = useTranslations("portfolio")
   const [editingHolding, setEditingHolding] = useState<Holding | null>(null)
   const [deletingHolding, setDeletingHolding] = useState<Holding | null>(null)
   const [manualPriceHolding, setManualPriceHolding] = useState<Holding | null>(null)
@@ -56,17 +56,15 @@ export function HoldingsList({
     })
   }
 
-  const formatQuantity = (value: number) => value.toFixed(8).replace(/\.?0+$/, '')
+  const formatQuantity = (value: number) => value.toFixed(8).replace(/\.?0+$/, "")
 
   if (holdings.length === 0) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <TrendingUp className="mb-4 h-12 w-12 text-muted-foreground" />
-          <h3 className="mb-2 text-lg font-semibold">{t('noHoldings')}</h3>
-          <p className="mb-4 text-center text-sm text-muted-foreground">
-            {t('addFirstHolding')}
-          </p>
+          <h3 className="mb-2 text-lg font-semibold">{t("noHoldings")}</h3>
+          <p className="mb-4 text-center text-sm text-muted-foreground">{t("addFirstHolding")}</p>
         </CardContent>
       </Card>
     )
@@ -101,24 +99,41 @@ export function HoldingsList({
 
                     {hasPrice ? (
                       <div className="text-xs text-muted-foreground sm:text-sm">
-                        {t('currentPrice')}: <span className="font-semibold text-foreground">{formatCurrency(currentPrice, holding.currency)}</span>
-                        <span className="ml-2">{t('priceStatusSet')}</span>
+                        {t("currentPrice")}:{" "}
+                        <span className="font-semibold text-foreground">
+                          {formatCurrency(currentPrice, holding.currency)}
+                        </span>
+                        <span className="ml-2">{t("priceStatusSet")}</span>
                       </div>
                     ) : (
                       <div className="text-xs text-amber-700 dark:text-amber-500 sm:text-sm">
-                        {t('priceStatusMissing')}
+                        {t("priceStatusMissing")}
                       </div>
                     )}
                   </div>
 
                   <div className="flex min-w-0 flex-col gap-2 md:items-end">
                     <div className="text-left md:text-right">
-                      <div className="text-xl font-bold sm:text-2xl">{formatCurrency(currentValue, holding.currency)}</div>
+                      <div className="text-xl font-bold sm:text-2xl">
+                        {formatCurrency(currentValue, holding.currency)}
+                      </div>
                       {hasPrice && (
-                        <div className={`mt-1 flex items-center gap-1 text-sm font-semibold ${profitLoss >= 0 ? "text-green-600" : "text-red-600"}`}>
-                          {profitLoss >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                          <span>{profitLoss >= 0 ? "+" : ""}{formatCurrency(profitLoss, holding.currency)}</span>
-                          <span>({roi >= 0 ? "+" : ""}{roi.toFixed(2)}%)</span>
+                        <div
+                          className={`mt-1 flex items-center gap-1 text-sm font-semibold ${profitLoss >= 0 ? "text-green-600" : "text-red-600"}`}
+                        >
+                          {profitLoss >= 0 ? (
+                            <TrendingUp className="h-4 w-4" />
+                          ) : (
+                            <TrendingDown className="h-4 w-4" />
+                          )}
+                          <span>
+                            {profitLoss >= 0 ? "+" : ""}
+                            {formatCurrency(profitLoss, holding.currency)}
+                          </span>
+                          <span>
+                            ({roi >= 0 ? "+" : ""}
+                            {roi.toFixed(2)}%)
+                          </span>
                         </div>
                       )}
                     </div>
@@ -130,7 +145,7 @@ export function HoldingsList({
                         onClick={() => setManualPriceHolding(holding)}
                       >
                         <PenSquare className="mr-2 h-4 w-4" />
-                        {t('setPrice')}
+                        {t("setPrice")}
                       </Button>
 
                       <Button
@@ -139,8 +154,12 @@ export function HoldingsList({
                         onClick={() => toggleHoldingDetails(holding.id)}
                         aria-expanded={isExpanded}
                       >
-                        {isExpanded ? t('hideDetails') : t('showDetails')}
-                        {isExpanded ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />}
+                        {isExpanded ? t("hideDetails") : t("showDetails")}
+                        {isExpanded ? (
+                          <ChevronUp className="ml-1 h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="ml-1 h-4 w-4" />
+                        )}
                       </Button>
 
                       <DropdownMenu>
@@ -152,14 +171,14 @@ export function HoldingsList({
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => setEditingHolding(holding)}>
                             <Edit className="mr-2 h-4 w-4" />
-                            {t('edit')}
+                            {t("edit")}
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => setDeletingHolding(holding)}
                             className="text-destructive"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            {t('delete')}
+                            {t("delete")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -173,34 +192,58 @@ export function HoldingsList({
                   <div className="rounded-md border bg-muted/20 p-3 sm:p-4">
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-7">
                       <div>
-                        <p className="text-xs text-muted-foreground sm:text-sm">{t('quantity')}</p>
-                        <p className="text-sm font-semibold sm:text-base">{formatQuantity(holding.quantity)}</p>
+                        <p className="text-xs text-muted-foreground sm:text-sm">{t("quantity")}</p>
+                        <p className="text-sm font-semibold sm:text-base">
+                          {formatQuantity(holding.quantity)}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground sm:text-sm">{t('avgBuyPrice')}</p>
-                        <p className="text-sm font-semibold sm:text-base">{formatCurrency(holding.average_buy_price, holding.currency)}</p>
+                        <p className="text-xs text-muted-foreground sm:text-sm">
+                          {t("avgBuyPrice")}
+                        </p>
+                        <p className="text-sm font-semibold sm:text-base">
+                          {formatCurrency(holding.average_buy_price, holding.currency)}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground sm:text-sm">{t('totalInvested')}</p>
-                        <p className="text-sm font-semibold sm:text-base">{formatCurrency(costBasisTotal, holding.currency)}</p>
+                        <p className="text-xs text-muted-foreground sm:text-sm">
+                          {t("totalInvested")}
+                        </p>
+                        <p className="text-sm font-semibold sm:text-base">
+                          {formatCurrency(costBasisTotal, holding.currency)}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground sm:text-sm">{t('currentValue')}</p>
-                        <p className="text-sm font-semibold sm:text-base">{formatCurrency(currentValue, holding.currency)}</p>
+                        <p className="text-xs text-muted-foreground sm:text-sm">
+                          {t("currentValue")}
+                        </p>
+                        <p className="text-sm font-semibold sm:text-base">
+                          {formatCurrency(currentValue, holding.currency)}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground sm:text-sm">{t('roi')}</p>
-                        <p className={`text-sm font-semibold sm:text-base ${hasPrice ? (roi >= 0 ? "text-green-600" : "text-red-600") : "text-muted-foreground"}`}>
+                        <p className="text-xs text-muted-foreground sm:text-sm">{t("roi")}</p>
+                        <p
+                          className={`text-sm font-semibold sm:text-base ${hasPrice ? (roi >= 0 ? "text-green-600" : "text-red-600") : "text-muted-foreground"}`}
+                        >
                           {hasPrice ? `${roi >= 0 ? "+" : ""}${roi.toFixed(2)}%` : "-"}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground sm:text-sm">{t('weeklyQuantity')}</p>
-                        <p className="text-sm font-semibold sm:text-base">{formatQuantity(holding.weekly_quantity || 0)}</p>
+                        <p className="text-xs text-muted-foreground sm:text-sm">
+                          {t("weeklyQuantity")}
+                        </p>
+                        <p className="text-sm font-semibold sm:text-base">
+                          {formatQuantity(holding.weekly_quantity || 0)}
+                        </p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground sm:text-sm">{t('monthlyQuantity')}</p>
-                        <p className="text-sm font-semibold sm:text-base">{formatQuantity(holding.monthly_quantity || 0)}</p>
+                        <p className="text-xs text-muted-foreground sm:text-sm">
+                          {t("monthlyQuantity")}
+                        </p>
+                        <p className="text-sm font-semibold sm:text-base">
+                          {formatQuantity(holding.monthly_quantity || 0)}
+                        </p>
                       </div>
                     </div>
                   </div>

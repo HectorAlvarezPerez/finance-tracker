@@ -112,8 +112,8 @@ export function DeleteCategoryDialog({
         </DialogHeader>
         <div className="py-4">
           <p className="text-sm text-muted-foreground">
-            This action cannot be undone. Transactions with this category will have their
-            category removed.
+            This action cannot be undone. Transactions with this category will have their category
+            removed.
           </p>
         </div>
         <DialogFooter>
@@ -128,4 +128,3 @@ export function DeleteCategoryDialog({
     </Dialog>
   )
 }
-

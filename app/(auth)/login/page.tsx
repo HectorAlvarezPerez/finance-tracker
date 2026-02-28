@@ -8,7 +8,14 @@ import { createBrowserClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import { Wallet, Eye, EyeOff, Sparkles } from "lucide-react"
 import { ForgotPasswordDialog } from "@/components/auth/forgot-password-dialog"
@@ -23,7 +30,7 @@ export default function LoginPage() {
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
-  const t = useTranslations('auth.login')
+  const t = useTranslations("auth.login")
   const [isDemoLoading, setIsDemoLoading] = useState(false)
   const DEMO_TIMEOUT_MS = 30000
 
@@ -115,15 +122,13 @@ export default function LoginPage() {
           <div className="flex justify-center mb-4">
             <Wallet className="h-12 w-12 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
-          <CardDescription>
-            {t('subtitle')}
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">{t("title")}</CardTitle>
+          <CardDescription>{t("subtitle")}</CardDescription>
         </CardHeader>
         <form onSubmit={handleLogin}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">{t('email')}</Label>
+              <Label htmlFor="email">{t("email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -135,13 +140,13 @@ export default function LoginPage() {
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">{t('password')}</Label>
+                <Label htmlFor="password">{t("password")}</Label>
                 <button
                   type="button"
                   onClick={() => setShowForgotPassword(true)}
                   className="text-xs text-primary hover:underline"
                 >
-                  {t('forgotPassword')}
+                  {t("forgotPassword")}
                 </button>
               </div>
               <div className="relative">
@@ -159,23 +164,19 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? t('signingIn') : t('signIn')}
+              {loading ? t("signingIn") : t("signIn")}
             </Button>
             <p className="text-sm text-center text-muted-foreground">
-              {t('noAccount')}{" "}
+              {t("noAccount")}{" "}
               <Link href="/signup" className="text-primary hover:underline">
-                {t('signUp')}
+                {t("signUp")}
               </Link>
             </p>
           </CardFooter>
@@ -187,9 +188,7 @@ export default function LoginPage() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or try it out
-              </span>
+              <span className="bg-background px-2 text-muted-foreground">Or try it out</span>
             </div>
           </div>
 
@@ -209,10 +208,7 @@ export default function LoginPage() {
         </div>
       </Card>
 
-      <ForgotPasswordDialog
-        open={showForgotPassword}
-        onOpenChange={setShowForgotPassword}
-      />
+      <ForgotPasswordDialog open={showForgotPassword} onOpenChange={setShowForgotPassword} />
     </div>
   )
 }

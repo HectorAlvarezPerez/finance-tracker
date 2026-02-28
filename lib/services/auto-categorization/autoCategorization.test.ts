@@ -1,4 +1,7 @@
-import { buildCategoryIndex, categorizeTransaction } from "@/lib/services/auto-categorization/autoCategorization"
+import {
+  buildCategoryIndex,
+  categorizeTransaction,
+} from "@/lib/services/auto-categorization/autoCategorization"
 
 const categories = [
   { id: "exp_rent", name: "Alquiler", type: "expense" as const },

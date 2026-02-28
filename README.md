@@ -10,6 +10,7 @@ A comprehensive, production-ready personal finance web application built with Ne
 ## 🚀 Features
 
 ### Core Functionality
+
 - **🤖 AI Assistant**: Natural language commands to create categories, transactions, accounts, and budgets (powered by OpenAI GPT-4)
 - **Multi-Account Management**: Track checking, savings, brokerage, crypto, and other accounts
 - **Transaction Management**: Full CRUD operations with CSV import/export
@@ -21,6 +22,7 @@ A comprehensive, production-ready personal finance web application built with Ne
 - **Multi-Currency Support**: Handle multiple currencies with proper formatting
 
 ### Technical Features
+
 - **Authentication**: Secure email/password auth with Supabase
 - **Row Level Security**: Multi-tenant architecture with RLS policies
 - **Real-time Updates**: Instant UI updates on data changes
@@ -32,6 +34,7 @@ A comprehensive, production-ready personal finance web application built with Ne
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **Next.js 14** (App Router)
 - **React 18**
 - **TypeScript 5**
@@ -41,11 +44,13 @@ A comprehensive, production-ready personal finance web application built with Ne
 - **next-themes** (dark mode)
 
 ### Backend & Database
+
 - **Supabase** (PostgreSQL, Auth, Row Level Security)
 - **OpenAI GPT-4** (AI Assistant with function calling)
 - **Zod** (schema validation)
 
 ### Deployment
+
 - **Vercel** (hosting & serverless functions)
 - **GitHub** (version control & CI/CD)
 
@@ -102,7 +107,7 @@ NEXT_PUBLIC_ENABLE_BANK_INTEGRATION=false
 ```
 
 > **📚 AI Assistant Setup**: For detailed instructions on setting up and using the AI Assistant, see [AI_ASSISTANT.md](./AI_ASSISTANT.md)
-> 
+>
 > **🔄 Recurring Transactions**: For automatic execution of recurring transactions with Vercel Cron Jobs, see [RECURRING_TRANSACTIONS.md](./RECURRING_TRANSACTIONS.md)
 
 ### 5. Run Database Migrations
@@ -243,6 +248,7 @@ date,description,amount,notes
 4. Deploy!
 
 Vercel automatically:
+
 - Builds the Next.js app
 - Sets up preview deployments for PRs
 - Provides a production URL
@@ -250,6 +256,7 @@ Vercel automatically:
 ### Environment Variables for Production
 
 Add these in Vercel:
+
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
@@ -268,6 +275,7 @@ Add these in Vercel:
 ### Adding New Categories
 
 1. Go to Settings or run a SQL insert:
+
 ```sql
 INSERT INTO categories (user_id, name, type, color, icon)
 VALUES ('your-user-id', 'My Category', 'expense', '#ef4444', 'tag');
@@ -280,6 +288,7 @@ Edit `tailwind.config.ts` and `app/globals.css` to customize colors.
 ### Adding Transaction Rules
 
 Go to Transactions page → Manage Rules. Rules support:
+
 - Simple text matching
 - Regex patterns
 - Auto-categorization
@@ -322,6 +331,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## 📧 Support
 
 For issues or questions:
+
 - Open an issue on GitHub
 - Email: your-email@example.com
 
@@ -334,4 +344,3 @@ For issues or questions:
 ---
 
 **Built with ❤️ for better financial management**
-

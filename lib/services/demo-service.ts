@@ -32,10 +32,7 @@ export async function createDemoAccount() {
   return { user: adminData.user, email, password }
 }
 
-export async function seedDemoData(
-  userId: string,
-  client?: SupabaseClient<Database>
-) {
+export async function seedDemoData(userId: string, client?: SupabaseClient<Database>) {
   const adminClient = createAdminClient()
   const supabase = client ?? adminClient ?? (await createServerClient())
 
@@ -191,9 +188,7 @@ export async function seedDemoData(
       },
     ]
 
-    const { error: txError } = await supabase
-      .from("transactions")
-      .insert(demoTransactions as any)
+    const { error: txError } = await supabase.from("transactions").insert(demoTransactions as any)
 
     if (txError) {
       throw new Error(`Failed to seed transactions: ${txError.message}`)
@@ -262,9 +257,7 @@ export async function seedDemoData(
     }
 
     if (demoBudgets.length > 0) {
-      const { error: budgetError } = await supabase
-        .from("budgets")
-        .insert(demoBudgets as any)
+      const { error: budgetError } = await supabase.from("budgets").insert(demoBudgets as any)
 
       if (budgetError) {
         throw new Error(`Failed to seed budgets: ${budgetError.message}`)

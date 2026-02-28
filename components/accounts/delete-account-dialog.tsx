@@ -33,9 +33,9 @@ export function DeleteAccountDialog({
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
-  const t = useTranslations('dialogs.deleteAccount')
-  const tForms = useTranslations('forms')
-  const tMsg = useTranslations('messages')
+  const t = useTranslations("dialogs.deleteAccount")
+  const tForms = useTranslations("forms")
+  const tMsg = useTranslations("messages")
 
   const handleDelete = async () => {
     setLoading(true)
@@ -56,28 +56,27 @@ export function DeleteAccountDialog({
 
       // Show success toast with undo option
       toast({
-        title: tMsg('success'),
-        description: t('message'),
+        title: tMsg("success"),
+        description: t("message"),
         action: (
           <ToastAction
             altText="Undo delete"
             onClick={async () => {
               try {
-                const { error: undoError } = await supabase
-                  .from("accounts")
-                  .insert(deletedAccount)
+                const { error: undoError } = await supabase.from("accounts").insert(deletedAccount)
 
                 if (undoError) throw undoError
 
                 toast({
                   title: "Account restored",
-                  description: "The account has been restored successfully. Note: Associated transactions cannot be recovered.",
+                  description:
+                    "The account has been restored successfully. Note: Associated transactions cannot be recovered.",
                 })
 
                 router.refresh()
               } catch (undoError: any) {
                 toast({
-                  title: tMsg('error'),
+                  title: tMsg("error"),
                   description: "Failed to restore account",
                   variant: "destructive",
                 })
@@ -93,8 +92,8 @@ export function DeleteAccountDialog({
       router.refresh()
     } catch (error: any) {
       toast({
-        title: tMsg('error'),
-        description: error.message || tMsg('error'),
+        title: tMsg("error"),
+        description: error.message || tMsg("error"),
         variant: "destructive",
       })
     } finally {
@@ -108,27 +107,24 @@ export function DeleteAccountDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            {t('title')}
+            {t("title")}
           </DialogTitle>
           <DialogDescription>
-            {t('message')} &quot;{account.name}&quot;?
+            {t("message")} &quot;{account.name}&quot;?
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-          <p className="text-sm text-muted-foreground">
-            {t('description')}
-          </p>
+          <p className="text-sm text-muted-foreground">{t("description")}</p>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {tForms('cancel')}
+            {tForms("cancel")}
           </Button>
           <Button variant="destructive" onClick={handleDelete} disabled={loading}>
-            {loading ? tForms('deleting') : t('title')}
+            {loading ? tForms("deleting") : t("title")}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   )
 }
-

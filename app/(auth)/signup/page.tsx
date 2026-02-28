@@ -8,7 +8,14 @@ import { createBrowserClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import { Wallet, Eye, EyeOff, Check, X, Sparkles } from "lucide-react"
 import { createDemoSession } from "@/app/actions/auth"
@@ -23,7 +30,7 @@ export default function SignupPage() {
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
-  const t = useTranslations('auth.signup')
+  const t = useTranslations("auth.signup")
   const [isDemoLoading, setIsDemoLoading] = useState(false)
   const DEMO_TIMEOUT_MS = 30000
 
@@ -133,7 +140,8 @@ export default function SignupPage() {
 
       toast({
         title: "Success!",
-        description: "Your account has been created. Please check your email to verify your account.",
+        description:
+          "Your account has been created. Please check your email to verify your account.",
       })
 
       router.push("/login")
@@ -155,15 +163,13 @@ export default function SignupPage() {
           <div className="flex justify-center mb-4">
             <Wallet className="h-12 w-12 text-primary" />
           </div>
-          <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
-          <CardDescription>
-            {t('subtitle')}
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">{t("title")}</CardTitle>
+          <CardDescription>{t("subtitle")}</CardDescription>
         </CardHeader>
         <form onSubmit={handleSignup}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">{t('email')}</Label>
+              <Label htmlFor="email">{t("email")}</Label>
               <Input
                 id="email"
                 type="email"
@@ -174,7 +180,7 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">{t('password')}</Label>
+              <Label htmlFor="password">{t("password")}</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -190,35 +196,61 @@ export default function SignupPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
               {password && (
                 <div className="space-y-1 p-3 rounded-md bg-muted/50 text-xs">
                   <p className="font-medium mb-1.5">Password must contain:</p>
                   <div className="space-y-1">
-                    <div className={`flex items-center gap-1.5 ${passwordRequirements.minLength ? 'text-green-600' : 'text-muted-foreground'}`}>
-                      {passwordRequirements.minLength ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                    <div
+                      className={`flex items-center gap-1.5 ${passwordRequirements.minLength ? "text-green-600" : "text-muted-foreground"}`}
+                    >
+                      {passwordRequirements.minLength ? (
+                        <Check className="h-3.5 w-3.5" />
+                      ) : (
+                        <X className="h-3.5 w-3.5" />
+                      )}
                       <span>At least 8 characters</span>
                     </div>
-                    <div className={`flex items-center gap-1.5 ${passwordRequirements.hasUppercase ? 'text-green-600' : 'text-muted-foreground'}`}>
-                      {passwordRequirements.hasUppercase ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                    <div
+                      className={`flex items-center gap-1.5 ${passwordRequirements.hasUppercase ? "text-green-600" : "text-muted-foreground"}`}
+                    >
+                      {passwordRequirements.hasUppercase ? (
+                        <Check className="h-3.5 w-3.5" />
+                      ) : (
+                        <X className="h-3.5 w-3.5" />
+                      )}
                       <span>One uppercase letter (A-Z)</span>
                     </div>
-                    <div className={`flex items-center gap-1.5 ${passwordRequirements.hasLowercase ? 'text-green-600' : 'text-muted-foreground'}`}>
-                      {passwordRequirements.hasLowercase ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                    <div
+                      className={`flex items-center gap-1.5 ${passwordRequirements.hasLowercase ? "text-green-600" : "text-muted-foreground"}`}
+                    >
+                      {passwordRequirements.hasLowercase ? (
+                        <Check className="h-3.5 w-3.5" />
+                      ) : (
+                        <X className="h-3.5 w-3.5" />
+                      )}
                       <span>One lowercase letter (a-z)</span>
                     </div>
-                    <div className={`flex items-center gap-1.5 ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-muted-foreground'}`}>
-                      {passwordRequirements.hasNumber ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                    <div
+                      className={`flex items-center gap-1.5 ${passwordRequirements.hasNumber ? "text-green-600" : "text-muted-foreground"}`}
+                    >
+                      {passwordRequirements.hasNumber ? (
+                        <Check className="h-3.5 w-3.5" />
+                      ) : (
+                        <X className="h-3.5 w-3.5" />
+                      )}
                       <span>One number (0-9)</span>
                     </div>
-                    <div className={`flex items-center gap-1.5 ${passwordRequirements.hasSpecial ? 'text-green-600' : 'text-muted-foreground'}`}>
-                      {passwordRequirements.hasSpecial ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                    <div
+                      className={`flex items-center gap-1.5 ${passwordRequirements.hasSpecial ? "text-green-600" : "text-muted-foreground"}`}
+                    >
+                      {passwordRequirements.hasSpecial ? (
+                        <Check className="h-3.5 w-3.5" />
+                      ) : (
+                        <X className="h-3.5 w-3.5" />
+                      )}
                       <span>One special character (!@#$...)</span>
                     </div>
                   </div>
@@ -226,7 +258,7 @@ export default function SignupPage() {
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
+              <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -253,12 +285,12 @@ export default function SignupPage() {
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? t('creatingAccount') : t('signUp')}
+              {loading ? t("creatingAccount") : t("signUp")}
             </Button>
             <p className="text-sm text-center text-muted-foreground">
-              {t('haveAccount')}{" "}
+              {t("haveAccount")}{" "}
               <Link href="/login" className="text-primary hover:underline">
-                {t('signIn')}
+                {t("signIn")}
               </Link>
             </p>
           </CardFooter>
@@ -270,9 +302,7 @@ export default function SignupPage() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or try it out
-              </span>
+              <span className="bg-background px-2 text-muted-foreground">Or try it out</span>
             </div>
           </div>
 

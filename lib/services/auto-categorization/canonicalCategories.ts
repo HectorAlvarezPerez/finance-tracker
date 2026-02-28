@@ -482,7 +482,16 @@ export const CANONICAL_CATEGORIES: CanonicalCategoryDefinition[] = [
   {
     canonicalKey: "TREATS",
     intent: "expense",
-    keywords: ["capricho", "antojo", "treat", "indulgence", "snack", "helado", "bubble tea", "boba"],
+    keywords: [
+      "capricho",
+      "antojo",
+      "treat",
+      "indulgence",
+      "snack",
+      "helado",
+      "bubble tea",
+      "boba",
+    ],
     amountHints: { negative: 0.2 },
     minConfidence: 1,
   },
@@ -561,7 +570,13 @@ export const CANONICAL_CATEGORIES: CanonicalCategoryDefinition[] = [
   {
     canonicalKey: "INCOME_GIFTS_RECEIVED",
     intent: "income",
-    keywords: ["regalo recibido", "gift received", "regalo de", "donation received", "virement recu"],
+    keywords: [
+      "regalo recibido",
+      "gift received",
+      "regalo de",
+      "donation received",
+      "virement recu",
+    ],
     amountHints: { positive: 0.25 },
     minConfidence: 0.95,
   },

@@ -3,8 +3,7 @@ import { redirect } from "next/navigation"
 import { DashboardWrapper } from "@/components/dashboard/dashboard-wrapper"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 
-
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function DashboardPage() {
   const supabase = await createServerClient()
@@ -27,4 +26,3 @@ export default async function DashboardPage() {
     </div>
   )
 }
-

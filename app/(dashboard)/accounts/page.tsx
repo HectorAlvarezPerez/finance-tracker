@@ -1,15 +1,15 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { getTranslations } from 'next-intl/server'
+import { getTranslations } from "next-intl/server"
 import { AccountsList } from "@/components/accounts/accounts-list"
 import { AddAccountDialog } from "@/components/accounts/add-account-dialog"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function AccountsPage() {
   const supabase = await createServerClient()
-  const t = await getTranslations('accounts')
-  
+  const t = await getTranslations("accounts")
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -28,10 +28,8 @@ export default async function AccountsPage() {
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-3xl font-bold">{t('title')}</h1>
-          <p className="text-muted-foreground">
-            {t('subtitle')}
-          </p>
+          <h1 className="text-3xl font-bold">{t("title")}</h1>
+          <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
         <AddAccountDialog userId={user.id} />
       </div>

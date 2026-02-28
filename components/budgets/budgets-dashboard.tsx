@@ -301,14 +301,18 @@ export function BudgetsDashboard({ userId }: { userId: string }) {
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardContent className="p-4">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">Total presupuestado</p>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+              Total presupuestado
+            </p>
             <p className="mt-1 text-xl font-semibold">{formatEur(data?.totals.budgeted ?? 0)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Total gastado</p>
-            <p className="mt-1 text-xl font-semibold text-red-600">{formatEur(data?.totals.spent ?? 0)}</p>
+            <p className="mt-1 text-xl font-semibold text-red-600">
+              {formatEur(data?.totals.spent ?? 0)}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -328,7 +332,9 @@ export function BudgetsDashboard({ userId }: { userId: string }) {
           {error && data && (
             <Card className="border-destructive/40">
               <CardContent className="flex flex-wrap items-center justify-between gap-2 p-3">
-                <p className="text-sm text-destructive">Error actualizando datos. Mostrando ultimo estado valido.</p>
+                <p className="text-sm text-destructive">
+                  Error actualizando datos. Mostrando ultimo estado valido.
+                </p>
                 <Button variant="outline" size="sm" onClick={retry}>
                   Reintentar
                 </Button>
@@ -378,7 +384,9 @@ export function BudgetsDashboard({ userId }: { userId: string }) {
                     }
                   }}
                   className={`rounded-xl border bg-card p-4 text-left transition hover:border-primary/60 hover:shadow-sm ${
-                    selectedBudgetId === item.budget.id ? "border-primary/60 shadow-sm" : "border-border"
+                    selectedBudgetId === item.budget.id
+                      ? "border-primary/60 shadow-sm"
+                      : "border-border"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -388,16 +396,22 @@ export function BudgetsDashboard({ userId }: { userId: string }) {
                       </p>
                       <p className="text-xs text-muted-foreground">{periodLabel}</p>
                     </div>
-                    <Badge className={getStatusClassName(item.status)}>{getStatusLabel(item.status)}</Badge>
+                    <Badge className={getStatusClassName(item.status)}>
+                      {getStatusLabel(item.status)}
+                    </Badge>
                   </div>
 
                   <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
                     <div>
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Presupuesto</p>
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                        Presupuesto
+                      </p>
                       <p className="font-semibold">{formatEur(Number(item.budget.amount))}</p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Gastado</p>
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                        Gastado
+                      </p>
                       <p className="font-semibold text-red-600">{formatEur(item.spent)}</p>
                     </div>
                   </div>
@@ -411,7 +425,9 @@ export function BudgetsDashboard({ userId }: { userId: string }) {
                   </div>
 
                   <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-                    <p className={`text-sm font-medium ${item.remaining < 0 ? "text-red-600" : "text-emerald-600"}`}>
+                    <p
+                      className={`text-sm font-medium ${item.remaining < 0 ? "text-red-600" : "text-emerald-600"}`}
+                    >
                       {item.remaining < 0 ? "Excedido" : "Disponible"}: {formatEur(item.remaining)}
                     </p>
                     <Button
@@ -460,7 +476,8 @@ export function BudgetsDashboard({ userId }: { userId: string }) {
               <DialogHeader>
                 <DialogTitle>Detalle de presupuesto</DialogTitle>
                 <DialogDescription>
-                  Informacion detallada para {selectedProgress.budget.categories?.name ?? "la categoria"}.
+                  Informacion detallada para{" "}
+                  {selectedProgress.budget.categories?.name ?? "la categoria"}.
                 </DialogDescription>
               </DialogHeader>
               <BudgetDetailPanel

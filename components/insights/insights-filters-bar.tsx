@@ -47,7 +47,9 @@ export function InsightsFiltersBar({
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
           <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Year</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Year
+            </p>
             <Select value={String(year)} onValueChange={(value) => onYearChange(Number(value))}>
               <SelectTrigger className="h-11 w-full min-w-0 sm:w-[140px]">
                 <SelectValue placeholder="Year" />
@@ -63,7 +65,9 @@ export function InsightsFiltersBar({
           </div>
 
           <div className="space-y-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Month</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Month
+            </p>
             <Select value={String(month)} onValueChange={(value) => onMonthChange(Number(value))}>
               <SelectTrigger className="h-11 w-full min-w-0 sm:w-[180px]">
                 <SelectValue placeholder="Month" />

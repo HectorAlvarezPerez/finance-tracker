@@ -118,14 +118,12 @@ export function CompactLegend({
 
   return (
     <div className={cn("space-y-2", className)}>
-      <div
-        className={cn(
-          "space-y-1",
-          expanded ? "max-h-[180px] overflow-auto pr-1" : undefined
-        )}
-      >
+      <div className={cn("space-y-1", expanded ? "max-h-[180px] overflow-auto pr-1" : undefined)}>
         {visibleItems.map((item) => (
-          <div key={item.key} className="flex items-center justify-between gap-2 text-xs sm:text-sm">
+          <div
+            key={item.key}
+            className="flex items-center justify-between gap-2 text-xs sm:text-sm"
+          >
             <span className="flex min-w-0 items-center gap-2">
               <span
                 className="h-2.5 w-2.5 shrink-0 rounded-full"

@@ -269,9 +269,6 @@ export function normalizeCategoryRelation(value: unknown): CategoryRow | null {
   return (value as CategoryRow | null) ?? null
 }
 
-export function getBudgetKey(input: {
-  period_type: BudgetPeriodType
-  category_id: string
-}) {
+export function getBudgetKey(input: { period_type: BudgetPeriodType; category_id: string }) {
   return `${input.period_type}:${input.category_id}`
 }

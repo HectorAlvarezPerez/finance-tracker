@@ -83,14 +83,15 @@ export function InsightsDashboard({ userId }: { userId: string }) {
 
   const periodLabel = data?.period.label ?? getMonthLabel(selectedYear, selectedMonth)
 
-  const topCategory =
-    data?.categoryDistribution.items.find((item) => item.name !== "Other") ?? null
+  const topCategory = data?.categoryDistribution.items.find((item) => item.name !== "Other") ?? null
 
   return (
     <div className="container mx-auto space-y-5 overflow-x-hidden px-3 py-4 sm:space-y-6 sm:px-4 md:px-6">
       <div>
         <h1 className="text-2xl font-bold sm:text-3xl">Analytics & Insights</h1>
-        <p className="text-muted-foreground">Comprehensive analysis of your financial health and spending patterns</p>
+        <p className="text-muted-foreground">
+          Comprehensive analysis of your financial health and spending patterns
+        </p>
       </div>
 
       <InsightsFiltersBar

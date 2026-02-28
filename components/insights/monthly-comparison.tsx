@@ -25,20 +25,20 @@ export function MonthlyComparison({
   historicalTransactions.forEach((t) => {
     const month = t.date.substring(0, 7)
     const current = monthlyData.get(month) || { income: 0, expenses: 0 }
-    
+
     if (t.amount > 0) {
       current.income += t.amount
     } else {
       current.expenses += Math.abs(t.amount)
     }
-    
+
     monthlyData.set(month, current)
   })
 
   // Process current month
   const currentMonth = new Date().toISOString().substring(0, 7)
   const currentData = { income: 0, expenses: 0 }
-  
+
   currentTransactions.forEach((t) => {
     if (t.amount > 0) {
       currentData.income += t.amount
@@ -46,7 +46,7 @@ export function MonthlyComparison({
       currentData.expenses += Math.abs(t.amount)
     }
   })
-  
+
   monthlyData.set(currentMonth, currentData)
 
   // Convert to array and sort

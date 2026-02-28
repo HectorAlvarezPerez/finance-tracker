@@ -13,7 +13,7 @@ export function InitDefaultData({ userId, locale }: { userId: string; locale?: s
       const storageKey = `categories_initialized_${userId}`
       const alreadyChecked = localStorage.getItem(storageKey)
 
-      if (alreadyChecked === 'true') {
+      if (alreadyChecked === "true") {
         setInitialized(true)
         return
       }
@@ -26,31 +26,31 @@ export function InitDefaultData({ userId, locale }: { userId: string; locale?: s
 
         // Check if user already has categories
         const { data: existingCategories, error: fetchError } = await supabase
-          .from('categories')
-          .select('id')
-          .eq('user_id', userId)
+          .from("categories")
+          .select("id")
+          .eq("user_id", userId)
           .limit(1)
 
         if (fetchError) {
-          console.error('Error checking categories:', fetchError)
+          console.error("Error checking categories:", fetchError)
           // Mark as checked even on error to avoid infinite retries
-          localStorage.setItem(storageKey, 'true')
+          localStorage.setItem(storageKey, "true")
           setInitialized(true)
           return
         }
 
         // If user already has categories, don't create defaults
         if (existingCategories && existingCategories.length > 0) {
-          localStorage.setItem(storageKey, 'true')
+          localStorage.setItem(storageKey, "true")
           setInitialized(true)
           return
         }
 
         // Get default categories based on locale (default to Spanish)
-        const defaultCategories = getDefaultCategories(locale || 'es')
+        const defaultCategories = getDefaultCategories(locale || "es")
 
         // Prepare categories for insertion
-        const categoriesToInsert = defaultCategories.map(cat => ({
+        const categoriesToInsert = defaultCategories.map((cat) => ({
           user_id: userId,
           name: cat.name,
           type: cat.type,
@@ -59,23 +59,21 @@ export function InitDefaultData({ userId, locale }: { userId: string; locale?: s
         }))
 
         // Insert categories in a single batch
-        const { error } = await supabase
-          .from('categories')
-          .insert(categoriesToInsert as any)
+        const { error } = await supabase.from("categories").insert(categoriesToInsert as any)
 
         if (error) {
-          console.error('Error creating default categories:', error)
+          console.error("Error creating default categories:", error)
         } else {
-          console.log('✅ Default categories created successfully')
+          console.log("✅ Default categories created successfully")
         }
 
         // Mark as initialized regardless of success/failure to avoid retries
-        localStorage.setItem(storageKey, 'true')
+        localStorage.setItem(storageKey, "true")
         setInitialized(true)
       } catch (error) {
-        console.error('Error initializing default data:', error)
+        console.error("Error initializing default data:", error)
         // Mark as checked even on error to avoid infinite loops
-        localStorage.setItem(`categories_initialized_${userId}`, 'true')
+        localStorage.setItem(`categories_initialized_${userId}`, "true")
         setInitialized(true)
       }
     }
@@ -93,4 +91,3 @@ export function InitDefaultData({ userId, locale }: { userId: string; locale?: s
   // This component doesn't render anything
   return null
 }
-

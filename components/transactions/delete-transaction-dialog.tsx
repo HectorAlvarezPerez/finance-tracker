@@ -36,32 +36,29 @@ export function DeleteTransactionDialog({
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
-  const t = useTranslations('dialogs.deleteTransaction')
-  const tForms = useTranslations('forms')
-  const tMsg = useTranslations('messages')
+  const t = useTranslations("dialogs.deleteTransaction")
+  const tForms = useTranslations("forms")
+  const tMsg = useTranslations("messages")
 
   const handleDelete = async () => {
     setLoading(true)
 
     try {
-      const { error } = await supabase
-        .from("transactions")
-        .delete()
-        .eq("id", transaction.id)
+      const { error } = await supabase.from("transactions").delete().eq("id", transaction.id)
 
       if (error) throw error
 
       toast({
-        title: tMsg('success'),
-        description: t('message'),
+        title: tMsg("success"),
+        description: t("message"),
       })
 
       onOpenChange(false)
       router.refresh()
     } catch (error: any) {
       toast({
-        title: tMsg('error'),
-        description: error.message || tMsg('error'),
+        title: tMsg("error"),
+        description: error.message || tMsg("error"),
         variant: "destructive",
       })
     } finally {
@@ -75,44 +72,42 @@ export function DeleteTransactionDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            {t('title')}
+            {t("title")}
           </DialogTitle>
-          <DialogDescription>
-            {t('message')}
-          </DialogDescription>
+          <DialogDescription>{t("message")}</DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <div className="rounded-lg border p-4 space-y-2">
             <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">{tForms('description')}:</span>
+              <span className="text-sm text-muted-foreground">{tForms("description")}:</span>
               <span className="text-sm font-medium">{transaction.description}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">{tForms('amount')}:</span>
-              <span className={`text-sm font-semibold ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"}`}>
+              <span className="text-sm text-muted-foreground">{tForms("amount")}:</span>
+              <span
+                className={`text-sm font-semibold ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"}`}
+              >
                 {formatCurrency(transaction.amount)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">{tForms('date')}:</span>
+              <span className="text-sm text-muted-foreground">{tForms("date")}:</span>
               <span className="text-sm">{formatDate(transaction.date, "long")}</span>
             </div>
             {transaction.categories && (
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">{tForms('category')}:</span>
+                <span className="text-sm text-muted-foreground">{tForms("category")}:</span>
                 <span className="text-sm">{transaction.categories.name}</span>
               </div>
             )}
             {transaction.accounts && (
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">{tForms('account')}:</span>
+                <span className="text-sm text-muted-foreground">{tForms("account")}:</span>
                 <span className="text-sm">{transaction.accounts.name}</span>
               </div>
             )}
           </div>
-          <p className="text-sm text-muted-foreground mt-4">
-            {t('description')}
-          </p>
+          <p className="text-sm text-muted-foreground mt-4">{t("description")}</p>
         </div>
         <DialogFooter>
           <Button
@@ -121,15 +116,10 @@ export function DeleteTransactionDialog({
             onClick={() => onOpenChange(false)}
             disabled={loading}
           >
-            {tForms('cancel')}
+            {tForms("cancel")}
           </Button>
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={loading}
-          >
-            {loading ? tForms('deleting') : t('title')}
+          <Button type="button" variant="destructive" onClick={handleDelete} disabled={loading}>
+            {loading ? tForms("deleting") : t("title")}
           </Button>
         </DialogFooter>
       </DialogContent>

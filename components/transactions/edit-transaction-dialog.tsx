@@ -58,8 +58,8 @@ export function EditTransactionDialog({
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
-  const t = useTranslations('dialogs.editTransaction')
-  const tForms = useTranslations('forms')
+  const t = useTranslations("dialogs.editTransaction")
+  const tForms = useTranslations("forms")
 
   useEffect(() => {
     setDescription(transaction.description)
@@ -112,14 +112,12 @@ export function EditTransactionDialog({
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{t('title')}</DialogTitle>
-            <DialogDescription>
-              {t('subtitle')}
-            </DialogDescription>
+            <DialogTitle>{t("title")}</DialogTitle>
+            <DialogDescription>{t("subtitle")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-description">{tForms('description')}</Label>
+              <Label htmlFor="edit-description">{tForms("description")}</Label>
               <Input
                 id="edit-description"
                 value={description}
@@ -128,7 +126,7 @@ export function EditTransactionDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-amount">{tForms('amount')}</Label>
+              <Label htmlFor="edit-amount">{tForms("amount")}</Label>
               <Input
                 id="edit-amount"
                 type="number"
@@ -139,7 +137,7 @@ export function EditTransactionDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-date">{tForms('date')}</Label>
+              <Label htmlFor="edit-date">{tForms("date")}</Label>
               <Input
                 id="edit-date"
                 type="date"
@@ -149,7 +147,7 @@ export function EditTransactionDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-account">{tForms('account')}</Label>
+              <Label htmlFor="edit-account">{tForms("account")}</Label>
               <Select value={accountId} onValueChange={setAccountId}>
                 <SelectTrigger>
                   <SelectValue />
@@ -165,7 +163,7 @@ export function EditTransactionDialog({
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="edit-category">{tForms('category')}</Label>
+                <Label htmlFor="edit-category">{tForms("category")}</Label>
                 {categoryId !== "none" && (
                   <Button
                     type="button"
@@ -181,10 +179,10 @@ export function EditTransactionDialog({
               </div>
               <Select value={categoryId} onValueChange={setCategoryId}>
                 <SelectTrigger>
-                  <SelectValue placeholder={tForms('selectCategory')} />
+                  <SelectValue placeholder={tForms("selectCategory")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">{tForms('noCategory')}</SelectItem>
+                  <SelectItem value="none">{tForms("noCategory")}</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
@@ -195,12 +193,8 @@ export function EditTransactionDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-notes">{tForms('notes')}</Label>
-              <Textarea
-                id="edit-notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
+              <Label htmlFor="edit-notes">{tForms("notes")}</Label>
+              <Textarea id="edit-notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
             </div>
           </div>
           <DialogFooter>
@@ -210,10 +204,10 @@ export function EditTransactionDialog({
               onClick={() => onOpenChange(false)}
               disabled={loading}
             >
-              {tForms('cancel')}
+              {tForms("cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? tForms('updating') : tForms('update')}
+              {loading ? tForms("updating") : tForms("update")}
             </Button>
           </DialogFooter>
         </form>
@@ -221,4 +215,3 @@ export function EditTransactionDialog({
     </Dialog>
   )
 }
-

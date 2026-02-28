@@ -33,19 +33,19 @@ const colorOptions = [
   { name: "Light Red", value: "#f87171" },
   { name: "Rose", value: "#f43f5e" },
   { name: "Light Rose", value: "#fb7185" },
-  
+
   // Oranges
   { name: "Orange", value: "#f97316" },
   { name: "Dark Orange", value: "#ea580c" },
   { name: "Light Orange", value: "#fb923c" },
-  
+
   // Ambers & Yellows
   { name: "Amber", value: "#f59e0b" },
   { name: "Dark Amber", value: "#d97706" },
   { name: "Light Amber", value: "#fbbf24" },
   { name: "Yellow", value: "#eab308" },
   { name: "Dark Yellow", value: "#ca8a04" },
-  
+
   // Limes & Greens
   { name: "Lime", value: "#84cc16" },
   { name: "Dark Lime", value: "#65a30d" },
@@ -53,7 +53,7 @@ const colorOptions = [
   { name: "Green", value: "#22c55e" },
   { name: "Dark Green", value: "#16a34a" },
   { name: "Light Green", value: "#4ade80" },
-  
+
   // Emeralds & Teals
   { name: "Emerald", value: "#10b981" },
   { name: "Dark Emerald", value: "#059669" },
@@ -61,7 +61,7 @@ const colorOptions = [
   { name: "Teal", value: "#14b8a6" },
   { name: "Dark Teal", value: "#0d9488" },
   { name: "Light Teal", value: "#2dd4bf" },
-  
+
   // Cyans & Skys
   { name: "Cyan", value: "#06b6d4" },
   { name: "Dark Cyan", value: "#0891b2" },
@@ -69,12 +69,12 @@ const colorOptions = [
   { name: "Sky", value: "#0ea5e9" },
   { name: "Dark Sky", value: "#0284c7" },
   { name: "Light Sky", value: "#38bdf8" },
-  
+
   // Blues
   { name: "Blue", value: "#3b82f6" },
   { name: "Dark Blue", value: "#2563eb" },
   { name: "Light Blue", value: "#60a5fa" },
-  
+
   // Indigos & Violets
   { name: "Indigo", value: "#6366f1" },
   { name: "Dark Indigo", value: "#4f46e5" },
@@ -82,7 +82,7 @@ const colorOptions = [
   { name: "Violet", value: "#8b5cf6" },
   { name: "Dark Violet", value: "#7c3aed" },
   { name: "Light Violet", value: "#a78bfa" },
-  
+
   // Purples & Fuchsias
   { name: "Purple", value: "#a855f7" },
   { name: "Dark Purple", value: "#9333ea" },
@@ -90,12 +90,12 @@ const colorOptions = [
   { name: "Fuchsia", value: "#d946ef" },
   { name: "Dark Fuchsia", value: "#c026d3" },
   { name: "Light Fuchsia", value: "#e879f9" },
-  
+
   // Pinks
   { name: "Pink", value: "#ec4899" },
   { name: "Dark Pink", value: "#db2777" },
   { name: "Light Pink", value: "#f472b6" },
-  
+
   // Browns, Stones & Grays
   { name: "Brown", value: "#92400e" },
   { name: "Stone", value: "#78716c" },
@@ -231,4 +231,3 @@ export function AddCategoryDialog({ userId }: { userId: string }) {
     </Dialog>
   )
 }
-

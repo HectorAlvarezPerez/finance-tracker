@@ -31,7 +31,10 @@ export function formatPercent(value: number, decimals: number = 2): string {
 }
 
 // Date formatting
-export function formatDate(date: Date | string, format: "short" | "medium" | "long" = "medium"): string {
+export function formatDate(
+  date: Date | string,
+  format: "short" | "medium" | "long" = "medium"
+): string {
   const dateObj = typeof date === "string" ? new Date(date) : date
 
   switch (format) {
@@ -124,19 +127,19 @@ export function generateRandomColor(): string {
     "#f87171", // red-400
     "#f43f5e", // rose-500
     "#fb7185", // rose-400
-    
+
     // Oranges
     "#ea580c", // orange-600
     "#f97316", // orange-500
     "#fb923c", // orange-400
-    
+
     // Ambers & Yellows
     "#d97706", // amber-600
     "#f59e0b", // amber-500
     "#fbbf24", // amber-400
     "#ca8a04", // yellow-600
     "#eab308", // yellow-500
-    
+
     // Limes & Greens
     "#65a30d", // lime-600
     "#84cc16", // lime-500
@@ -144,7 +147,7 @@ export function generateRandomColor(): string {
     "#16a34a", // green-600
     "#22c55e", // green-500
     "#4ade80", // green-400
-    
+
     // Emeralds & Teals
     "#059669", // emerald-600
     "#10b981", // emerald-500
@@ -152,7 +155,7 @@ export function generateRandomColor(): string {
     "#0d9488", // teal-600
     "#14b8a6", // teal-500
     "#2dd4bf", // teal-400
-    
+
     // Cyans & Skys
     "#0891b2", // cyan-600
     "#06b6d4", // cyan-500
@@ -160,12 +163,12 @@ export function generateRandomColor(): string {
     "#0284c7", // sky-600
     "#0ea5e9", // sky-500
     "#38bdf8", // sky-400
-    
+
     // Blues
     "#2563eb", // blue-600
     "#3b82f6", // blue-500
     "#60a5fa", // blue-400
-    
+
     // Indigos & Violets
     "#4f46e5", // indigo-600
     "#6366f1", // indigo-500
@@ -173,7 +176,7 @@ export function generateRandomColor(): string {
     "#7c3aed", // violet-600
     "#8b5cf6", // violet-500
     "#a78bfa", // violet-400
-    
+
     // Purples & Fuchsias
     "#9333ea", // purple-600
     "#a855f7", // purple-500
@@ -181,17 +184,17 @@ export function generateRandomColor(): string {
     "#c026d3", // fuchsia-600
     "#d946ef", // fuchsia-500
     "#e879f9", // fuchsia-400
-    
+
     // Pinks
     "#db2777", // pink-600
     "#ec4899", // pink-500
     "#f472b6", // pink-400
-    
+
     // Browns & Stones
     "#92400e", // amber-800 (brown)
     "#78716c", // stone-500
     "#a8a29e", // stone-400
-    
+
     // Slates & Grays
     "#475569", // slate-600
     "#64748b", // slate-500
@@ -207,4 +210,3 @@ export function parseCSVAmount(value: string): number {
   const parsed = parseFloat(cleaned)
   return isNaN(parsed) ? 0 : parsed
 }
-

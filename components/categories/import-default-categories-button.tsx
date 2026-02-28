@@ -10,8 +10,8 @@ import { getDefaultCategories } from "@/lib/data/default-categories"
 
 export function ImportDefaultCategoriesButton({
   userId,
-  locale = 'es',
-  hasCategories
+  locale = "es",
+  hasCategories,
 }: {
   userId: string
   locale?: string
@@ -35,7 +35,7 @@ export function ImportDefaultCategoriesButton({
       const defaultCategories = getDefaultCategories(locale)
 
       // Prepare for insertion
-      const categoriesToInsert = defaultCategories.map(cat => ({
+      const categoriesToInsert = defaultCategories.map((cat) => ({
         user_id: userId,
         name: cat.name,
         type: cat.type,
@@ -44,9 +44,7 @@ export function ImportDefaultCategoriesButton({
       }))
 
       // Insert categories
-      const { error } = await supabase
-        .from('categories')
-        .insert(categoriesToInsert as any)
+      const { error } = await supabase.from("categories").insert(categoriesToInsert as any)
 
       if (error) throw error
 
@@ -68,15 +66,9 @@ export function ImportDefaultCategoriesButton({
   }
 
   return (
-    <Button
-      onClick={handleImport}
-      disabled={loading}
-      variant="outline"
-      className="gap-2"
-    >
+    <Button onClick={handleImport} disabled={loading} variant="outline" className="gap-2">
       <Download className="h-4 w-4" />
       {loading ? "Importando..." : "Importar Categorías Predeterminadas"}
     </Button>
   )
 }
-

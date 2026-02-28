@@ -1,12 +1,12 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { getTranslations } from 'next-intl/server'
+import { getTranslations } from "next-intl/server"
 import { TransactionsTable } from "@/components/transactions/transactions-table"
 import { TransactionFilters } from "@/components/transactions/transaction-filters"
 import { AddTransactionDialog } from "@/components/transactions/add-transaction-dialog"
 import { SmartCSVImportDialog } from "@/components/transactions/smart-csv-import-dialog"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function TransactionsPage({
   searchParams,
@@ -14,7 +14,7 @@ export default async function TransactionsPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const supabase = await createServerClient()
-  const t = await getTranslations('transactions')
+  const t = await getTranslations("transactions")
 
   const {
     data: { user },
@@ -64,7 +64,9 @@ export default async function TransactionsPage({
   // Build query based on filters
   let query = supabase
     .from("transactions")
-    .select("id, user_id, description, amount, currency, date, category_id, account_id, notes, created_at, updated_at, categories(name, color, icon), accounts(name, type)")
+    .select(
+      "id, user_id, description, amount, currency, date, category_id, account_id, notes, created_at, updated_at, categories(name, color, icon), accounts(name, type)"
+    )
     .eq("user_id", user.id)
     .order("date", { ascending: false })
 
@@ -114,17 +116,15 @@ export default async function TransactionsPage({
   const transactions = rawTransactions?.map((t: any) => ({
     ...t,
     categories: Array.isArray(t.categories) ? t.categories[0] : t.categories,
-    accounts: Array.isArray(t.accounts) ? t.accounts[0] : t.accounts
+    accounts: Array.isArray(t.accounts) ? t.accounts[0] : t.accounts,
   }))
 
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">{t('title')}</h1>
-          <p className="text-muted-foreground">
-            {t('subtitle')}
-          </p>
+          <h1 className="text-3xl font-bold">{t("title")}</h1>
+          <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
         <div className="flex w-full flex-wrap gap-2 sm:w-auto">
           <SmartCSVImportDialog
@@ -141,10 +141,7 @@ export default async function TransactionsPage({
       </div>
 
       <div className="sticky top-0 z-30 -mx-4 border-y bg-background/95 px-4 py-3 backdrop-blur md:static md:mx-0 md:border-0 md:bg-transparent md:px-0 md:py-0">
-        <TransactionFilters
-          accounts={accounts || []}
-          categories={categories || []}
-        />
+        <TransactionFilters accounts={accounts || []} categories={categories || []} />
       </div>
 
       <TransactionsTable

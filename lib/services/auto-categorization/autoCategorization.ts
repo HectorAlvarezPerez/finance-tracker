@@ -118,7 +118,16 @@ const STOP_WORDS = new Set([
 ])
 
 const MOBILE_SIGNAL_TERMS = buildTerms(["movil", "mobile", "linea", "forfait", "sim", "roaming"])
-const TELCO_TERMS = buildTerms(["orange", "free", "sfr", "bouygues", "movistar", "vodafone", "masmovil", "digi"])
+const TELCO_TERMS = buildTerms([
+  "orange",
+  "free",
+  "sfr",
+  "bouygues",
+  "movistar",
+  "vodafone",
+  "masmovil",
+  "digi",
+])
 const AMAZON_TERMS = buildTerms(["amazon"])
 const FLIGHT_TERMS = buildTerms(["flight", "vuelo", "vuelos", "airline", "boarding", "aeropuerto"])
 
@@ -210,7 +219,10 @@ export function categorizeTransaction(
 ): CategorizationResult {
   const normalizedDescription = normalizeText(transaction.description)
   const normalizedMerchant = normalizeText(transaction.merchant)
-  const searchableText = [normalizedDescription, normalizedMerchant].filter(Boolean).join(" ").trim()
+  const searchableText = [normalizedDescription, normalizedMerchant]
+    .filter(Boolean)
+    .join(" ")
+    .trim()
   const amount = Number(transaction.amount ?? 0)
 
   if (!searchableText) {
@@ -321,13 +333,15 @@ interface ScoreParams {
 }
 
 function scoreCanonicalForTransaction(params: ScoreParams): number {
-  const { config, canonical, amount, searchableTokens, searchableTokenSet, merchantTokenSet } = params
+  const { config, canonical, amount, searchableTokens, searchableTokenSet, merchantTokenSet } =
+    params
   const { definition } = canonical
 
   let score = 0
 
   const merchantHits = countTermMatches(canonical.merchantTerms, merchantTokenSet)
-  const merchantFallbackHits = merchantHits > 0 ? 0 : countTermMatches(canonical.merchantTerms, searchableTokenSet)
+  const merchantFallbackHits =
+    merchantHits > 0 ? 0 : countTermMatches(canonical.merchantTerms, searchableTokenSet)
   if (merchantHits > 0) {
     score += 0.9
   } else if (merchantFallbackHits > 0) {
@@ -375,7 +389,10 @@ function scoreCanonicalForTransaction(params: ScoreParams): number {
     score += 0.3
   }
 
-  if (definition.canonicalKey === "TRAVEL_FLIGHTS" && countTermMatches(FLIGHT_TERMS, searchableTokenSet) > 0) {
+  if (
+    definition.canonicalKey === "TRAVEL_FLIGHTS" &&
+    countTermMatches(FLIGHT_TERMS, searchableTokenSet) > 0
+  ) {
     score += 0.2
   }
 
@@ -399,7 +416,10 @@ function matchesIntent(intent: CanonicalIntent, categoryType: UserCategory["type
   return categoryType === "income"
 }
 
-function scoreCategoryAffinity(category: IndexedUserCategory, canonical: IndexedCanonicalCategory): number {
+function scoreCategoryAffinity(
+  category: IndexedUserCategory,
+  canonical: IndexedCanonicalCategory
+): number {
   const overlapCount = intersectionSize(category.mappingTokens, canonical.mappingTokens)
   const overlapRatio = overlapCount / Math.max(1, category.mappingTokens.size)
 
@@ -480,7 +500,8 @@ function countFuzzyKeywordMatches(
     }
 
     const fuzzyMatch = searchableTokens.some(
-      (searchableToken) => searchableToken.length >= 4 && diceCoefficient(searchableToken, token) >= 0.9
+      (searchableToken) =>
+        searchableToken.length >= 4 && diceCoefficient(searchableToken, token) >= 0.9
     )
 
     if (fuzzyMatch) {
@@ -591,7 +612,7 @@ function diceCoefficient(left: string, right: string): number {
     matches += Math.min(leftCount, rightCount)
   }
 
-  const total = (left.length - 1) + (right.length - 1)
+  const total = left.length - 1 + (right.length - 1)
   if (total === 0) {
     return 0
   }

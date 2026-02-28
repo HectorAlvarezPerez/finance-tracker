@@ -6,7 +6,14 @@ import { createBrowserClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
 import { Lock, AlertCircle } from "lucide-react"
 import Link from "next/link"
@@ -42,13 +49,11 @@ export default function ResetPasswordPage() {
         const searchParams = currentUrl.searchParams
         const hashParams = new URLSearchParams(currentUrl.hash.slice(1))
 
-        const errorParam =
-          searchParams.get("error") || hashParams.get("error")
+        const errorParam = searchParams.get("error") || hashParams.get("error")
         if (errorParam) {
           console.error(
             "Reset password error:",
-            searchParams.get("error_description") ||
-              hashParams.get("error_description")
+            searchParams.get("error_description") || hashParams.get("error_description")
           )
           setValidToken(false)
           return
@@ -95,13 +100,13 @@ export default function ResetPasswordPage() {
         setValidToken(false)
       } catch (error) {
         console.error("Reset password session error:", error)
-    setValidToken(false)
-  } finally {
-    setChecking(false)
-  }
-}
+        setValidToken(false)
+      } finally {
+        setChecking(false)
+      }
+    }
 
-processRecovery()
+    processRecovery()
   }, [supabase, router])
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -176,9 +181,7 @@ processRecovery()
               <AlertCircle className="h-12 w-12 text-destructive" />
             </div>
             <CardTitle className="text-2xl font-bold">Invalid or Expired Link</CardTitle>
-            <CardDescription>
-              This password reset link is invalid or has expired.
-            </CardDescription>
+            <CardDescription>This password reset link is invalid or has expired.</CardDescription>
           </CardHeader>
           <CardFooter className="flex justify-center">
             <Link href="/login">
@@ -198,9 +201,7 @@ processRecovery()
             <Lock className="h-12 w-12 text-primary" />
           </div>
           <CardTitle className="text-2xl font-bold">Reset Password</CardTitle>
-          <CardDescription>
-            Enter your new password below
-          </CardDescription>
+          <CardDescription>Enter your new password below</CardDescription>
         </CardHeader>
         <form onSubmit={handleResetPassword}>
           <CardContent className="space-y-4">
@@ -215,9 +216,7 @@ processRecovery()
                 required
                 minLength={6}
               />
-              <p className="text-xs text-muted-foreground">
-                At least 6 characters
-              </p>
+              <p className="text-xs text-muted-foreground">At least 6 characters</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirm-password">Confirm Password</Label>
@@ -236,7 +235,10 @@ processRecovery()
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Resetting..." : "Reset Password"}
             </Button>
-            <Link href="/login" className="text-sm text-center text-muted-foreground hover:text-primary">
+            <Link
+              href="/login"
+              className="text-sm text-center text-muted-foreground hover:text-primary"
+            >
               Back to Login
             </Link>
           </CardFooter>

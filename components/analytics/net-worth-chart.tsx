@@ -58,7 +58,8 @@ export function NetWorthChart({
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">
-          {t("current")}: <span className="font-semibold text-foreground">{formatCurrency(currentValue)}</span>
+          {t("current")}:{" "}
+          <span className="font-semibold text-foreground">{formatCurrency(currentValue)}</span>
         </p>
       </div>
 
@@ -103,7 +104,9 @@ export function NetWorthChart({
                 return (
                   <TooltipCard
                     title={String(label)}
-                    rows={[{ id: "net-worth", label: t("netWorthLabel"), value: formatCurrency(value) }]}
+                    rows={[
+                      { id: "net-worth", label: t("netWorthLabel"), value: formatCurrency(value) },
+                    ]}
                   />
                 )
               }}

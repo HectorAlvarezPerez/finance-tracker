@@ -69,7 +69,10 @@ export function IncomeVsExpensesChart({
     >
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm">
         <p className="text-muted-foreground">
-          {t("avgNet")}: <span className="font-semibold text-foreground">{formatCurrency(totals.net / Math.max(chartData.length, 1))}</span>
+          {t("avgNet")}:{" "}
+          <span className="font-semibold text-foreground">
+            {formatCurrency(totals.net / Math.max(chartData.length, 1))}
+          </span>
         </p>
       </div>
 
@@ -130,8 +133,20 @@ export function IncomeVsExpensesChart({
                 )
               }}
             />
-            <Bar dataKey="income" fill={incomeFill} name={t("income")} radius={[10, 10, 0, 0]} maxBarSize={28} />
-            <Bar dataKey="expenses" fill={expensesFill} name={t("expenses")} radius={[10, 10, 0, 0]} maxBarSize={28} />
+            <Bar
+              dataKey="income"
+              fill={incomeFill}
+              name={t("income")}
+              radius={[10, 10, 0, 0]}
+              maxBarSize={28}
+            />
+            <Bar
+              dataKey="expenses"
+              fill={expensesFill}
+              name={t("expenses")}
+              radius={[10, 10, 0, 0]}
+              maxBarSize={28}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -153,7 +168,9 @@ export function IncomeVsExpensesChart({
           <p className="text-xs text-muted-foreground">{t("net")}</p>
           <p
             className="text-xl font-semibold"
-            style={{ color: totals.net >= 0 ? chartTokens.semantic.success : chartTokens.semantic.danger }}
+            style={{
+              color: totals.net >= 0 ? chartTokens.semantic.success : chartTokens.semantic.danger,
+            }}
           >
             {formatCurrency(totals.net)}
           </p>

@@ -13,20 +13,14 @@ import { useTranslations } from "next-intl"
 
 type Category = Database["public"]["Tables"]["categories"]["Row"]
 
-export function CategoriesList({
-  categories,
-  userId,
-}: {
-  categories: Category[]
-  userId: string
-}) {
+export function CategoriesList({ categories, userId }: { categories: Category[]; userId: string }) {
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
-  const t = useTranslations('categories')
+  const t = useTranslations("categories")
 
   // Filter categories based on search
-  const filteredCategories = categories.filter(c =>
+  const filteredCategories = categories.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -57,7 +51,7 @@ export function CategoriesList({
           size="icon"
           className="h-8 w-8 text-muted-foreground hover:text-foreground"
           onClick={() => setEditingCategory(category)}
-          title={t('edit')}
+          title={t("edit")}
         >
           <Edit className="h-4 w-4" />
         </Button>
@@ -66,7 +60,7 @@ export function CategoriesList({
           size="icon"
           className="h-8 w-8 text-destructive/70 hover:text-destructive hover:bg-destructive/10"
           onClick={() => setDeletingCategory(category)}
-          title={t('delete')}
+          title={t("delete")}
         >
           <Trash2 className="h-4 w-4" />
         </Button>
@@ -81,10 +75,8 @@ export function CategoriesList({
           <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
             <Tag className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">{t('noCategories')}</h3>
-          <p className="text-muted-foreground max-w-sm">
-            {t('createFirstCategory')}
-          </p>
+          <h3 className="text-xl font-semibold mb-2">{t("noCategories")}</h3>
+          <p className="text-muted-foreground max-w-sm">{t("createFirstCategory")}</p>
         </CardContent>
       </Card>
     )
@@ -96,7 +88,7 @@ export function CategoriesList({
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder={t('search')}
+          placeholder={t("search")}
           className="pl-9 bg-background"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -105,14 +97,18 @@ export function CategoriesList({
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Income Column */}
-        {(incomeCategories.length > 0 || (searchQuery && categories.some(c => c.type === 'income'))) && (
+        {(incomeCategories.length > 0 ||
+          (searchQuery && categories.some((c) => c.type === "income"))) && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-lg flex items-center gap-2 text-green-600">
                 <TrendingUp className="h-5 w-5" />
-                {t('income')}
+                {t("income")}
               </h3>
-              <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+              <Badge
+                variant="secondary"
+                className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+              >
                 {incomeCategories.length}
               </Badge>
             </div>
@@ -121,21 +117,27 @@ export function CategoriesList({
                 <CategoryCard key={category.id} category={category} />
               ))}
               {incomeCategories.length === 0 && searchQuery && (
-                <p className="text-sm text-muted-foreground italic text-center py-4">{t('noResults')}</p>
+                <p className="text-sm text-muted-foreground italic text-center py-4">
+                  {t("noResults")}
+                </p>
               )}
             </div>
           </div>
         )}
 
         {/* Expense Column */}
-        {(expenseCategories.length > 0 || (searchQuery && categories.some(c => c.type === 'expense'))) && (
+        {(expenseCategories.length > 0 ||
+          (searchQuery && categories.some((c) => c.type === "expense"))) && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-lg flex items-center gap-2 text-red-600">
                 <TrendingDown className="h-5 w-5" />
-                {t('expense')}
+                {t("expense")}
               </h3>
-              <Badge variant="secondary" className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+              <Badge
+                variant="secondary"
+                className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+              >
                 {expenseCategories.length}
               </Badge>
             </div>
@@ -144,30 +146,33 @@ export function CategoriesList({
                 <CategoryCard key={category.id} category={category} />
               ))}
               {expenseCategories.length === 0 && searchQuery && (
-                <p className="text-sm text-muted-foreground italic text-center py-4">{t('noResults')}</p>
+                <p className="text-sm text-muted-foreground italic text-center py-4">
+                  {t("noResults")}
+                </p>
               )}
             </div>
           </div>
         )}
 
         {/* Other Column */}
-        {(otherCategories.length > 0 || (searchQuery && categories.some(c => ['transfer', 'investment'].includes(c.type)))) && (
+        {(otherCategories.length > 0 ||
+          (searchQuery && categories.some((c) => ["transfer", "investment"].includes(c.type)))) && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-lg flex items-center gap-2 text-muted-foreground">
                 <MoreHorizontal className="h-5 w-5" />
                 Other
               </h3>
-              <Badge variant="secondary">
-                {otherCategories.length}
-              </Badge>
+              <Badge variant="secondary">{otherCategories.length}</Badge>
             </div>
             <div className="space-y-3">
               {otherCategories.map((category) => (
                 <CategoryCard key={category.id} category={category} />
               ))}
               {otherCategories.length === 0 && searchQuery && (
-                <p className="text-sm text-muted-foreground italic text-center py-4">{t('noResults')}</p>
+                <p className="text-sm text-muted-foreground italic text-center py-4">
+                  {t("noResults")}
+                </p>
               )}
             </div>
           </div>
@@ -176,7 +181,7 @@ export function CategoriesList({
 
       {searchQuery && filteredCategories.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">{t('noSearchResults')}</p>
+          <p className="text-muted-foreground">{t("noSearchResults")}</p>
         </div>
       )}
 
@@ -198,4 +203,3 @@ export function CategoriesList({
     </div>
   )
 }
-

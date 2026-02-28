@@ -1,6 +1,5 @@
 "use client"
 
-
 import { useState } from "react"
 import { createBrowserClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -22,10 +21,7 @@ interface ForgotPasswordDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function ForgotPasswordDialog({
-  open,
-  onOpenChange,
-}: ForgotPasswordDialogProps) {
+export function ForgotPasswordDialog({ open, onOpenChange }: ForgotPasswordDialogProps) {
   const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
@@ -85,7 +81,8 @@ export function ForgotPasswordDialog({
         if (error.status === 429 || message.includes("for security purposes")) {
           toast({
             title: "Email already sent",
-            description: "Please check your inbox and wait a moment before requesting another reset link.",
+            description:
+              "Please check your inbox and wait a moment before requesting another reset link.",
           })
           return
         }
@@ -162,9 +159,7 @@ export function ForgotPasswordDialog({
             <div className="mx-auto w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mb-4">
               <Mail className="h-6 w-6 text-green-600 dark:text-green-400" />
             </div>
-            <p className="text-sm text-muted-foreground">
-              Password reset email sent successfully!
-            </p>
+            <p className="text-sm text-muted-foreground">Password reset email sent successfully!</p>
           </div>
         )}
       </DialogContent>

@@ -27,7 +27,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { useTranslations } from "next-intl"
 
 export function AddHoldingDialog({ userId }: { userId: string }) {
-  const t = useTranslations('portfolio')
+  const t = useTranslations("portfolio")
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [name, setName] = useState("")
@@ -66,8 +66,8 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
       if (error) throw error
 
       toast({
-        title: t('success'),
-        description: t('addHoldingSuccess'),
+        title: t("success"),
+        description: t("addHoldingSuccess"),
       })
 
       setOpen(false)
@@ -80,8 +80,8 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
       router.refresh()
     } catch (error: any) {
       toast({
-        title: t('error'),
-        description: error.message || t('failedAddHolding'),
+        title: t("error"),
+        description: error.message || t("failedAddHolding"),
         variant: "destructive",
       })
     } finally {
@@ -94,20 +94,18 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
-          {t('addHolding')}
+          {t("addHolding")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{t('addHoldingTitle')}</DialogTitle>
-            <DialogDescription>
-              {t('addHoldingDescription')}
-            </DialogDescription>
+            <DialogTitle>{t("addHoldingTitle")}</DialogTitle>
+            <DialogDescription>{t("addHoldingDescription")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="name">{t('assetName')}</Label>
+              <Label htmlFor="name">{t("assetName")}</Label>
               <Input
                 id="name"
                 placeholder="e.g., iShares MSCI World ETF"
@@ -117,19 +115,17 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="symbol">{t('symbolOptional')}</Label>
+              <Label htmlFor="symbol">{t("symbolOptional")}</Label>
               <Input
                 id="symbol"
                 placeholder="e.g., IWDA, SPY, BTC"
                 value={symbol}
                 onChange={(e) => setSymbol(e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">
-                {t('symbolReferenceOnly')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t("symbolReferenceOnly")}</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="assetType">{t('assetType')}</Label>
+              <Label htmlFor="assetType">{t("assetType")}</Label>
               <Select value={assetType} onValueChange={setAssetType}>
                 <SelectTrigger>
                   <SelectValue />
@@ -145,7 +141,7 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="quantity">{t('numberOfShares')}</Label>
+              <Label htmlFor="quantity">{t("numberOfShares")}</Label>
               <Input
                 id="quantity"
                 type="number"
@@ -157,7 +153,7 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="avgBuyPrice">{t('avgBuyPricePerShare')}</Label>
+              <Label htmlFor="avgBuyPrice">{t("avgBuyPricePerShare")}</Label>
               <Input
                 id="avgBuyPrice"
                 type="number"
@@ -167,13 +163,11 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
                 onChange={(e) => setAvgBuyPrice(e.target.value)}
                 required
               />
-              <p className="text-xs text-muted-foreground">
-                {t('avgBuyPriceHelp')}
-              </p>
+              <p className="text-xs text-muted-foreground">{t("avgBuyPriceHelp")}</p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="weeklyQuantity">{t('weeklyQuantity')}</Label>
+                <Label htmlFor="weeklyQuantity">{t("weeklyQuantity")}</Label>
                 <Input
                   id="weeklyQuantity"
                   type="number"
@@ -185,7 +179,7 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="monthlyQuantity">{t('monthlyQuantity')}</Label>
+                <Label htmlFor="monthlyQuantity">{t("monthlyQuantity")}</Label>
                 <Input
                   id="monthlyQuantity"
                   type="number"
@@ -200,10 +194,10 @@ export function AddHoldingDialog({ userId }: { userId: string }) {
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              {t('cancel')}
+              {t("cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? t('adding') : t('addHolding')}
+              {loading ? t("adding") : t("addHolding")}
             </Button>
           </DialogFooter>
         </form>

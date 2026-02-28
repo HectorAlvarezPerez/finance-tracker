@@ -21,11 +21,13 @@ export async function getRules() {
 
   const { data, error } = await supabase
     .from("transaction_rules")
-    .select(`
+    .select(
+      `
       *,
       categories:category_id(id, name, color, icon),
       accounts:default_account_id(id, name, type)
-    `)
+    `
+    )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
 

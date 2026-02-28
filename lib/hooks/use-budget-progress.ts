@@ -86,11 +86,11 @@ async function fetchBudgetProgress(
     .not("category_id", "is", null)
     .order("date", { ascending: false })
 
-  const [{ data: categories, error: categoriesError }, { data: budgets, error: budgetsError }, { data: transactions, error: transactionsError }] = await Promise.all([
-    categoriesPromise,
-    budgetsQuery,
-    transactionsPromise,
-  ])
+  const [
+    { data: categories, error: categoriesError },
+    { data: budgets, error: budgetsError },
+    { data: transactions, error: transactionsError },
+  ] = await Promise.all([categoriesPromise, budgetsQuery, transactionsPromise])
 
   if (categoriesError) {
     throw categoriesError
@@ -106,12 +106,14 @@ async function fetchBudgetProgress(
 
   const normalizedBudgetsRaw = (budgets ?? []).map(normalizeBudgetRow)
   const normalizedBudgets = Array.from(
-    normalizedBudgetsRaw.reduce((map, budget) => {
-      if (!map.has(budget.category_id)) {
-        map.set(budget.category_id, budget)
-      }
-      return map
-    }, new Map<string, BudgetWithCategory>()).values()
+    normalizedBudgetsRaw
+      .reduce((map, budget) => {
+        if (!map.has(budget.category_id)) {
+          map.set(budget.category_id, budget)
+        }
+        return map
+      }, new Map<string, BudgetWithCategory>())
+      .values()
   )
   // Budget spend excludes transfers/investments by only counting expense categories.
   const normalizedTransactions = (transactions ?? [])

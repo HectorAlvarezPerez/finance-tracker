@@ -78,7 +78,9 @@ export function BudgetsFiltersBar({
             </div>
 
             <div className="space-y-1">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ano</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Ano
+              </p>
               <Select value={String(year)} onValueChange={(value) => onYearChange(Number(value))}>
                 <SelectTrigger className="h-11 w-full min-w-0 sm:w-[140px]">
                   <SelectValue placeholder="Ano" />
@@ -95,8 +97,13 @@ export function BudgetsFiltersBar({
 
             {periodType === "monthly" && (
               <div className="space-y-1">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Mes</p>
-                <Select value={String(month)} onValueChange={(value) => onMonthChange(Number(value))}>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Mes
+                </p>
+                <Select
+                  value={String(month)}
+                  onValueChange={(value) => onMonthChange(Number(value))}
+                >
                   <SelectTrigger className="h-11 w-full min-w-0 sm:w-[180px]">
                     <SelectValue placeholder="Mes" />
                   </SelectTrigger>

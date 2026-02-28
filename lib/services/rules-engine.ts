@@ -137,8 +137,7 @@ export function detectDuplicates(
     const sameAmount = Math.abs(existing.amount - (newTransaction.amount || 0)) < 0.01
     const sameDate = existing.date === newTransaction.date
     const similarDescription =
-      existing.description.toLowerCase().trim() ===
-      newTransaction.description?.toLowerCase().trim()
+      existing.description.toLowerCase().trim() === newTransaction.description?.toLowerCase().trim()
 
     if (sameAmount && sameDate && similarDescription) {
       duplicates.push(existing)
@@ -147,4 +146,3 @@ export function detectDuplicates(
 
   return duplicates
 }
-

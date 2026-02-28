@@ -29,11 +29,16 @@ const accountIcons = {
 }
 
 const accountColors = {
-  checking: "bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700",
-  savings: "bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700",
-  brokerage: "bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900 dark:text-purple-200 dark:border-purple-700",
-  crypto: "bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900 dark:text-orange-200 dark:border-orange-700",
-  other: "bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700",
+  checking:
+    "bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700",
+  savings:
+    "bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700",
+  brokerage:
+    "bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900 dark:text-purple-200 dark:border-purple-700",
+  crypto:
+    "bg-orange-100 text-orange-800 border-orange-300 dark:bg-orange-900 dark:text-orange-200 dark:border-orange-700",
+  other:
+    "bg-gray-100 text-gray-800 border-gray-300 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700",
 }
 
 export function AccountsList({ accounts, userId }: { accounts: Account[]; userId: string }) {
@@ -41,12 +46,12 @@ export function AccountsList({ accounts, userId }: { accounts: Account[]; userId
   const [editingAccount, setEditingAccount] = useState<Account | null>(null)
   const [deletingAccount, setDeletingAccount] = useState<Account | null>(null)
   const supabase = createBrowserClient()
-  const t = useTranslations('accounts')
+  const t = useTranslations("accounts")
 
   useEffect(() => {
     async function fetchBalances() {
       const balanceMap = new Map<string, number>()
-      
+
       for (const account of accounts) {
         const { data } = await supabase
           .from("transactions")
@@ -68,10 +73,8 @@ export function AccountsList({ accounts, userId }: { accounts: Account[]; userId
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Wallet className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">{t('noAccounts')}</h3>
-          <p className="text-sm text-muted-foreground text-center mb-4">
-            {t('addFirstAccount')}
-          </p>
+          <h3 className="text-lg font-semibold mb-2">{t("noAccounts")}</h3>
+          <p className="text-sm text-muted-foreground text-center mb-4">{t("addFirstAccount")}</p>
         </CardContent>
       </Card>
     )
@@ -87,12 +90,10 @@ export function AccountsList({ accounts, userId }: { accounts: Account[]; userId
           return (
             <Card key={account.id}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-base font-medium">
-                  {account.name}
-                </CardTitle>
+                <CardTitle className="text-base font-medium">{account.name}</CardTitle>
                 <div className="flex items-center gap-2">
-                  <Badge 
-                    variant="outline" 
+                  <Badge
+                    variant="outline"
                     className={`capitalize ${accountColors[account.type as keyof typeof accountColors]}`}
                   >
                     {account.type}
@@ -155,4 +156,3 @@ export function AccountsList({ accounts, userId }: { accounts: Account[]; userId
     </>
   )
 }
-

@@ -4,19 +4,17 @@ import { I18nProvider } from "@/lib/i18n/provider"
 import { InitDefaultData } from "@/components/providers/init-default-data"
 import { createServerClient } from "@/lib/supabase/server"
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createServerClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   // Get user settings to determine locale
   const { data: settings } = await supabase
-    .from('settings')
-    .select('locale')
-    .eq('user_id', user?.id || '')
+    .from("settings")
+    .select("locale")
+    .eq("user_id", user?.id || "")
     .single()
 
   return (

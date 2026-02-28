@@ -44,10 +44,10 @@ export function EditAccountDialog({
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
-  const t = useTranslations('dialogs.editAccount')
-  const tForms = useTranslations('forms')
-  const tMsg = useTranslations('messages')
-  const tTypes = useTranslations('accountTypes')
+  const t = useTranslations("dialogs.editAccount")
+  const tForms = useTranslations("forms")
+  const tMsg = useTranslations("messages")
+  const tTypes = useTranslations("accountTypes")
 
   useEffect(() => {
     setName(account.name)
@@ -77,16 +77,14 @@ export function EditAccountDialog({
       if (balanceAdjustment && parseFloat(balanceAdjustment) !== 0) {
         const { data: userData } = await supabase.auth.getUser()
 
-        const { error: transactionError } = await supabase
-          .from("transactions")
-          .insert({
-            user_id: userData.user?.id,
-            account_id: account.id,
-            description: "Balance Adjustment",
-            amount: parseFloat(balanceAdjustment),
-            date: new Date().toISOString().split('T')[0],
-            category_id: null,
-          })
+        const { error: transactionError } = await supabase.from("transactions").insert({
+          user_id: userData.user?.id,
+          account_id: account.id,
+          description: "Balance Adjustment",
+          amount: parseFloat(balanceAdjustment),
+          date: new Date().toISOString().split("T")[0],
+          category_id: null,
+        })
 
         if (transactionError) {
           console.error("Error creating balance adjustment transaction:", transactionError)
@@ -94,16 +92,16 @@ export function EditAccountDialog({
       }
 
       toast({
-        title: tMsg('success'),
-        description: t('success'),
+        title: tMsg("success"),
+        description: t("success"),
       })
 
       onOpenChange(false)
       router.refresh()
     } catch (error: any) {
       toast({
-        title: tMsg('error'),
-        description: error.message || t('error'),
+        title: tMsg("error"),
+        description: error.message || t("error"),
         variant: "destructive",
       })
     } finally {
@@ -116,12 +114,12 @@ export function EditAccountDialog({
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{t('title')}</DialogTitle>
-            <DialogDescription>{t('subtitle')}</DialogDescription>
+            <DialogTitle>{t("title")}</DialogTitle>
+            <DialogDescription>{t("subtitle")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="edit-name">{tForms('name')}</Label>
+              <Label htmlFor="edit-name">{tForms("name")}</Label>
               <Input
                 id="edit-name"
                 value={name}
@@ -130,29 +128,29 @@ export function EditAccountDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-type">{tForms('type')}</Label>
+              <Label htmlFor="edit-type">{tForms("type")}</Label>
               <Select value={type} onValueChange={setType}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="checking">{tTypes('checking')}</SelectItem>
-                  <SelectItem value="savings">{tTypes('savings')}</SelectItem>
-                  <SelectItem value="brokerage">{tTypes('brokerage')}</SelectItem>
-                  <SelectItem value="crypto">{tTypes('crypto')}</SelectItem>
-                  <SelectItem value="other">{tTypes('other')}</SelectItem>
+                  <SelectItem value="checking">{tTypes("checking")}</SelectItem>
+                  <SelectItem value="savings">{tTypes("savings")}</SelectItem>
+                  <SelectItem value="brokerage">{tTypes("brokerage")}</SelectItem>
+                  <SelectItem value="crypto">{tTypes("crypto")}</SelectItem>
+                  <SelectItem value="other">{tTypes("other")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-currency">{tForms('currency')}</Label>
+              <Label htmlFor="edit-currency">{tForms("currency")}</Label>
               <div className="flex items-center justify-between p-2 border rounded-md bg-muted/30">
                 <span className="text-sm">EUR 🇪🇺</span>
                 <span className="text-xs text-muted-foreground">Default</span>
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="balanceAdjustment">{tForms('balanceAdjustment')}</Label>
+              <Label htmlFor="balanceAdjustment">{tForms("balanceAdjustment")}</Label>
               <Input
                 id="balanceAdjustment"
                 type="number"
@@ -168,10 +166,10 @@ export function EditAccountDialog({
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              {tForms('cancel')}
+              {tForms("cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? tForms('updating') : tForms('update')}
+              {loading ? tForms("updating") : tForms("update")}
             </Button>
           </DialogFooter>
         </form>
@@ -179,4 +177,3 @@ export function EditAccountDialog({
     </Dialog>
   )
 }
-

@@ -1,15 +1,15 @@
 import { createServerClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
-import { getTranslations } from 'next-intl/server'
+import { getTranslations } from "next-intl/server"
 import { CategoriesList } from "@/components/categories/categories-list"
 import { AddCategoryDialog } from "@/components/categories/add-category-dialog"
 import { ImportDefaultCategoriesButton } from "@/components/categories/import-default-categories-button"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function CategoriesPage() {
   const supabase = await createServerClient()
-  const t = await getTranslations('categories')
+  const t = await getTranslations("categories")
 
   const {
     data: { user },
@@ -28,9 +28,9 @@ export default async function CategoriesPage() {
 
   // Get user locale for default categories
   const { data: settings } = await supabase
-    .from('settings')
-    .select('*')
-    .eq('user_id', user.id)
+    .from("settings")
+    .select("*")
+    .eq("user_id", user.id)
     .single()
 
   const hasCategories = !!(categories && categories.length > 0)
@@ -40,10 +40,8 @@ export default async function CategoriesPage() {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <div>
-            <h1 className="text-3xl font-bold">{t('title')}</h1>
-            <p className="text-muted-foreground">
-              {t('subtitle')}
-            </p>
+            <h1 className="text-3xl font-bold">{t("title")}</h1>
+            <p className="text-muted-foreground">{t("subtitle")}</p>
             {hasCategories && (
               <div className="mt-2 text-sm text-muted-foreground bg-muted/50 inline-block px-2 py-1 rounded-md">
                 {categories?.length || 0} Total
@@ -56,14 +54,12 @@ export default async function CategoriesPage() {
         {!hasCategories && (
           <div className="flex items-center gap-2 p-4 bg-muted rounded-lg">
             <div className="flex-1">
-              <p className="text-sm font-medium">{t('gettingStarted')}</p>
-              <p className="text-xs text-muted-foreground">
-                {t('importDefault')}
-              </p>
+              <p className="text-sm font-medium">{t("gettingStarted")}</p>
+              <p className="text-xs text-muted-foreground">{t("importDefault")}</p>
             </div>
             <ImportDefaultCategoriesButton
               userId={user.id}
-              locale={settings?.locale || 'en-US'}
+              locale={settings?.locale || "en-US"}
               hasCategories={hasCategories}
             />
           </div>
@@ -71,6 +67,6 @@ export default async function CategoriesPage() {
       </div>
 
       <CategoriesList categories={categories || []} userId={user.id} />
-    </div >
+    </div>
   )
 }

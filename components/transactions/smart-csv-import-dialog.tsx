@@ -50,8 +50,8 @@ export function SmartCSVImportDialog({
   const router = useRouter()
   const { toast } = useToast()
   const supabase = createBrowserClient()
-  const t = useTranslations('dialogs.importCSV')
-  const tForms = useTranslations('forms')
+  const t = useTranslations("dialogs.importCSV")
+  const tForms = useTranslations("forms")
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -80,12 +80,12 @@ export function SmartCSVImportDialog({
     if (files && files[0]) {
       const file = files[0]
       // Check if it's a CSV or Excel file
-      if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+      if (file.name.endsWith(".csv") || file.name.endsWith(".xlsx") || file.name.endsWith(".xls")) {
         setFile(file)
       } else {
         toast({
-          title: t('invalidFormat'),
-          description: t('invalidFormatDesc'),
+          title: t("invalidFormat"),
+          description: t("invalidFormatDesc"),
           variant: "destructive",
         })
       }
@@ -94,47 +94,71 @@ export function SmartCSVImportDialog({
 
   // Detect column names flexibly
   const detectColumns = (headers: string[]) => {
-    const lowerHeaders = headers.map(h => h.toLowerCase())
+    const lowerHeaders = headers.map((h) => h.toLowerCase())
 
-    const dateCol = headers[lowerHeaders.findIndex(h =>
-      h.includes('date') || h.includes('fecha') || h.includes('data')
-    )]
+    const dateCol =
+      headers[
+        lowerHeaders.findIndex(
+          (h) => h.includes("date") || h.includes("fecha") || h.includes("data")
+        )
+      ]
 
-    const descCol = headers[lowerHeaders.findIndex(h =>
-      h.includes('desc') || h.includes('concept') || h.includes('detail') ||
-      h.includes('name') || h.includes('merchant')
-    )]
+    const descCol =
+      headers[
+        lowerHeaders.findIndex(
+          (h) =>
+            h.includes("desc") ||
+            h.includes("concept") ||
+            h.includes("detail") ||
+            h.includes("name") ||
+            h.includes("merchant")
+        )
+      ]
 
-    const merchantCol = headers[lowerHeaders.findIndex(h =>
-      h.includes('merchant') || h.includes('comercio') || h.includes('establecimiento') ||
-      h.includes('payee') || h.includes('beneficiary')
-    )]
+    const merchantCol =
+      headers[
+        lowerHeaders.findIndex(
+          (h) =>
+            h.includes("merchant") ||
+            h.includes("comercio") ||
+            h.includes("establecimiento") ||
+            h.includes("payee") ||
+            h.includes("beneficiary")
+        )
+      ]
 
-    const amountCol = headers[lowerHeaders.findIndex(h =>
-      h.includes('amount') || h.includes('value') || h.includes('import') ||
-      h.includes('cantidad') || h.includes('monto')
-    )]
+    const amountCol =
+      headers[
+        lowerHeaders.findIndex(
+          (h) =>
+            h.includes("amount") ||
+            h.includes("value") ||
+            h.includes("import") ||
+            h.includes("cantidad") ||
+            h.includes("monto")
+        )
+      ]
 
     return { dateCol, descCol, amountCol, merchantCol }
   }
 
   // Parse date flexibly (handles different formats)
   const parseDate = (value: string): string => {
-    if (!value) return new Date().toISOString().split('T')[0]
+    if (!value) return new Date().toISOString().split("T")[0]
 
     const str = value.toString().trim()
 
     // Try different date formats
     // Format: YYYY-MM-DD (ISO)
     if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
-      return str.split(' ')[0] // Remove time if present
+      return str.split(" ")[0] // Remove time if present
     }
 
     // Format: DD/MM/YYYY or DD-MM-YYYY
     const ddmmyyyy = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/)
     if (ddmmyyyy) {
       const [, day, month, year] = ddmmyyyy
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`
     }
 
     // Format: MM/DD/YYYY or MM-DD-YYYY (American)
@@ -143,19 +167,19 @@ export function SmartCSVImportDialog({
       const [, month, day, year] = mmddyyyy
       // Assume European format if day > 12, otherwise American
       if (parseInt(day) > 12) {
-        return `${year}-${day.padStart(2, '0')}-${month.padStart(2, '0')}`
+        return `${year}-${day.padStart(2, "0")}-${month.padStart(2, "0")}`
       }
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`
     }
 
     // Try parsing as Date object
     const date = new Date(str)
     if (!isNaN(date.getTime())) {
-      return date.toISOString().split('T')[0]
+      return date.toISOString().split("T")[0]
     }
 
     // Fallback to today
-    return new Date().toISOString().split('T')[0]
+    return new Date().toISOString().split("T")[0]
   }
 
   // Parse amount flexibly (handles different formats)
@@ -164,8 +188,8 @@ export function SmartCSVImportDialog({
     // Remove currency symbols, spaces, and replace comma with dot
     const cleaned = value
       .toString()
-      .replace(/[€$£¥\s]/g, '')
-      .replace(',', '.')
+      .replace(/[€$£¥\s]/g, "")
+      .replace(",", ".")
     return parseFloat(cleaned) || 0
   }
 
@@ -175,7 +199,7 @@ export function SmartCSVImportDialog({
     // Validate that user has at least one account
     if (!accounts || accounts.length === 0) {
       toast({
-        title: t('error'),
+        title: t("error"),
         description: "You need to create at least one account first",
         variant: "destructive",
       })
@@ -185,7 +209,7 @@ export function SmartCSVImportDialog({
     // Validate that user has selected an account
     if (!selectedAccountId) {
       toast({
-        title: t('error'),
+        title: t("error"),
         description: "Please select an account for these transactions",
         variant: "destructive",
       })
@@ -194,7 +218,7 @@ export function SmartCSVImportDialog({
 
     setLoading(true)
     setProgress(10)
-    setStatusMessage(t('reading'))
+    setStatusMessage(t("reading"))
 
     try {
       // Wrap Papa.parse in a Promise for better async handling
@@ -204,7 +228,7 @@ export function SmartCSVImportDialog({
             header: true,
             complete: (results) => {
               const rows = results.data.filter((row: any) => {
-                const values = Object.values(row).join('')
+                const values = Object.values(row).join("")
                 return values.trim().length > 0
               })
               resolve(rows)
@@ -219,23 +243,23 @@ export function SmartCSVImportDialog({
       const rows = await parseFile()
 
       if (rows.length === 0) {
-        throw new Error(t('errorDesc'))
+        throw new Error(t("errorDesc"))
       }
 
       setProgress(20)
-      setStatusMessage(t('processing'))
+      setStatusMessage(t("processing"))
 
       // Detect columns automatically
       const headers = Object.keys(rows[0] as any)
       const { dateCol, descCol, amountCol, merchantCol } = detectColumns(headers)
 
       if (!dateCol || !amountCol || (!descCol && !merchantCol)) {
-        throw new Error(t('errorDesc'))
+        throw new Error(t("errorDesc"))
       }
 
       // Prepare transactions
       setProgress(40)
-      setStatusMessage(t('preparing'))
+      setStatusMessage(t("preparing"))
 
       const preparedTransactions = rows.map((row: any) => ({
         user_id: userId,
@@ -248,20 +272,22 @@ export function SmartCSVImportDialog({
         notes: null,
       }))
 
-      let transactions = preparedTransactions.map(({ merchant: _merchant, ...transaction }) => transaction)
+      let transactions = preparedTransactions.map(
+        ({ merchant: _merchant, ...transaction }) => transaction
+      )
 
       if (categories.length > 0) {
         setProgress(50)
-        setStatusMessage(t('categorizing'))
+        setStatusMessage(t("categorizing"))
 
         try {
-          const response = await fetch('/api/auto-categorize', {
-            method: 'POST',
+          const response = await fetch("/api/auto-categorize", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              transactions: preparedTransactions.map(t => ({
+              transactions: preparedTransactions.map((t) => ({
                 description: t.description,
                 merchant: t.merchant,
                 amount: t.amount,
@@ -271,7 +297,7 @@ export function SmartCSVImportDialog({
           })
 
           if (!response.ok) {
-            throw new Error('Error al auto-categorizar transacciones')
+            throw new Error("Error al auto-categorizar transacciones")
           }
 
           const { categorizations } = await response.json()
@@ -285,38 +311,40 @@ export function SmartCSVImportDialog({
             }
           })
 
-          const categorizedCount = transactions.filter(t => t.category_id !== null).length
-          console.log(`✅ ${categorizedCount} de ${transactions.length} transacciones categorizadas`)
+          const categorizedCount = transactions.filter((t) => t.category_id !== null).length
+          console.log(
+            `✅ ${categorizedCount} de ${transactions.length} transacciones categorizadas`
+          )
         } catch (error) {
-          console.error('Error en auto-categorizacion:', error)
+          console.error("Error en auto-categorizacion:", error)
           toast({
-            title: 'Aviso',
-            description: 'No se pudo auto-categorizar. Las transacciones se importaran sin categoria.',
-            variant: 'default',
+            title: "Aviso",
+            description:
+              "No se pudo auto-categorizar. Las transacciones se importaran sin categoria.",
+            variant: "default",
           })
         }
       }
 
       setProgress(80)
-      setStatusMessage(t('saving'))
+      setStatusMessage(t("saving"))
 
       // Insert transactions
-      const { error: txError } = await supabase
-        .from('transactions')
-        .insert(transactions as any)
+      const { error: txError } = await supabase.from("transactions").insert(transactions as any)
 
       if (txError) throw txError
 
       setProgress(100)
-      setStatusMessage(t('complete'))
+      setStatusMessage(t("complete"))
 
-      const categorizedCount = transactions.filter(t => t.category_id !== null).length
-      const successMessage = categorizedCount > 0
-        ? `${transactions.length} transacciones importadas (${categorizedCount} auto-categorizadas)`
-        : `${transactions.length} ${t('successDesc')}`
+      const categorizedCount = transactions.filter((t) => t.category_id !== null).length
+      const successMessage =
+        categorizedCount > 0
+          ? `${transactions.length} transacciones importadas (${categorizedCount} auto-categorizadas)`
+          : `${transactions.length} ${t("successDesc")}`
 
       toast({
-        title: t('success'),
+        title: t("success"),
         description: successMessage,
       })
 
@@ -331,10 +359,10 @@ export function SmartCSVImportDialog({
         setStatusMessage("")
       }, 500)
     } catch (error: any) {
-      console.error('Import error:', error)
+      console.error("Import error:", error)
       toast({
-        title: t('error'),
-        description: error.message || t('errorDesc'),
+        title: t("error"),
+        description: error.message || t("errorDesc"),
         variant: "destructive",
       })
     } finally {
@@ -347,18 +375,16 @@ export function SmartCSVImportDialog({
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="w-full sm:w-auto">
           <Upload className="mr-2 h-4 w-4" />
-          {tForms('import')}
+          {tForms("import")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5 text-primary" />
-            {t('title')}
+            {t("title")}
           </DialogTitle>
-          <DialogDescription>
-            {t('subtitle')}
-          </DialogDescription>
+          <DialogDescription>{t("subtitle")}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           {/* Drag & Drop Zone */}
@@ -368,11 +394,12 @@ export function SmartCSVImportDialog({
             onDrop={handleDrop}
             className={`
               relative border-2 border-dashed rounded-lg p-8 transition-all cursor-pointer
-              ${isDragging
-                ? 'border-primary bg-primary/5 scale-105'
-                : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-accent/50'
+              ${
+                isDragging
+                  ? "border-primary bg-primary/5 scale-105"
+                  : "border-muted-foreground/25 hover:border-primary/50 hover:bg-accent/50"
               }
-              ${loading ? 'pointer-events-none opacity-50' : ''}
+              ${loading ? "pointer-events-none opacity-50" : ""}
             `}
           >
             <input
@@ -385,21 +412,17 @@ export function SmartCSVImportDialog({
             />
 
             <div className="flex flex-col items-center justify-center text-center space-y-3">
-              <div className={`p-3 rounded-full transition-all ${isDragging ? 'bg-primary text-primary-foreground scale-110' : 'bg-muted'
-                }`}>
-                <Upload className={`h-8 w-8 ${isDragging ? 'animate-bounce' : ''}`} />
+              <div
+                className={`p-3 rounded-full transition-all ${
+                  isDragging ? "bg-primary text-primary-foreground scale-110" : "bg-muted"
+                }`}
+              >
+                <Upload className={`h-8 w-8 ${isDragging ? "animate-bounce" : ""}`} />
               </div>
 
               <div>
-                <p className="text-sm font-medium">
-                  {isDragging
-                    ? t('dropHere')
-                    : t('dragDrop')
-                  }
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {t('orClick')}
-                </p>
+                <p className="text-sm font-medium">{isDragging ? t("dropHere") : t("dragDrop")}</p>
+                <p className="text-xs text-muted-foreground mt-1">{t("orClick")}</p>
               </div>
 
               <div className="flex gap-2 text-xs text-muted-foreground">
@@ -410,16 +433,14 @@ export function SmartCSVImportDialog({
             </div>
           </div>
 
-          <p className="text-xs text-center text-muted-foreground">
-            {t('fileInfo')}
-          </p>
+          <p className="text-xs text-center text-muted-foreground">{t("fileInfo")}</p>
 
           {/* Account Selection */}
           <div className="space-y-2">
-            <Label htmlFor="account">{tForms('account')}</Label>
+            <Label htmlFor="account">{tForms("account")}</Label>
             <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
               <SelectTrigger>
-                <SelectValue placeholder={tForms('selectAccount')} />
+                <SelectValue placeholder={tForms("selectAccount")} />
               </SelectTrigger>
               <SelectContent>
                 {accounts.map((account) => (
@@ -429,16 +450,13 @@ export function SmartCSVImportDialog({
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-xs text-muted-foreground">
-              {t('accountAssignment')}
-            </p>
+            <p className="text-xs text-muted-foreground">{t("accountAssignment")}</p>
           </div>
 
           <p className="text-xs text-muted-foreground">
             {categories.length === 0
               ? "No hay categorias para auto-categorizar. Se importaran sin categoria."
-              : "Se intentara auto-categorizar de forma local usando tus categorias existentes."
-            }
+              : "Se intentara auto-categorizar de forma local usando tus categorias existentes."}
           </p>
 
           {loading && (
@@ -484,12 +502,12 @@ export function SmartCSVImportDialog({
             {loading ? (
               <>
                 <Upload className="mr-2 h-4 w-4 animate-bounce" />
-                {t('processing')}
+                {t("processing")}
               </>
             ) : (
               <>
                 <Upload className="mr-2 h-4 w-4" />
-                {t('importButton')}
+                {t("importButton")}
               </>
             )}
           </Button>

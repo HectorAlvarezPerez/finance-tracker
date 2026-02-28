@@ -142,7 +142,9 @@ function buildInsightsPayload(
   const categoryMonths = getMonthSequence(year, month, 12).map((entry) => entry.key)
   const categoryMonthsSet = new Set(categoryMonths)
 
-  const currentTransactions = allTransactions.filter((item) => toMonthKeyFromDate(item.date) === monthKey)
+  const currentTransactions = allTransactions.filter(
+    (item) => toMonthKeyFromDate(item.date) === monthKey
+  )
   const previousTransactions = allTransactions.filter(
     (item) => toMonthKeyFromDate(item.date) === previousMonthKey
   )
@@ -191,7 +193,8 @@ function buildInsightsPayload(
     }
   })
 
-  const currentMonthly = monthlyPoints[monthlyPoints.length - 1] ?? createEmptyMonthlyMetric(monthKey)
+  const currentMonthly =
+    monthlyPoints[monthlyPoints.length - 1] ?? createEmptyMonthlyMetric(monthKey)
   const previousMonthly =
     monthlyPoints[monthlyPoints.length - 2] ?? createEmptyMonthlyMetric(previousMonthKey)
 
@@ -248,15 +251,17 @@ function buildInsightsPayload(
   }
 
   const sampledNetWorth = netWorthData.filter(
-    (_, index) =>
-      index === 0 || index === netWorthData.length - 1 || index % 3 === 0
+    (_, index) => index === 0 || index === netWorthData.length - 1 || index % 3 === 0
   )
 
   const currentNetWorth = sampledNetWorth[sampledNetWorth.length - 1]?.netWorth ?? 0
   const previousNetWorth = sampledNetWorth[0]?.netWorth ?? 0
   const netWorthComparison = compareValues(currentNetWorth, previousNetWorth)
 
-  const expenseMonthlyByCategory = new Map<string, Map<string, { name: string; color: string; total: number }>>()
+  const expenseMonthlyByCategory = new Map<
+    string,
+    Map<string, { name: string; color: string; total: number }>
+  >()
   categoryMonths.forEach((key) => {
     expenseMonthlyByCategory.set(key, new Map())
   })
@@ -348,10 +353,15 @@ function buildInsightsPayload(
     INSIGHTS_DONUT_TOP_CATEGORY_LIMIT
   )
   const previousCategoryMap = new Map(previousCategoryTotals.map((item) => [item.key, item.total]))
-  const groupedKeys = new Set(groupedCurrentCategories.filter((item) => item.key !== "other").map((item) => item.key))
+  const groupedKeys = new Set(
+    groupedCurrentCategories.filter((item) => item.key !== "other").map((item) => item.key)
+  )
 
   const distributionTotal = groupedCurrentCategories.reduce((sum, item) => sum + item.total, 0)
-  const previousDistributionTotal = previousCategoryTotals.reduce((sum, item) => sum + item.total, 0)
+  const previousDistributionTotal = previousCategoryTotals.reduce(
+    (sum, item) => sum + item.total,
+    0
+  )
   const distributionComparison = compareValues(distributionTotal, previousDistributionTotal)
 
   const distributionItems: CategoryDistributionPoint[] = groupedCurrentCategories.map((item) => {
@@ -371,7 +381,8 @@ function buildInsightsPayload(
       color: item.color,
       total: toNumber(item.total),
       previousTotal: toNumber(previousTotal),
-      percentage: distributionTotal > 0 ? Number(((item.total / distributionTotal) * 100).toFixed(1)) : 0,
+      percentage:
+        distributionTotal > 0 ? Number(((item.total / distributionTotal) * 100).toFixed(1)) : 0,
       delta: toNumber(comparison.delta),
       deltaPct: comparison.deltaPct === null ? null : Number(comparison.deltaPct.toFixed(1)),
     }
@@ -397,7 +408,10 @@ function buildInsightsPayload(
       currentValue: toNumber(currentNetWorth),
       previousValue: toNumber(previousNetWorth),
       delta: toNumber(netWorthComparison.delta),
-      deltaPct: netWorthComparison.deltaPct === null ? null : Number(netWorthComparison.deltaPct.toFixed(1)),
+      deltaPct:
+        netWorthComparison.deltaPct === null
+          ? null
+          : Number(netWorthComparison.deltaPct.toFixed(1)),
     },
     monthlyMetrics: {
       points: monthlyPoints,
@@ -420,7 +434,10 @@ function buildInsightsPayload(
       total: toNumber(distributionTotal),
       previousTotal: toNumber(previousDistributionTotal),
       delta: toNumber(distributionComparison.delta),
-      deltaPct: distributionComparison.deltaPct === null ? null : Number(distributionComparison.deltaPct.toFixed(1)),
+      deltaPct:
+        distributionComparison.deltaPct === null
+          ? null
+          : Number(distributionComparison.deltaPct.toFixed(1)),
     },
   }
 }
@@ -437,7 +454,9 @@ async function fetchInsightsPayload(
 
   const { data, error } = await supabase
     .from("transactions")
-    .select("id,user_id,account_id,date,amount,currency,description,category_id,notes,created_at,updated_at,categories(*)")
+    .select(
+      "id,user_id,account_id,date,amount,currency,description,category_id,notes,created_at,updated_at,categories(*)"
+    )
     .eq("user_id", userId)
     .gte("date", fetchStartDate)
     .lte("date", fetchEndDate)

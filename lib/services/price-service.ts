@@ -155,4 +155,3 @@ export function createPriceService(supabaseClient: any): IPriceService {
 
   return new ManualPriceService(supabaseClient)
 }
-

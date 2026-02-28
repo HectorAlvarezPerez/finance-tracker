@@ -81,7 +81,10 @@ export function TransactionsTable({
     replaceSelection,
   } = useRowSelection()
 
-  const visibleIds = useMemo(() => transactions.map((transaction) => transaction.id), [transactions])
+  const visibleIds = useMemo(
+    () => transactions.map((transaction) => transaction.id),
+    [transactions]
+  )
 
   useEffect(() => {
     clearSelection()
@@ -113,11 +116,7 @@ export function TransactionsTable({
 
   const allVisibleSelected = visibleIds.length > 0 && visibleSelectedCount === visibleIds.length
   const headerCheckedState: boolean | "indeterminate" =
-    visibleSelectedCount === 0
-      ? false
-      : allVisibleSelected
-      ? true
-      : "indeterminate"
+    visibleSelectedCount === 0 ? false : allVisibleSelected ? true : "indeterminate"
 
   const groupedTransactions = useMemo(() => {
     const groups = new Map<string, { monthLabel: string; items: Transaction[] }>()
@@ -232,7 +231,9 @@ export function TransactionsTable({
           title: "Borrado parcial",
           description: (
             <div className="space-y-2">
-              <p>{deletedCount} borradas, {failedIds.length} no se han podido borrar.</p>
+              <p>
+                {deletedCount} borradas, {failedIds.length} no se han podido borrar.
+              </p>
               <ul className="list-disc pl-4 text-xs">
                 {failedIds.map((id) => (
                   <li key={id}>{formatFailedTransaction(id)}</li>
@@ -313,8 +314,12 @@ export function TransactionsTable({
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="line-clamp-2 text-sm font-medium">{transaction.description}</p>
-                          <p className="mt-1 text-xs text-muted-foreground">{formatDate(transaction.date, "short")}</p>
+                          <p className="line-clamp-2 text-sm font-medium">
+                            {transaction.description}
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {formatDate(transaction.date, "short")}
+                          </p>
                         </div>
                         <div className="flex shrink-0 items-start gap-2">
                           <span
@@ -345,7 +350,9 @@ export function TransactionsTable({
                             {transaction.categories.name}
                           </Badge>
                         )}
-                        <span className="text-xs text-muted-foreground">{transaction.accounts?.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {transaction.accounts?.name}
+                        </span>
                       </div>
                     </button>
                   </div>
@@ -354,7 +361,9 @@ export function TransactionsTable({
                     <div className="space-y-3 border-t px-4 py-3">
                       {transaction.notes && (
                         <div>
-                          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Notes</p>
+                          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            Notes
+                          </p>
                           <p className="text-sm text-muted-foreground">{transaction.notes}</p>
                         </div>
                       )}
@@ -411,7 +420,10 @@ export function TransactionsTable({
             {groupedTransactions.map((group) => (
               <Fragment key={`month-fragment-${group.monthKey}`}>
                 <TableRow key={`month-${group.monthKey}`} className="bg-muted/40 hover:bg-muted/40">
-                  <TableCell colSpan={7} className="py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  <TableCell
+                    colSpan={7}
+                    className="py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                  >
                     {group.monthLabel}
                   </TableCell>
                 </TableRow>
@@ -431,7 +443,9 @@ export function TransactionsTable({
                       <TableCell className="whitespace-nowrap">
                         {formatDate(transaction.date, "short")}
                       </TableCell>
-                      <TableCell className="max-w-[260px] truncate font-medium">{transaction.description}</TableCell>
+                      <TableCell className="max-w-[260px] truncate font-medium">
+                        {transaction.description}
+                      </TableCell>
                       <TableCell>
                         {transaction.categories && (
                           <Badge

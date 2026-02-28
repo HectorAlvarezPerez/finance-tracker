@@ -13,21 +13,23 @@ type Transaction = Database["public"]["Tables"]["transactions"]["Row"] & {
   categories: Database["public"]["Tables"]["categories"]["Row"] | null
 }
 
-export function DashboardOverview({ 
-  userId, 
+export function DashboardOverview({
+  userId,
   selectedAccountId = "all",
-  selectedMonth
-}: { 
+  selectedMonth,
+}: {
   userId: string
   selectedAccountId?: string
   selectedMonth?: string
 }) {
-  const t = useTranslations('dashboard')
-  const tInsights = useTranslations('insights')
+  const t = useTranslations("dashboard")
+  const tInsights = useTranslations("insights")
   const supabase = createBrowserClient()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [allTransactions, setAllTransactions] = useState<{ account_id: string; amount: number }[]>([])
+  const [allTransactions, setAllTransactions] = useState<{ account_id: string; amount: number }[]>(
+    []
+  )
   const [loading, setLoading] = useState(true)
   const [incomeExpanded, setIncomeExpanded] = useState(false)
   const [expensesExpanded, setExpensesExpanded] = useState(false)
@@ -46,16 +48,16 @@ export function DashboardOverview({
       setAccounts(accountsData || [])
 
       // Get transactions for selected month
-      const [year, month] = selectedMonth 
-        ? selectedMonth.split('-').map(Number)
+      const [year, month] = selectedMonth
+        ? selectedMonth.split("-").map(Number)
         : [new Date().getFullYear(), new Date().getMonth() + 1]
-      
-      // Calculate first and last day without timezone conversion
-      const firstDay = `${year}-${String(month).padStart(2, '0')}-01`
-      const lastDayOfMonth = new Date(year, month, 0).getDate()
-      const lastDay = `${year}-${String(month).padStart(2, '0')}-${String(lastDayOfMonth).padStart(2, '0')}`
 
-      console.log('Date range:', { selectedMonth, firstDay, lastDay })
+      // Calculate first and last day without timezone conversion
+      const firstDay = `${year}-${String(month).padStart(2, "0")}-01`
+      const lastDayOfMonth = new Date(year, month, 0).getDate()
+      const lastDay = `${year}-${String(month).padStart(2, "0")}-${String(lastDayOfMonth).padStart(2, "0")}`
+
+      console.log("Date range:", { selectedMonth, firstDay, lastDay })
 
       const { data: transactionsData } = await supabase
         .from("transactions")
@@ -80,9 +82,10 @@ export function DashboardOverview({
   }, [userId, supabase, selectedAccountId, selectedMonth])
 
   // Filter transactions by selected account
-  const filteredTransactions = selectedAccountId === "all"
-    ? transactions
-    : transactions.filter((t) => t.account_id === selectedAccountId)
+  const filteredTransactions =
+    selectedAccountId === "all"
+      ? transactions
+      : transactions.filter((t) => t.account_id === selectedAccountId)
 
   // Get income and expense transactions
   const incomeTransactions = filteredTransactions
@@ -106,30 +109,30 @@ export function DashboardOverview({
   })
 
   // For filtered view, calculate total balance based on selected account
-  const totalBalance = selectedAccountId === "all"
-    ? Array.from(accountBalances.values()).reduce((sum, val) => sum + val, 0)
-    : accountBalances.get(selectedAccountId) || 0
+  const totalBalance =
+    selectedAccountId === "all"
+      ? Array.from(accountBalances.values()).reduce((sum, val) => sum + val, 0)
+      : accountBalances.get(selectedAccountId) || 0
 
   // Filter accounts to display based on selection
-  const displayAccounts = selectedAccountId === "all"
-    ? accounts
-    : accounts.filter((a) => a.id === selectedAccountId)
+  const displayAccounts =
+    selectedAccountId === "all" ? accounts : accounts.filter((a) => a.id === selectedAccountId)
 
   // Get period label
   const getPeriodLabel = () => {
-    if (!selectedMonth) return t('thisMonth')
-    
-    const [year, month] = selectedMonth.split('-').map(Number)
+    if (!selectedMonth) return t("thisMonth")
+
+    const [year, month] = selectedMonth.split("-").map(Number)
     const now = new Date()
     const currentYear = now.getFullYear()
     const currentMonth = now.getMonth() + 1
-    
+
     if (year === currentYear && month === currentMonth) {
-      return t('thisMonth')
+      return t("thisMonth")
     }
-    
+
     const date = new Date(year, month - 1)
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    return date.toLocaleDateString("en-US", { month: "long", year: "numeric" })
   }
 
   const periodLabel = getPeriodLabel()
@@ -137,7 +140,7 @@ export function DashboardOverview({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">{t('loading')}</p>
+        <p className="text-muted-foreground">{t("loading")}</p>
       </div>
     )
   }
@@ -147,23 +150,22 @@ export function DashboardOverview({
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('totalBalance')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("totalBalance")}</CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalBalance)}</div>
             <p className="text-xs text-muted-foreground">
-              {selectedAccountId === "all" 
-                ? t('acrossAccounts', { count: accounts.length })
-                : `${accounts.find(a => a.id === selectedAccountId)?.name || t('selectedAccount')}`
-              }
+              {selectedAccountId === "all"
+                ? t("acrossAccounts", { count: accounts.length })
+                : `${accounts.find((a) => a.id === selectedAccountId)?.name || t("selectedAccount")}`}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{tInsights('income')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{tInsights("income")}</CardTitle>
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-green-600" />
               {incomeTransactions.length > 0 && (
@@ -185,10 +187,12 @@ export function DashboardOverview({
             <p className="text-xs text-muted-foreground">
               {incomeTransactions.length} transactions ({periodLabel})
             </p>
-            
+
             {incomeExpanded && incomeTransactions.length > 0 && (
               <div className="mt-4 space-y-2 max-h-64 overflow-y-auto">
-                <div className="text-xs font-semibold text-muted-foreground mb-2">Transactions:</div>
+                <div className="text-xs font-semibold text-muted-foreground mb-2">
+                  Transactions:
+                </div>
                 {incomeTransactions.map((t) => (
                   <div
                     key={t.id}
@@ -212,7 +216,7 @@ export function DashboardOverview({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{tInsights('expenses')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{tInsights("expenses")}</CardTitle>
             <div className="flex items-center gap-2">
               <TrendingDown className="h-4 w-4 text-red-600" />
               {expenseTransactions.length > 0 && (
@@ -234,10 +238,12 @@ export function DashboardOverview({
             <p className="text-xs text-muted-foreground">
               {expenseTransactions.length} transactions ({periodLabel})
             </p>
-            
+
             {expensesExpanded && expenseTransactions.length > 0 && (
               <div className="mt-4 space-y-2 max-h-64 overflow-y-auto">
-                <div className="text-xs font-semibold text-muted-foreground mb-2">Transactions:</div>
+                <div className="text-xs font-semibold text-muted-foreground mb-2">
+                  Transactions:
+                </div>
                 {expenseTransactions.map((t) => (
                   <div
                     key={t.id}
@@ -261,7 +267,7 @@ export function DashboardOverview({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{tInsights('net')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{tInsights("net")}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -292,20 +298,28 @@ export function DashboardOverview({
                       className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-2 h-2 rounded-full ${
-                          account.type === 'checking' ? 'bg-blue-500' :
-                          account.type === 'savings' ? 'bg-green-500' :
-                          account.type === 'brokerage' ? 'bg-purple-500' :
-                          account.type === 'crypto' ? 'bg-orange-500' :
-                          'bg-gray-500'
-                        }`} />
+                        <div
+                          className={`w-2 h-2 rounded-full ${
+                            account.type === "checking"
+                              ? "bg-blue-500"
+                              : account.type === "savings"
+                                ? "bg-green-500"
+                                : account.type === "brokerage"
+                                  ? "bg-purple-500"
+                                  : account.type === "crypto"
+                                    ? "bg-orange-500"
+                                    : "bg-gray-500"
+                          }`}
+                        />
                         <div>
                           <p className="font-medium text-sm">{account.name}</p>
                           <p className="text-xs text-muted-foreground capitalize">{account.type}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className={`font-semibold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p
+                          className={`font-semibold ${balance >= 0 ? "text-green-600" : "text-red-600"}`}
+                        >
                           {formatCurrency(balance)}
                         </p>
                       </div>
@@ -314,9 +328,7 @@ export function DashboardOverview({
                 })
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  {selectedAccountId === "all" 
-                    ? t('noAccountsMessage')
-                    : t('accountNotFound')}
+                  {selectedAccountId === "all" ? t("noAccountsMessage") : t("accountNotFound")}
                 </p>
               )}
             </div>

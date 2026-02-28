@@ -15,8 +15,18 @@ import {
 import { useCurrency } from "@/lib/hooks/use-currency"
 import { useIsMobile } from "@/lib/hooks/use-mobile"
 import { ChartContainer } from "@/components/insights/chart-container"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CompactLegend, formatCurrencyTick, TooltipCard } from "@/components/analytics/chart-helpers"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  CompactLegend,
+  formatCurrencyTick,
+  TooltipCard,
+} from "@/components/analytics/chart-helpers"
 import { chartTokens, type ChartVariant } from "@/lib/theme/chartTokens"
 
 interface ExpensesByCategoryChartProps {
